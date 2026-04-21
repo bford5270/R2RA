@@ -1,0 +1,22 @@
+{
+  "id": "mroe",
+  "ordinal": 3,
+  "title": "MEDICAL RULES OF ENGAGEMENT (MROE)",
+  "items": [
+    {
+      "id": "mroe.1",
+      "type": "binary",
+      "prompt": "Unit received copy of the MROE for theater; 100% of team briefed"
+    },
+    {
+      "id": "mroe.2",
+      "type": "binary",
+      "prompt": "Supported Units Chain of Command briefed on the MROE"
+    },
+    {
+      "id": "mroe.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}
