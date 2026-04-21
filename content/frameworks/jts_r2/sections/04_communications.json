@@ -1,0 +1,41 @@
+{
+  "id": "communications",
+  "ordinal": 4,
+  "title": "COMMUNICATIONS",
+  "items": [
+    {
+      "id": "comms.table",
+      "type": "table_yn",
+      "label": "Communication Type",
+      "columns": [
+        { "id": "y", "label": "Y", "type": "yn" },
+        { "id": "n", "label": "N", "type": "yn" }
+      ],
+      "rows": [
+        { "id": "siprnet",     "label": "Secret Internet Protocol Router Network (SIPRNet)" },
+        { "id": "nato",        "label": "NATO (i.e., Combined Enterprise Regional Information Exchange System [CENTRIXS]; or Coalition (i.e. Battlefield Information Collection and Exploitation Systems Extended [BICES]))" },
+        { "id": "svoip",       "label": "Secret Voice over Internet Provider (SVoIP) - phone" },
+        { "id": "svtc",        "label": "Secure Video Teleconference" },
+        { "id": "scanner",     "label": "Document Scanner for Records" },
+        { "id": "tmit",        "label": "Theater Medical IT Support" },
+        { "id": "telehealth",  "label": "Capability for Telehealth" },
+        { "id": "permissive",  "label": "Permissive Environment for Coms (i.e. WhatsApp)" },
+        { "id": "niprnet",     "label": "NIPRNet" },
+        { "id": "mirc",        "label": "Microsoft Internet Relay Chat (mIRC)" },
+        { "id": "voip",        "label": "VoIP/Phone" },
+        { "id": "other",       "label": "Other",
+          "help": "Specify in Discussion/Shortfalls." }
+      ]
+    },
+    {
+      "id": "comms.1",
+      "type": "binary",
+      "prompt": "Appropriate team members have SIPRNet tokens and access"
+    },
+    {
+      "id": "comms.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}
