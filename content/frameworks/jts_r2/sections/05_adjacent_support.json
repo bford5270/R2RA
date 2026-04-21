@@ -1,0 +1,27 @@
+{
+  "id": "adjacent_support",
+  "ordinal": 5,
+  "title": "ADJACENT / CO-LOCATED MEDICAL SUPPORT",
+  "items": [
+    {
+      "id": "adj.table",
+      "type": "table_yn",
+      "label": "Description",
+      "columns": [
+        { "id": "y", "label": "Y", "type": "yn" },
+        { "id": "n", "label": "N", "type": "yn" }
+      ],
+      "rows": [
+        { "id": "intl",        "label": "International resources (i.e. NATO and/or Coalition)" },
+        { "id": "blood_det",   "label": "Blood Support Detachment" },
+        { "id": "medevac",     "label": "MEDEVAC" },
+        { "id": "isos",        "label": "International SOS (ISOS)" },
+        { "id": "host_nation", "label": "Host Nation" },
+        { "id": "ngo",         "label": "Non-Government Organizations (NGO)" },
+        { "id": "civil_state", "label": "Civil Affairs / State Dept" },
+        { "id": "us_role1",    "label": "US Role 1 (i.e. Primary Care Support)" },
+        { "id": "other",       "label": "Other", "help": "Specify in notes." }
+      ]
+    }
+  ]
+}
