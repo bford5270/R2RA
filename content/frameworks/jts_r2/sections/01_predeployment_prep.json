@@ -1,0 +1,70 @@
+{
+  "id": "predeployment_prep",
+  "ordinal": 1,
+  "title": "PREDEPLOYMENT PREP",
+  "items": [
+    {
+      "id": "pdp.1",
+      "type": "binary",
+      "prompt": "Team briefed on type of and location(s) for mission"
+    },
+    {
+      "id": "pdp.2",
+      "type": "binary",
+      "prompt": "Team briefed on medical capabilities (i.e. Joint, Coalition, Host Nation) in the area of responsibility (AOR)"
+    },
+    {
+      "id": "pdp.3",
+      "type": "binary",
+      "prompt": "Team attended Service-specific training pre-deployment (i.e. Army Trauma Training Center [ATTC]; Navy Trauma Training Center [NTTC]; Center for Sustainment of Trauma and Readiness Skills [C-STaRS]; Ground Surgical Team Training [GSTT])"
+    },
+    {
+      "id": "pdp.4",
+      "type": "binary",
+      "prompt": "Team attended Home-Station trauma training pre-deployment – list name(s) of the course(s) or exercise attended",
+      "capture": [
+        { "id": "courses", "label": "Course / exercise name(s)", "type": "text_long" }
+      ]
+    },
+    {
+      "id": "pdp.5",
+      "type": "binary",
+      "prompt": "Team has briefed home station chain of command (COC) on mission; unit/individual readiness"
+    },
+    {
+      "id": "pdp.6",
+      "type": "binary",
+      "prompt": "Individual and unit training for Theater entry requirements completed"
+    },
+    {
+      "id": "pdp.7",
+      "type": "binary",
+      "prompt": "Team members have current Secret Clearances"
+    },
+    {
+      "id": "pdp.8",
+      "type": "binary",
+      "prompt": "Appropriate team members have SIPRNet access during pre-deployment planning phase"
+    },
+    {
+      "id": "pdp.9",
+      "type": "binary",
+      "prompt": "Interfacility Credentials Transfer Brief (ICTB) provided to Service Component Surgeon or their designee, prior to deployment based on CCMD guidance/policy"
+    },
+    {
+      "id": "pdp.10",
+      "type": "binary",
+      "prompt": "All nurses and medics have copies of licenses and certifications"
+    },
+    {
+      "id": "pdp.11",
+      "type": "binary",
+      "prompt": "Team briefed on JTS orientation course; aware of JTS conferences for the CCMD"
+    },
+    {
+      "id": "pdp.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}
