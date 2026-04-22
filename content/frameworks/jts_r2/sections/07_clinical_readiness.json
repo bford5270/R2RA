@@ -1,0 +1,77 @@
+{
+  "id": "clinical_readiness",
+  "ordinal": 7,
+  "title": "CLINICAL READINESS ASSESSMENT",
+  "items": [
+    {
+      "id": "cra.1",
+      "type": "binary",
+      "prompt": "Knowledge/Skills/Attributes (KSAs)/Individual Critical Task List (ICTL) of medical team members reviewed"
+    },
+    {
+      "id": "cra.2",
+      "type": "binary",
+      "prompt": "Individual and unit predeployment clincial training for Theater entry completed"
+    },
+    {
+      "id": "cra.3",
+      "type": "binary",
+      "prompt": "Gen Surgeon and/or Emergency Medicine MD is trained (i.e. Basic Endovascular Skills Course [BESC] or the Resuscitative Endovascular Balloon Occlusion of the Aorta [REBOA] placement)"
+    },
+    {
+      "id": "cra.4",
+      "type": "binary",
+      "prompt": "Gen Surgeon has attended Emergency War Surgery Course (EWSC) in the last 3 years"
+    },
+    {
+      "id": "cra.5",
+      "type": "binary",
+      "prompt": "Gen Surgeon regularly participates in trauma surgical care when not deployed"
+    },
+    {
+      "id": "cra.6",
+      "type": "binary",
+      "prompt": "Ortho Surgeon (if applicable) has attended Combat Extremity Surgical Course (CESC) or equivalent in last 3 years"
+    },
+    {
+      "id": "cra.7",
+      "type": "binary",
+      "prompt": "All physicians are current (< 3 years) in Advance Trauma Life Support (ATLS)"
+    },
+    {
+      "id": "cra.8",
+      "type": "binary",
+      "prompt": "Team trained on MC4 computers (Medical Communications for Combat Casualty Care) for electronic patient documentation"
+    },
+    {
+      "id": "cra.9",
+      "type": "binary",
+      "prompt": "Team members have access and training on the Theater Medical Data Store (TMDS) for clinicians and patient administrative personnel"
+    },
+    {
+      "id": "cra.10",
+      "type": "binary",
+      "prompt": "Team members identifed for access; and completed training on the TMDS Blood Module"
+    },
+    {
+      "id": "cra.11",
+      "type": "binary",
+      "prompt": "Team members trained on DD1380 and the En Route Care documentation from point of injury (POI)"
+    },
+    {
+      "id": "cra.12",
+      "type": "binary",
+      "prompt": "Team members briefed on Theater specific policy regarding clinical photography"
+    },
+    {
+      "id": "cra.13",
+      "type": "binary",
+      "prompt": "Team members briefed on trauma documentation forms; DoD Trauma Registry (DoDTR); and process for uploading trauma documentation"
+    },
+    {
+      "id": "cra.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}
