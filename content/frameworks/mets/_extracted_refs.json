@@ -1,0 +1,49 @@
+{
+  "extracted_mets": [
+    {
+      "id": "MCT 1.1.2",
+      "description": "Provide Forces",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 1.12.2",
+      "description": "Support Amphibious Operations",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.3",
+      "description": "Conduct Casualty Treatment",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.3.1",
+      "description": "Conduct Casualty Triage",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.4",
+      "description": "Conduct Temporary Casualty Holding",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.5",
+      "description": "Conduct Casualty Evacuation",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.7.2",
+      "description": "Maintain Dental Health Readiness",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.7.3",
+      "description": "Provide Emergency Dental Services",
+      "source": "NAVMC 3500.84B Ch 2"
+    },
+    {
+      "id": "MCT 4.5.8",
+      "description": "Conduct Medical Regulating",
+      "source": "NAVMC 3500.84B Ch 2"
+    }
+  ]
+}
