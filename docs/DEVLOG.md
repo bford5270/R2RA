@@ -10,7 +10,7 @@ next session can resume cleanly.
 - **Last session**: 2026-04-22
 - **Current phase**: Phase 0 **complete** — Phase 1 not yet started
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `986faf0` (Document content/ conventions, provenance, and regeneration)
+- **Last commit**: `45e6450` (Add CLAUDE.md as session entry point)
 - **Open PR**: none yet
 - **Blocked on**: nothing — awaiting user direction on Phase 1 kickoff
 
