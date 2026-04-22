@@ -93,6 +93,7 @@
   ],
   "signoff": [
     { "role": "role2_team_chief", "label": "Role 2 Team Chief" },
-    { "role": "tmd",              "label": "Theater Trauma Director" }
+    { "role": "tmd",              "label": "Theater Trauma Director" },
+    { "role": "arst_chief",       "label": "Austere Resuscitative Surgical Team, Chief", "visible_when": { "mission_type": "arst" } }
   ]
 }

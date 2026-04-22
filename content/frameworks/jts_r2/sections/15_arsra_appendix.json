@@ -1,0 +1,142 @@
+{
+  "id": "arsra_appendix",
+  "ordinal": 15,
+  "title": "APPENDIX: Austere Resuscitative and Surgical Readiness Assessment",
+  "visible_when": { "mission_type": "arst" },
+  "items": [
+    {
+      "id": "arsra.cpg_reviewed",
+      "type": "binary",
+      "prompt": "Austere Resuscitative Surgical Care (ARSC) Clinical Practice Guideline (CPG) reviewed by all team members",
+      "capture": [
+        { "id": "comments", "label": "Comments on CPG", "type": "text_long" }
+      ]
+    },
+    {
+      "id": "arsra.tactical_considerations",
+      "type": "binary",
+      "prompt": "Tactical considerations reviewed with Service Component Command Surgeon cell"
+    }
+  ],
+  "sections": [
+    {
+      "id": "arsra.personnel",
+      "ordinal": "15.1",
+      "title": "PERSONNEL",
+      "items": [
+        { "id": "arsra.pers.1", "type": "binary", "prompt": "Physical Fitness Standards for all team members" },
+        { "id": "arsra.pers.2", "type": "binary", "prompt": "Secret clearances for leadership" },
+        { "id": "arsra.pers.3", "type": "binary", "prompt": "Secret clearances for team members/SIPRNet Tokens" },
+        { "id": "arsra.pers.4", "type": "binary", "prompt": "Appropriate members clinical specialties represented (i.e., no OB in GS role; \"subs\" for other specialties)" },
+        { "id": "arsra.pers.discussion", "type": "text_long", "label": "Discussion / Shortfalls" }
+      ]
+    },
+    {
+      "id": "arsra.training",
+      "ordinal": "15.2",
+      "title": "TRAINING",
+      "description": "Ideally conducted pre-deployment or pre-mission at very least.",
+      "items": [
+        { "id": "arsra.tng.split",      "type": "binary", "prompt": "Training conducted with split teams and variable team sizes." },
+        { "id": "arsra.tng.weapons",    "type": "binary", "prompt": "Weapons Qualifications verified, primary and secondary weapons systems" },
+        { "id": "arsra.tng.crew_served","type": "binary", "prompt": "Crew-served weapons familiarization (convoy or transport vehicles; if applicable)" },
+        { "id": "arsra.tng.tmt",        "type": "binary", "prompt": "Tactical Movement Training, mounted and dismounted" },
+        { "id": "arsra.tng.nav",        "type": "binary", "prompt": "Navigation proficiency" },
+        { "id": "arsra.tng.security",   "type": "binary", "prompt": "Security considerations" },
+        { "id": "arsra.tng.react",      "type": "binary", "prompt": "React to enemy contact SOPs, mounted and dismounted" },
+        {
+          "id": "arsra.tng.tac_comms",
+          "type": "group",
+          "label": "Tactical Communications:",
+          "sub_items": [
+            { "id": "arsra.tng.tac_comms.tic",       "type": "binary", "prompt": "How to pass enemy contact to higher level of command (reporting TIC)" },
+            { "id": "arsra.tng.tac_comms.nine_line", "type": "binary", "prompt": "9-line; MIST; other medical operational reports" },
+            { "id": "arsra.tng.tac_comms.qrf",       "type": "binary", "prompt": "Process to request tactical assistance (i.e., Quick Reaction Force [QRF])" },
+            { "id": "arsra.tng.tac_comms.los_oth",   "type": "binary", "prompt": "Tactical Communication training, both Line of Sight (LOS) and Over the Horizon (OTH); verified once in theater" }
+          ]
+        },
+        { "id": "arsra.tng.nvg",        "type": "binary", "prompt": "Night Vision/Low visibility training and equipment available to all team members" },
+        { "id": "arsra.tng.low_light",  "type": "binary", "prompt": "Trained to perform tactical duties and medical duties in LOW/NO light" },
+        { "id": "arsra.tng.power",      "type": "binary", "prompt": "Plans for low electrical power or NO electrical power" },
+        { "id": "arsra.tng.mascal",     "type": "binary", "prompt": "MASCAL response (individual team and integrated with base plans)" },
+        { "id": "arsra.tng.cbrn",       "type": "binary", "prompt": "CBRN response (if applicable)" },
+        { "id": "arsra.tng.discussion", "type": "text_long", "label": "Discussion / Shortfalls" }
+      ]
+    },
+    {
+      "id": "arsra.mission_planning",
+      "ordinal": "15.3",
+      "title": "MISSION PLANNING",
+      "items": [
+        { "id": "arsra.mp.orientation", "type": "binary", "prompt": "Received orientation to supported units' organization and operational element, mission scope, etc." },
+        { "id": "arsra.mp.conops",      "type": "binary", "prompt": "Ability to be included in supported units' mission planning/visibility of CONOPS process" },
+        { "id": "arsra.mp.tools",       "type": "binary", "prompt": "Ability to access planning communication tools (SIPRNet computer access, Operational communications [radios, secure telephone, SATCOM], access to Operations Center, etc.)" },
+        { "id": "arsra.mp.relationship","type": "text_long", "label": "Describe relationship with supported Command team(s)" },
+        {
+          "id": "arsra.mp.threat",
+          "type": "select_one",
+          "prompt": "Expected enemy threat level to the surgical team",
+          "options": [
+            { "value": "high",   "label": "High" },
+            { "value": "medium", "label": "Medium" },
+            { "value": "low",    "label": "Low" }
+          ]
+        },
+        {
+          "id": "arsra.mp.checklist",
+          "type": "group",
+          "label": "Mission Specific Checklist Includes:",
+          "sub_items": [
+            { "id": "arsra.mp.checklist.troops",    "type": "text_long", "label": "# and types of troops at risk" },
+            { "id": "arsra.mp.checklist.holding",   "type": "text_long", "label": "Expected patient holding times" },
+            { "id": "arsra.mp.checklist.casevac",   "type": "text_long", "label": "Expected CASEVAC/MEDEVAC times" },
+            { "id": "arsra.mp.checklist.scalable",  "type": "text_long", "label": "Scalable surgical team plan (i.e. what are the minimum pax required to meet mission requirements)" },
+            { "id": "arsra.mp.checklist.split",     "type": "text_long", "label": "What capabilities can be shifted in split team operations that can push care forward minimizing risk (i.e. Resus team goes closer to the X; surg team stays back until needed)" },
+            { "id": "arsra.mp.checklist.evac",      "type": "text_long", "label": "Plans for rapid evacuation in setting of breaking contact (in order of precedence, what sensitives do you bring, what do you leave behind if tactical scenario requires rapid departure)" }
+          ]
+        },
+        { "id": "arsra.mp.discussion", "type": "text_long", "label": "Discussion / Shortfalls" }
+      ]
+    },
+    {
+      "id": "arsra.equipment",
+      "ordinal": "15.4",
+      "title": "EQUIPMENT",
+      "items": [
+        {
+          "id": "arsra.eq.individual",
+          "type": "group",
+          "label": "Individual:",
+          "sub_items": [
+            { "id": "arsra.eq.individual.nav",    "type": "binary", "prompt": "Navigation tools" },
+            { "id": "arsra.eq.individual.nvg",    "type": "binary", "prompt": "Night vision equipment" },
+            { "id": "arsra.eq.individual.comms",  "type": "binary", "prompt": "Communication tools for LOS and OTH" },
+            { "id": "arsra.eq.individual.cbrn",   "type": "binary", "prompt": "CBRN equipment (if applicable)" }
+          ]
+        },
+        {
+          "id": "arsra.eq.team",
+          "type": "group",
+          "label": "Medical Team:",
+          "sub_items": [
+            { "id": "arsra.eq.team.loud",        "type": "binary", "prompt": "Equipment to perform care in loud environments (doing primary survey/surgery as a team in back of a loud helo nearly impossible to communicate without radios and headsets, esp with >1 pt)" },
+            { "id": "arsra.eq.team.modular",     "type": "binary", "prompt": "Ruck, truck and house modular medical equipment loads" },
+            { "id": "arsra.eq.team.casevac",     "type": "binary", "prompt": "CASEVAC and/or en route care equipment" },
+            { "id": "arsra.eq.team.familiarize", "type": "binary", "prompt": "Familiarization with supported units' equipment: vehicles, aircraft, TCCC and other medical equipment" }
+          ]
+        },
+        { "id": "arsra.eq.discussion", "type": "text_long", "label": "Discussion / Shortfalls" }
+      ]
+    },
+    {
+      "id": "arsra.closing",
+      "ordinal": "15.5",
+      "title": "Closing — TMD Summary (ARSRA)",
+      "items": [
+        { "id": "arsra.close.concerns",  "type": "text_long", "label": "TMD documents concerns, deficiencies, and/or issues identified through this assessment" },
+        { "id": "arsra.close.actions",   "type": "text_long", "label": "TMD documents actions taken to resolve; and at what level they were resolved (i.e., Unit; TMD; TF MED; JTF/CTF MED; Service Component Surgeon; CCMD Surgeon)" },
+        { "id": "arsra.close.reporting", "type": "text_long", "label": "TMD develops a reporting process of completed assessments in coordination with the CCMD Surgeons office (with copy sent to JTS for inclusion into the joint lessons learned process)" }
+      ]
+    }
+  ]
+}
