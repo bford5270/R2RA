@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://r2ra.local/schema/mets.schema.json",
+  "title": "R2RA MET Catalog",
+  "description": "Lookup catalog of doctrinal Mission Essential Tasks (MCT / UJTL), used by the UI to render hover / press-and-hold definitions next to wicket and JTS item references.",
+  "type": "object",
+  "required": ["catalog_id", "version", "mets"],
+  "additionalProperties": false,
+  "properties": {
+    "catalog_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "version": { "type": "string" },
+    "title": { "type": "string" },
+    "source": {
+      "type": "object",
+      "properties": {
+        "authority": { "type": "string" },
+        "documents": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "string" }
+      }
+    },
+    "mets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/met" }
+    }
+  },
+  "$defs": {
+    "met": {
+      "type": "object",
+      "required": ["id", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Canonical token, e.g., 'MCT 4.5.5' or 'UJTL OP 4.7.4'.",
+          "pattern": "^(MCT|UJTL|JMET|MET)(\\s+[A-Z]+)?\\s+[0-9]+(\\.[0-9]+)*$"
+        },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "parent_id": { "type": "string" },
+        "family": {
+          "type": "string",
+          "enum": ["MCT", "UJTL", "JMET", "MET"]
+        },
+        "domain_hint": {
+          "type": "string",
+          "description": "Rough categorization to aid UI filtering (e.g., 'HSS', 'Logistics', 'Command', 'Intel')."
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Doctrinal sources for this MET."
+        },
+        "role2_relevance": {
+          "type": "string",
+          "enum": ["core", "supporting", "adjacent", "none"]
+        }
+      }
+    }
+  }
+}

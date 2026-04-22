@@ -123,6 +123,10 @@ def find_wicket_starts(lines: list[str]) -> list[tuple[int, str, str]]:
         # page number or leader-dots only.
         if re.fullmatch(r"\.+\s*\d+.*", title):
             continue
+        # Skip placeholder example codes like XXXX-XXX-XXXX used in the
+        # Overview chapter to illustrate the event-code grammar.
+        if re.fullmatch(r"X+(?:-X+){2,3}", code):
+            continue
         starts.append((i, code, title))
     return starts
 
@@ -307,7 +311,15 @@ def main() -> int:
     flat, page_of_line = flatten_pages(pages)
     lines = flat.split("\n")
 
-    chapters = detect_chapters(lines, page_of_line)
+    raw_chapters = detect_chapters(lines, page_of_line)
+    # Dedupe by chapter number, keeping the longest title (body header usually
+    # has the full title; TOC sometimes truncates).
+    by_num: dict[int, dict] = {}
+    for c in raw_chapters:
+        prev = by_num.get(c["number"])
+        if prev is None or len(c["title"]) > len(prev["title"]):
+            by_num[c["number"]] = c
+    chapters = [by_num[n] for n in sorted(by_num)]
     wickets = chunk_wickets(lines, page_of_line)
 
     checksum = hashlib.sha256(args.pdf.read_bytes()).hexdigest()

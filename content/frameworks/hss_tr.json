@@ -13,28 +13,12 @@
       "title": "OVERVIEW"
     },
     {
-      "number": 1,
-      "title": "OVERVIEW"
-    },
-    {
-      "number": 2,
-      "title": "HEALTH SERVICES MISSION ESSENTIAL TASKS MATRIX"
-    },
-    {
       "number": 2,
       "title": "HEALTH SERVICES MISSION ESSENTIAL TASKS MATRIX"
     },
     {
       "number": 3,
       "title": "COLLECTIVE EVENTS"
-    },
-    {
-      "number": 3,
-      "title": "COLLECTIVE EVENTS"
-    },
-    {
-      "number": 4,
-      "title": "MARINE CORPS SKILLS (MCS) INDIVIDUAL EVENTS"
     },
     {
       "number": 4,
@@ -45,20 +29,8 @@
       "title": "MEDICAL COMMON SKILLS INDIVIDUAL EVENTS"
     },
     {
-      "number": 5,
-      "title": "MEDICAL COMMON SKILLS INDIVIDUAL EVENTS"
-    },
-    {
       "number": 6,
       "title": "L03A - FIELD MEDICAL SERVICE TECHNICIAN INDIVIDUAL EVENTS"
-    },
-    {
-      "number": 6,
-      "title": "L03A - FIELD MEDICAL SERVICE TECHNICIAN INDIVIDUAL EVENTS"
-    },
-    {
-      "number": 7,
-      "title": "CLINICAL INDIVIDUAL EVENTS"
     },
     {
       "number": 7,
@@ -69,20 +41,8 @@
       "title": "NEC 8427 INDIVIDUAL EVENTS"
     },
     {
-      "number": 8,
-      "title": "NEC 8427 INDIVIDUAL EVENTS"
-    },
-    {
       "number": 9,
       "title": "NEC 8403 INDIVIDUAL EVENTS"
-    },
-    {
-      "number": 9,
-      "title": "NEC 8403 INDIVIDUAL EVENTS"
-    },
-    {
-      "number": 10,
-      "title": "MOUNTAIN WARFARE INDIVIDUAL EVENTS"
     },
     {
       "number": 10,
@@ -90,14 +50,6 @@
     }
   ],
   "wickets": [
-    {
-      "event_code": "XXXX-XXX-XXXX",
-      "title": "Call for indirect fire using the grid method (L/S)",
-      "provenance": {
-        "source_page": 18
-      },
-      "community": "XXXX"
-    },
     {
       "event_code": "HSS-OPS-7001",
       "title": "Conduct combat operations center (COC) functions",
@@ -7151,10 +7103,10 @@
     }
   ],
   "_meta": {
-    "ingested_at": "2026-04-22T00:37:01.041333+00:00",
+    "ingested_at": "2026-04-22T00:41:22.978561+00:00",
     "ingested_by": "scripts/ingest/parse_navmc.py",
     "pages_total": 197,
-    "wickets_extracted": 160,
-    "chapters_detected": 20
+    "wickets_extracted": 159,
+    "chapters_detected": 10
   }
 }
