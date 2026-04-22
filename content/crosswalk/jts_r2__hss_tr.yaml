@@ -1,0 +1,315 @@
+# Crosswalk v0.1 — DRAFT, NEEDS SME REVIEW
+#
+# Maps JTS Role 2 Readiness Assessment items to USMC HSS T&R wickets
+# (NAVMC 3500.84B Ch 2) and to doctrinal METs (MCT).
+#
+# Intent: when an assessor answers a JTS item, the UI surfaces the mapped
+# wickets + METs on the right-hand crosswalk panel. If any referenced
+# wicket is NO-GO / expired, the JTS item can't fairly be GO.
+#
+# Mapping confidence:
+#   high   — strong 1:1 or near-1:1 doctrinal/training correspondence
+#   medium — plausible relationship, SME should confirm
+#   low    — thematic link only; included for context, not gating
+#
+# Each mapping is an SME touchpoint. Do not treat as authoritative until
+# reviewed and status is flipped to 'approved'.
+
+version: "0.1"
+status: draft-needs-sme-review
+source_frameworks:
+  jts:   { id: jts_r2,  version: "2024.0" }
+  hsstr: { id: hss_tr,  version: "3500.84B-ch2" }
+  mets:  { id: mct_hss_seed, version: "0.1" }
+
+mappings:
+
+  # --- PREDEPLOYMENT PREP --------------------------------------------
+  - jts_item: pdp.1
+    wickets:
+      - { event_code: HSS-PLAN-6001, confidence: high,   rationale: "Plan for operations — briefing on mission type and location is the output of unit-level planning." }
+      - { event_code: HSS-PLAN-7001, confidence: medium, rationale: "Conduct planning — MAGTF-level planning feeds the unit brief." }
+    mets:
+      - { id: MCT 1.1.2, confidence: medium, rationale: "Providing trained forces for a specific mission presumes mission orientation." }
+
+  - jts_item: pdp.2
+    wickets:
+      - { event_code: HSS-PLAN-6001, confidence: high,   rationale: "Situational awareness of AOR medical capabilities is a planning product." }
+    mets:
+      - { id: MCT 4.5,   confidence: medium, rationale: "Coordinated HSS system requires knowledge of adjacent / co-located capabilities." }
+
+  - jts_item: pdp.3
+    wickets: []  # Service-specific training courses (ATTC/NTTC/C-STaRS/GSTT) live outside NAVMC 3500.84B
+    mets: []
+    note: "Service-specific training occurs at named schools; not a NAVMC T&R event. Evidence via course certificates."
+
+  - jts_item: pdp.4
+    wickets:
+      - { event_code: HSS-MED-2002, confidence: medium, rationale: "Perform Tactical Combat Casualty Care — home-station trauma training sustains TCCC currency." }
+    mets:
+      - { id: MCT 4.5.3, confidence: medium }
+
+  - jts_item: pdp.5
+    wickets: []
+    mets: []
+    note: "Command reporting is a command function, not a T&R wicket."
+
+  - jts_item: pdp.6
+    wickets: []
+    mets: []
+    note: "Theater-entry requirements are CCMD-specific; evidence via individual training records."
+
+  - jts_item: pdp.7
+    wickets: []
+    mets: []
+    note: "Clearances are personnel security products; not T&R."
+
+  - jts_item: pdp.8
+    wickets: []
+    mets: []
+
+  - jts_item: pdp.9
+    wickets: []
+    mets: []
+    note: "ICTB is a credentialing product; evidence via ICTB memo."
+
+  - jts_item: pdp.10
+    wickets: []
+    mets: []
+    note: "Licensure/cert copies are credentialing artifacts; evidence via copies in the unit evidence shelf."
+
+  - jts_item: pdp.11
+    wickets: []
+    mets: []
+    note: "JTS orientation is a JTS course, not a T&R event."
+
+  # --- COMMAND AND CONTROL (C2) --------------------------------------
+  - jts_item: c2.1
+    wickets:
+      - { event_code: HSS-OPS-6001, confidence: high,   rationale: "Conduct COC functions — CCIR awareness is core to COC ops at Role 2." }
+      - { event_code: HSS-OPS-6002, confidence: high,   rationale: "Provide Role 2 command and control." }
+    mets:
+      - { id: MCT 1.1.2, confidence: low }
+
+  - jts_item: c2.2
+    wickets:
+      - { event_code: HSS-OPS-6002, confidence: high,   rationale: "OPCON is a core C2 construct for the Role 2 unit." }
+
+  - jts_item: c2.3
+    wickets:
+      - { event_code: HSS-OPS-6002, confidence: high }
+
+  - jts_item: c2.4
+    wickets:
+      - { event_code: HSS-OPS-6002, confidence: high }
+
+  # --- MEDICAL RULES OF ENGAGEMENT -----------------------------------
+  - jts_item: mroe.1
+    wickets: []
+    note: "MROE is theater-specific policy, not a T&R event. Evidence via copy of theater MROE and training roster."
+
+  - jts_item: mroe.2
+    wickets: []
+
+  # --- COMMUNICATIONS ------------------------------------------------
+  # Table responses (comms.table rows) are capability declarations, not
+  # per-item crosswalks. Handled at the section level.
+  - jts_item: comms.1
+    wickets: []
+    note: "SIPRNet token/access is a communications security product."
+
+  # --- OPERATIONAL READINESS & SOPs ----------------------------------
+  - jts_item: orsop.medevac
+    wickets:
+      - { event_code: HSS-SVCS-4005, confidence: high, rationale: "Coordinate patient movement." }
+    mets:
+      - { id: MCT 4.5.5, confidence: high, rationale: "Conduct Casualty Evacuation." }
+
+  - jts_item: orsop.trauma_naming_policy
+    wickets: []
+    note: "CCMD trauma naming policy is a command product."
+
+  - jts_item: orsop.rehearsed_on.cpg
+    wickets:
+      - { event_code: HSS-MED-2002, confidence: medium, rationale: "TCCC is aligned to JTS CPGs." }
+    mets:
+      - { id: MCT 4.5.3, confidence: medium }
+
+  - jts_item: orsop.rehearsed_on.mwd
+    wickets: []
+    note: "MWD procedures are a specialized SOP; evidence via SOP doc + rehearsal log."
+
+  - jts_item: orsop.weapons_clearing
+    wickets: []
+
+  - jts_item: orsop.uxo
+    wickets: []
+
+  - jts_item: orsop.detainee
+    wickets: []
+    note: "Detainee healthcare per DoDI 2310.08; evidence via JKO course completion."
+
+  - jts_item: orsop.narcotics
+    wickets: []
+
+  - jts_item: orsop.waste
+    wickets: []
+
+  - jts_item: orsop.human_remains
+    wickets: []
+
+  - jts_item: orsop.linguists
+    wickets: []
+
+  - jts_item: orsop.hn_transfer
+    wickets: []
+
+  # --- CLINICAL READINESS --------------------------------------------
+  - jts_item: cra.1
+    wickets: []
+    note: "KSA/ICTL review is meta-process; applies to every individual event."
+
+  - jts_item: cra.2
+    wickets: []
+
+  - jts_item: cra.3
+    wickets: []
+    note: "BESC/REBOA are clinical courses; reference Ch 7 Clinical Individual Events once curated."
+    mets:
+      - { id: MCT 4.5.3, confidence: medium }
+
+  - jts_item: cra.4
+    wickets: []
+    note: "EWSC is a named course, not a NAVMC wicket."
+
+  - jts_item: cra.5
+    wickets: []
+
+  - jts_item: cra.6
+    wickets: []
+    note: "CESC is a named course."
+
+  - jts_item: cra.7
+    wickets: []
+    note: "ATLS is an external certification."
+
+  - jts_item: cra.8
+    wickets: []
+    note: "MC4 is an IT platform; evidence via training record."
+
+  - jts_item: cra.9
+    wickets: []
+    note: "TMDS access is an IT product."
+
+  - jts_item: cra.10
+    wickets: []
+
+  - jts_item: cra.11
+    wickets:
+      - { event_code: HSS-MED-2002, confidence: medium, rationale: "En Route Care + DD1380 are components of TCCC documentation." }
+    mets:
+      - { id: MCT 4.5.5, confidence: medium }
+
+  - jts_item: cra.12
+    wickets: []
+
+  - jts_item: cra.13
+    wickets: []
+    note: "DoDTR upload is a documentation process; evidence via unit process doc."
+
+  # --- CLINICAL CAPABILITIES -----------------------------------------
+  - jts_item: cc.1
+    wickets: []
+    note: "Sterilization is a clinical support capability — cross-reference Ch 7 once curated."
+
+  - jts_item: cc.2
+    wickets: []
+
+  - jts_item: cc.3
+    wickets: []
+
+  - jts_item: cc.4
+    wickets: []
+    mets:
+      - { id: MCT 4.5.4, confidence: high, rationale: "Conduct Temporary Casualty Holding — holding expansion is the operational expression of this MET." }
+
+  - jts_item: cc.5
+    wickets: []
+
+  - jts_item: cc.6
+    wickets: []
+    mets:
+      - { id: MCT 4.5.3, confidence: medium }
+
+  # --- BLOOD RESOURCES -----------------------------------------------
+  - jts_item: blood.wbb
+    wickets:
+      - { event_code: HSS-SVCS-4004, confidence: high, rationale: "Provide damage control resuscitation — WBB is the classic DCR enabler at Role 2." }
+    mets:
+      - { id: MCT 4.5.3, confidence: high }
+
+  - jts_item: blood.jbo
+    wickets: []
+    note: "JBO POC is a theater liaison product."
+
+  - jts_item: blood.storage
+    wickets: []
+
+  - jts_item: blood.prep
+    wickets:
+      - { event_code: HSS-SVCS-4004, confidence: medium }
+
+  # --- TEAM COMPOSITION ----------------------------------------------
+  # Team composition is a structural snapshot, not a trainable event.
+  # No per-row crosswalk; handled by the Personnel / Manning domain rollup.
+
+  # --- CRITICAL SUPPLIES / MEDICAL EQUIPMENT -------------------------
+  # Equipment and supply inventories are materiel checks, not T&R events.
+  # No crosswalk at row level.
+
+  # --- FACILITIES ----------------------------------------------------
+  - jts_item: fac.climate.main
+    wickets:
+      - { event_code: HSS-SVCS-5001, confidence: medium, rationale: "Establish Role 2 HSS capability — climate control is a facility enabler." }
+      - { event_code: HSS-SVCS-6001, confidence: medium }
+    mets:
+      - { id: MCT 4.5,   confidence: low }
+
+  - jts_item: fac.power.main
+    wickets:
+      - { event_code: HSS-SVCS-5001, confidence: medium }
+      - { event_code: HSS-SVCS-6001, confidence: medium }
+
+  - jts_item: fac.mascal
+    wickets: []
+    note: "MASCAL planning cross-references unit-level collective events; curate after full Ch 3 review."
+
+  # --- ARSRA APPENDIX ------------------------------------------------
+  # ARSRA items are largely tactical readiness (weapons, nav, CBRN) and
+  # will crosswalk primarily to MCS/MCCS chapters (Ch 4) once the Ch 4
+  # wicket set is curated for Role-2 relevance.
+  - jts_item: arsra.tng.weapons
+    wickets: []
+    note: "Weapons qualification lives in MCS — curate Ch 4 individual events in a follow-up pass."
+
+  - jts_item: arsra.tng.nav
+    wickets: []
+    note: "Navigation — MCS chapter."
+
+  - jts_item: arsra.tng.cbrn
+    wickets: []
+    note: "CBRN — MCCS chapter."
+
+# --- Mappings-by-section summary (for future auto-generation) --------
+# Counted by (# items with >=1 wicket / total items in section):
+#   predeployment_prep:  2 / 11
+#   c2:                  4 /  4
+#   mroe:                0 /  2
+#   orsop:               2 / 11
+#   clinical_readiness:  1 / 13
+#   clinical_capabilities: 2 / 6
+#   blood_resources:     2 /  4
+#   facilities:          2 /  5
+# Coverage is intentionally sparse in v0.1; deeper coverage requires
+# per-chapter SME curation (especially Ch 5, 6, 7) which is a separate
+# pass.
