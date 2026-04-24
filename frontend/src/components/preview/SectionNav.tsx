@@ -31,7 +31,7 @@ export function SectionNav({ sections, activeSectionId, onSelect }: Props) {
           >
             {s.ordinal}
           </span>
-          <span className="leading-snug">{s.id.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</span>
+          <span className="leading-snug">{s.title}</span>
         </button>
       ))}
     </nav>

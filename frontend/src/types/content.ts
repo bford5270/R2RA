@@ -83,6 +83,7 @@ export interface Section {
 export interface SectionManifestEntry {
   id: string
   ordinal: number
+  title: string
   file: string
   visible_when?: Record<string, string>
 }
