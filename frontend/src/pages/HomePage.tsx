@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export function HomePage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-8">
@@ -10,15 +12,18 @@ export function HomePage() {
         </p>
       </div>
 
-      <div className="rounded border border-neutral-200 bg-white p-6 text-sm text-neutral-700 max-w-md w-full">
-        <p className="font-semibold text-neutral-900 mb-2">Phase 1 scaffolding complete.</p>
-        <ul className="list-disc list-inside space-y-1 text-neutral-600">
-          <li>FastAPI backend running on :8000</li>
-          <li>Content routes serving JTS R2 framework</li>
-          <li>CUI banners persistent top + bottom</li>
-          <li>Read-only preview page next</li>
-        </ul>
+      <div className="flex flex-col gap-3 w-full max-w-sm">
+        <Link
+          to="/preview"
+          className="flex items-center justify-center rounded bg-scarlet text-white text-sm font-semibold px-4 py-2.5 hover:bg-scarlet-dark transition-colors"
+        >
+          Preview JTS R2 Form
+        </Link>
       </div>
+
+      <p className="text-xs text-neutral-400 max-w-sm text-center">
+        Phase 1 in progress — read-only form preview. Auth, responses, and PDF export coming next.
+      </p>
     </main>
   )
 }

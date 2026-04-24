@@ -1,8 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
-import { CuiBannerFixed } from './components/CuiBanner'
 import { HomePage } from './pages/HomePage'
+import { PreviewPage } from './pages/PreviewPage'
 
-// CuiBannerFixed is not exported yet — we'll use inline until we clean up
 function BannerTop() {
   return (
     <div
@@ -36,6 +35,7 @@ export default function App() {
       <BannerBottom />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/preview" element={<PreviewPage />} />
       </Routes>
     </>
   )
