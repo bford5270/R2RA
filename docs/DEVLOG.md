@@ -8,11 +8,11 @@ next session can resume cleanly.
 ## Header (always current)
 
 - **Last session**: 2026-04-23
-- **Current phase**: Phase 1 — MVP scaffolding **in progress**
+- **Current phase**: Phase 1 — read-only preview **complete**, data model next
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `609b850` (feat(frontend): Vite+React+TS+Tailwind skeleton with CUI banners)
+- **Last commit**: `45d3de1` (feat(frontend): read-only JTS R2 preview page)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next step is read-only JTS preview page
+- **Blocked on**: nothing — next step is data model migrations (STRATEGY §9)
 
 ---
 
@@ -61,12 +61,9 @@ Guardrails that repeatedly bit us in earlier sessions:
 
 ## Next actions (recommended order)
 
-1. ~~**Phase 1 MVP scaffolding**~~ — **done** (`0d84102`, `b06ea39`, `609b850`).
-   Root `.gitignore` + `Makefile`, FastAPI backend (`pyproject.toml`, `app/main.py`,
-   health + content routes), Vite+React+TS+Tailwind frontend (CUI banners, TanStack
-   Query, React Router, placeholder `HomePage`).
-2. **Read-only JTS preview page** — renders the form from content/, no
-   persistence, no auth. Proves the content shape is right.
+1. ~~**Phase 1 MVP scaffolding**~~ — **done** (`0d84102`–`609b850`).
+2. ~~**Read-only JTS preview page**~~ — **done** (`45d3de1`). Three-pane layout,
+   all three item types (binary/text_long/table_counts), content loaded from API.
 3. **Data model migrations** — assessments, assignments, responses,
    evidence, signatures, audit_log (from STRATEGY §9).
 4. **First writable flow** — create-assessment → assign-section →
