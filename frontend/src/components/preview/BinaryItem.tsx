@@ -1,4 +1,5 @@
 import type { BinaryItem as BinaryItemType } from '@/types/content'
+import { AcronymText } from './AcronymText'
 
 interface Props {
   item: BinaryItemType
@@ -18,14 +19,18 @@ export function BinaryItem({ item }: Props) {
             </span>
           ))}
         </div>
-        <p className="text-sm text-neutral-800 leading-snug">{item.prompt}</p>
+        <p className="text-sm text-neutral-800 leading-snug">
+          <AcronymText text={item.prompt} />
+        </p>
       </div>
 
       {item.capture && (
         <div className="mt-2 ml-20 space-y-1">
           {item.capture.map((field) => (
             <div key={field.id} className="flex flex-col gap-0.5">
-              <label className="text-xs text-neutral-500">{field.label}</label>
+              <label className="text-xs text-neutral-500">
+                <AcronymText text={field.label} />
+              </label>
               <div className="h-7 rounded border border-neutral-200 bg-neutral-50 w-full" />
             </div>
           ))}

@@ -1,33 +1,42 @@
 import type { Section } from '@/types/content'
-import { BinaryItem } from './BinaryItem'
-import { TextLongItem } from './TextLongItem'
-import { TableCountsItem } from './TableCountsItem'
+import { AcronymProvider } from './AcronymContext'
+import { ItemRenderer } from './ItemRenderer'
 
 interface Props {
   section: Section
 }
 
-export function SectionView({ section }: Props) {
+function SectionItems({ section }: { section: Section }) {
   return (
     <div>
       <h2 className="text-base font-bold text-neutral-900 pb-3 mb-1 border-b border-neutral-200">
         {section.ordinal}. {section.title}
       </h2>
 
-      <div className="divide-y divide-neutral-100">
-        {section.items.map((item) => {
-          if (item.type === 'binary') {
-            return <BinaryItem key={item.id} item={item} />
-          }
-          if (item.type === 'text_long') {
-            return <TextLongItem key={item.id} item={item} />
-          }
-          if (item.type === 'table_counts') {
-            return <TableCountsItem key={item.id} item={item} />
-          }
-          return null
-        })}
-      </div>
+      {section.items?.map((item) => (
+        <ItemRenderer key={item.id} item={item} />
+      ))}
+
+      {/* ARSRA appendix and similar sections have nested sub-sections */}
+      {section.sections?.map((sub) => (
+        <div key={sub.id} className="mt-6">
+          <h3 className="text-sm font-bold text-neutral-800 pb-2 mb-1 border-b border-neutral-200">
+            {sub.ordinal}. {sub.title}
+          </h3>
+          {sub.items?.map((item) => (
+            <ItemRenderer key={item.id} item={item} />
+          ))}
+        </div>
+      ))}
     </div>
+  )
+}
+
+export function SectionView({ section }: Props) {
+  return (
+    // Key on section.id so AcronymProvider remounts (fresh seen-set) per section
+    <AcronymProvider key={section.id}>
+      <SectionItems section={section} />
+    </AcronymProvider>
   )
 }

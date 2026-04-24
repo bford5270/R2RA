@@ -1,7 +1,7 @@
 export interface CaptureField {
   id: string
   label: string
-  type: 'text_short' | 'text_long' | 'number'
+  type: 'text_short' | 'text_long' | 'number' | 'date'
 }
 
 export interface BinaryItem {
@@ -22,7 +22,7 @@ export interface TextLongItem {
 export interface TableColumn {
   id: string
   label: string
-  type?: 'number' | 'text_short'
+  type?: 'number' | 'text_short' | 'yn_na'
 }
 
 export interface TableRow {
@@ -39,13 +39,45 @@ export interface TableCountsItem {
   visible_when?: Record<string, string>
 }
 
-export type AssessmentItem = BinaryItem | TextLongItem | TableCountsItem
+export interface TableYnItem {
+  id: string
+  type: 'table_yn'
+  label: string
+  columns: TableColumn[]
+  rows: TableRow[]
+  visible_when?: Record<string, string>
+}
+
+export interface GroupItem {
+  id: string
+  type: 'group'
+  label: string
+  sub_items: AssessmentItem[]
+  visible_when?: Record<string, string>
+}
+
+export interface SelectOneItem {
+  id: string
+  type: 'select_one'
+  prompt: string
+  options: Array<{ value: string; label: string }>
+  visible_when?: Record<string, string>
+}
+
+export type AssessmentItem =
+  | BinaryItem
+  | TextLongItem
+  | TableCountsItem
+  | TableYnItem
+  | GroupItem
+  | SelectOneItem
 
 export interface Section {
   id: string
-  ordinal: number
+  ordinal: number | string
   title: string
   items: AssessmentItem[]
+  sections?: Section[]
 }
 
 export interface SectionManifestEntry {
