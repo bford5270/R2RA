@@ -7,10 +7,6 @@
     --cui-banner-height: 2rem;
   }
 
-  * {
-    @apply border-border;
-  }
-
   body {
     @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
     /* Reserve top + bottom for CUI banners */
