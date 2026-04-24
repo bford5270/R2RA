@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-23
-- **Current phase**: Phase 1 — data model done, auth + writable flow next
+- **Last session**: 2026-04-24
+- **Current phase**: Phase 1 — auth complete, first writable flow next
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `b530c17` (fix(content+frontend): use real section titles in nav)
+- **Last commit**: `eb41718` (feat(frontend): auth context, login page, and protected routes)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next step is auth (login, JWT, TOTP)
+- **Blocked on**: nothing — next step is first writable flow (create-assessment)
 
 ---
 
@@ -68,11 +68,12 @@ Guardrails that repeatedly bit us in earlier sessions:
 3. ~~**Data model migrations**~~ — **done** (`2b11da2`, `032329f`). All 9 tables
    (users, units, assessments, assessment_assignments, responses, response_comments,
    evidence, signatures, audit_log). Alembic applied to `r2ra_dev.db`.
-4. **Auth** — local login (email + bcrypt password + JWT), TOTP enrollment,
-   `/api/auth/login`, `/api/auth/me`, `Authorization: Bearer` middleware.
-   Start here next session.
+4. ~~**Auth**~~ — **done** (`df7fa95`, `eb41718`). Backend: bcrypt + JWT + TOTP
+   (enroll/confirm/unenroll) + bootstrap register. Frontend: AuthContext
+   (in-memory token, CUI posture), LoginPage (credentials → TOTP screen),
+   ProtectedRoute, Bearer injection in api.ts.
 5. **First writable flow** — create-assessment → assign-section →
-   contributor fills → lead reconciles.
+   contributor fills → lead reconciles. Start here next session.
 6. **PDF export** — JTS-faithful layout.
 
 ### Content-side follow-ups (can parallelize with Phase 1)
@@ -101,6 +102,49 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-24 — Session 4: auth — backend + frontend
+
+**In**: Data model done; no auth; all routes unprotected; frontend had no
+login flow.
+
+**Out**:
+- **Backend auth package** (`app/auth/`): `security.py` (bcrypt via passlib,
+  HS256 JWT via python-jose — 8-hr full tokens, 5-min partial tokens for
+  TOTP-pending state), `totp.py` (pyotp — random secret, provisioning URI,
+  verify with ±30 s clock-skew window), `deps.py` (`get_current_user` /
+  `require_admin` FastAPI dependencies; partial tokens explicitly rejected).
+- **Backend schemas** (`app/schemas/auth.py`): Pydantic I/O models for all
+  auth endpoints.
+- **Backend router** (`app/routers/auth.py`): `POST /api/auth/login`,
+  `POST /api/auth/totp/complete`, `GET /api/auth/me`, `POST /api/auth/totp/enroll`,
+  `POST /api/auth/totp/confirm`, `DELETE /api/auth/totp`,
+  `POST /api/auth/register` (bootstrap-only — open when 0 users exist).
+- **Frontend auth context** (`src/lib/auth.tsx`): `AuthProvider` + `useAuth`
+  hook; token in memory only (no localStorage) per CUI posture.
+- **Frontend api.ts** updated: `post`/`delete`, Bearer injection via
+  module-level `setToken()`, all auth endpoints typed.
+- **LoginPage** (`src/pages/LoginPage.tsx`): two-screen state machine —
+  credentials form → 6-digit TOTP input if enrolled; USMC scarlet styling.
+- **ProtectedRoute** (`src/components/ProtectedRoute.tsx`): redirects to
+  `/login` preserving intended destination.
+- **App.tsx + main.tsx** wired: `AuthProvider` added; `/login` redirects away
+  when already authenticated; `/` and `/preview` protected.
+
+TypeScript clean, Vite build clean (99 modules, 0 errors).
+
+**Key decisions**: Token in memory only (not sessionStorage or localStorage)
+— deliberate for CUI field posture; refresh = re-login.
+
+**Operational notes**:
+- Bootstrap: hit `POST /api/auth/register` with first user (role=admin)
+  while DB is empty; endpoint closes itself after that.
+- TOTP enroll flow: `POST /auth/totp/enroll` → returns secret + URI →
+  user scans QR → `POST /auth/totp/confirm` with {secret, code} → activated.
+
+**Commits this session**: `df7fa95` → `eb41718` (all pushed).
+
+---
 
 ### 2026-04-23 — Session 3: preview polish + data model
 
