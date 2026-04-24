@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-22
-- **Current phase**: Phase 0 **complete** — Phase 1 not yet started
+- **Last session**: 2026-04-23
+- **Current phase**: Phase 1 — MVP scaffolding **in progress**
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `45e6450` (Add CLAUDE.md as session entry point)
+- **Last commit**: `609b850` (feat(frontend): Vite+React+TS+Tailwind skeleton with CUI banners)
 - **Open PR**: none yet
-- **Blocked on**: nothing — awaiting user direction on Phase 1 kickoff
+- **Blocked on**: nothing — next step is read-only JTS preview page
 
 ---
 
@@ -61,10 +61,10 @@ Guardrails that repeatedly bit us in earlier sessions:
 
 ## Next actions (recommended order)
 
-1. **Phase 1 MVP scaffolding** — monorepo layout, FastAPI backend skeleton,
-   Vite+React+Tailwind+shadcn/ui frontend skeleton, CUI banner, audit log
-   stub, auth abstraction (local + TOTP), content loader that walks
-   `jts_r2/_manifest.json`.
+1. ~~**Phase 1 MVP scaffolding**~~ — **done** (`0d84102`, `b06ea39`, `609b850`).
+   Root `.gitignore` + `Makefile`, FastAPI backend (`pyproject.toml`, `app/main.py`,
+   health + content routes), Vite+React+TS+Tailwind frontend (CUI banners, TanStack
+   Query, React Router, placeholder `HomePage`).
 2. **Read-only JTS preview page** — renders the form from content/, no
    persistence, no auth. Proves the content shape is right.
 3. **Data model migrations** — assessments, assignments, responses,
@@ -99,6 +99,26 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-23 — Session 2: Phase 1 MVP scaffolding
+
+**In**: Phase 0 complete, no application code existed.
+
+**Out**: Full monorepo scaffold committed and pushed.
+- Root: `.gitignore` (Python + Node + secrets + field bundles), `Makefile`
+- `backend/`: `pyproject.toml` (FastAPI, SQLAlchemy, Alembic, Pydantic v2, TOTP),
+  `app/main.py`, `app/config.py` (pydantic-settings), `app/routers/health.py`,
+  `app/routers/content.py` (walks `jts_r2/_manifest.json`, serves manifest +
+  section list + individual sections), `.env.example`
+- `frontend/`: `package.json`, Vite+React+TS config, Tailwind (USMC scarlet/gold/
+  CUI green palette), persistent CUI banners top+bottom, TanStack Query, React
+  Router, `lib/api.ts` typed fetch wrapper, placeholder `HomePage`
+
+**Key decisions**: None new — followed STRATEGY §6 stack exactly.
+
+**Commits this session**: `0d84102` → `609b850` (all pushed).
+
+---
 
 ### 2026-04-22 — Session 1: planning + Phase 0 complete
 
