@@ -8,11 +8,11 @@ next session can resume cleanly.
 ## Header (always current)
 
 - **Last session**: 2026-04-23
-- **Current phase**: Phase 1 — read-only preview **complete**, data model next
+- **Current phase**: Phase 1 — data model done, auth + writable flow next
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `45d3de1` (feat(frontend): read-only JTS R2 preview page)
+- **Last commit**: `b530c17` (fix(content+frontend): use real section titles in nav)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next step is data model migrations (STRATEGY §9)
+- **Blocked on**: nothing — next step is auth (login, JWT, TOTP)
 
 ---
 
@@ -62,13 +62,18 @@ Guardrails that repeatedly bit us in earlier sessions:
 ## Next actions (recommended order)
 
 1. ~~**Phase 1 MVP scaffolding**~~ — **done** (`0d84102`–`609b850`).
-2. ~~**Read-only JTS preview page**~~ — **done** (`45d3de1`). Three-pane layout,
-   all three item types (binary/text_long/table_counts), content loaded from API.
-3. **Data model migrations** — assessments, assignments, responses,
-   evidence, signatures, audit_log (from STRATEGY §9).
-4. **First writable flow** — create-assessment → assign-section →
+2. ~~**Read-only JTS preview page**~~ — **done** (`45d3de1`–`b530c17`). Three-pane
+   layout, all six item types (binary, text_long, table_counts, table_yn, group,
+   select_one), acronym define-on-first-use per section, real section titles in nav.
+3. ~~**Data model migrations**~~ — **done** (`2b11da2`, `032329f`). All 9 tables
+   (users, units, assessments, assessment_assignments, responses, response_comments,
+   evidence, signatures, audit_log). Alembic applied to `r2ra_dev.db`.
+4. **Auth** — local login (email + bcrypt password + JWT), TOTP enrollment,
+   `/api/auth/login`, `/api/auth/me`, `Authorization: Bearer` middleware.
+   Start here next session.
+5. **First writable flow** — create-assessment → assign-section →
    contributor fills → lead reconciles.
-5. **PDF export** — JTS-faithful layout.
+6. **PDF export** — JTS-faithful layout.
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
@@ -96,6 +101,43 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-23 — Session 3: preview polish + data model
+
+**In**: Phase 1 scaffold done; read-only preview page done but missing item
+types and acronym handling; data model not yet wired.
+
+**Out**:
+- **Acronym handling**: `lib/acronyms.ts` (70+ term glossary), `AcronymText`
+  component (define-on-first-use per section with hover tooltip on repeat),
+  `AcronymProvider` keyed on section ID for clean reset.
+- **New item renderers**: `TableYnItem` (Y/N/NA checkbox tables, used in §11),
+  `GroupItem` (indented sub-items, used in ARSRA), `SelectOneItem` (option
+  chips), `ItemRenderer` dispatch — all six item types now render correctly.
+- **ARSRA nested sub-sections** handled in `SectionView`.
+- **Section nav titles**: added `title` field to all 15 manifest entries;
+  nav now shows "Medical Rules of Engagement (MROE)", "ARSRA Appendix", etc.
+  instead of formatted IDs.
+- **Data model**: `app/models/` (User, Unit, Assessment, AssessmentAssignment,
+  Response, ResponseComment, Evidence, Signature, AuditLog), `app/database.py`
+  (sync SQLAlchemy engine), Alembic `alembic.ini` + `env.py` + initial
+  migration applied to `r2ra_dev.db`.
+- **Install fix**: corrected `pyproject.toml` build backend for Python 3.11.
+- Both dev servers running: backend :8000, frontend :5173.
+
+**Key decisions**: None new.
+
+**Operational lessons**:
+- Python 3.11 on this machine — use `setuptools.build_meta` not
+  `setuptools.backends.legacy:build`. `requires-python = ">=3.11"`.
+- setuptools autogenerate needs `[tool.setuptools.packages.find] include = ["app*"]`
+  when `alembic/` is also a top-level directory.
+- Tailwind `@apply border-border` fails without shadcn/ui's CSS variable setup —
+  removed from `index.css`.
+
+**Commits this session**: `8fbebe0` → `b530c17` (all pushed).
+
+---
 
 ### 2026-04-23 — Session 2: Phase 1 MVP scaffolding
 
