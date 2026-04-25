@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import { useManifest, useSection } from '@/hooks/useContent'
 import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
 import { AcronymText } from '@/components/preview/AcronymText'
-import type { Assessment, ItemResponse, ResponseStatus } from '../types/assessment'
+import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus } from '../types/assessment'
 import type { AssessmentItem, Section } from '@/types/content'
+import type { CrosswalkEntry } from '../types/crosswalk'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 
 // ---------------------------------------------------------------------------
@@ -240,6 +241,89 @@ function ResponseSectionView({
 }
 
 // ---------------------------------------------------------------------------
+// Status button
+// ---------------------------------------------------------------------------
+
+const STATUS_LABELS: Record<string, string> = {
+  draft:            'Draft',
+  in_progress:      'In Progress',
+  ready_for_review: 'Ready for Review',
+  certified:        'Certified',
+}
+const STATUS_NEXT: Record<string, string> = {
+  draft:            'in_progress',
+  in_progress:      'ready_for_review',
+  ready_for_review: 'certified',
+}
+const STATUS_NEXT_LABEL: Record<string, string> = {
+  draft:            'Start',
+  in_progress:      'Submit for Review',
+  ready_for_review: 'Certify',
+}
+const STATUS_COLOR: Record<string, string> = {
+  draft:            'bg-neutral-100 text-neutral-500',
+  in_progress:      'bg-blue-50 text-blue-700',
+  ready_for_review: 'bg-yellow-50 text-yellow-700',
+  certified:        'bg-green-50 text-green-700',
+}
+
+// ---------------------------------------------------------------------------
+// Crosswalk panel
+// ---------------------------------------------------------------------------
+
+function CrosswalkPanel({ sectionId }: { sectionId: string | null }) {
+  const [entries, setEntries] = useState<CrosswalkEntry[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!sectionId) return
+    setLoading(true)
+    api.getCrosswalk(sectionId)
+      .then(setEntries)
+      .catch(() => setEntries([]))
+      .finally(() => setLoading(false))
+  }, [sectionId])
+
+  const confidenceColor = (c: string) =>
+    c === 'high' ? 'text-green-600' : c === 'medium' ? 'text-yellow-600' : 'text-neutral-400'
+
+  return (
+    <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto hidden lg:flex flex-col">
+      <div className="px-4 pt-4 pb-2 border-b border-neutral-100">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">T&amp;R Crosswalk</p>
+        <p className="text-[10px] text-neutral-400 mt-0.5">NAVMC 3500.84B · draft, needs SME review</p>
+      </div>
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
+        {loading && <p className="text-xs text-neutral-400">Loading…</p>}
+        {!loading && entries.length === 0 && (
+          <p className="text-xs text-neutral-400 italic">No crosswalk mappings for this section yet.</p>
+        )}
+        {entries.map(entry => (
+          <div key={entry.jts_item} className="text-xs">
+            <p className="font-mono text-neutral-500 text-[10px] mb-1">{entry.jts_item}</p>
+            {entry.wickets.map(w => (
+              <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-200">
+                <span className="font-mono text-neutral-700">{w.event_code}</span>
+                <span className={`ml-1.5 text-[10px] font-semibold ${confidenceColor(w.confidence)}`}>
+                  {w.confidence}
+                </span>
+                <p className="text-neutral-500 text-[10px] mt-0.5 leading-snug">{w.rationale}</p>
+              </div>
+            ))}
+            {entry.mets?.map(m => (
+              <div key={m.mct_task} className="mb-1 pl-2 border-l-2 border-blue-100">
+                <span className="font-mono text-blue-600 text-[10px]">MCT {m.mct_task}</span>
+                <span className={`ml-1.5 text-[10px] ${confidenceColor(m.confidence)}`}>{m.confidence}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </aside>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
@@ -255,6 +339,7 @@ export function AssessmentPage() {
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [responses, setResponses] = useState<Map<string, ItemResponse>>(new Map())
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [advancing, setAdvancing] = useState(false)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -277,6 +362,21 @@ export function AssessmentPage() {
     setResponses(prev => new Map(prev).set(itemId, updated))
   }, [assessmentId])
 
+  async function handleAdvanceStatus() {
+    if (!assessment || !assessmentId) return
+    const next = STATUS_NEXT[assessment.status]
+    if (!next) return
+    setAdvancing(true)
+    try {
+      const updated = await api.advanceStatus(assessmentId, next)
+      setAssessment(updated)
+    } catch {
+      // keep current status on error
+    } finally {
+      setAdvancing(false)
+    }
+  }
+
   const effectiveSectionId = activeSectionId ?? manifest?.sections_manifest[0]?.id ?? null
 
   if (loadError) {
@@ -295,32 +395,51 @@ export function AssessmentPage() {
     )
   }
 
-  const answered = responses.size
-  const total = manifest?.sections_manifest.length ?? 0
+  const nextStatus = STATUS_NEXT[assessment.status]
+  const answered = [...responses.values()].filter(r => r.status !== 'unanswered').length
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Left pane — section nav */}
       <aside className="w-64 shrink-0 border-r border-neutral-200 bg-white overflow-y-auto flex flex-col">
-        <div className="px-3 pt-4 pb-3 border-b border-neutral-100">
+        <div className="px-3 pt-4 pb-3 border-b border-neutral-100 space-y-2">
           <button
             onClick={() => navigate('/')}
-            className="text-xs text-neutral-400 hover:text-neutral-600 mb-2 block"
+            className="text-xs text-neutral-400 hover:text-neutral-600 block"
           >
             ← Assessments
           </button>
           <p className="text-xs font-bold text-neutral-800 leading-tight">{assessment.unit_name}</p>
           <p className="text-[11px] text-neutral-500 font-mono">{assessment.unit_uic}</p>
-          <p className="text-[11px] text-neutral-500 mt-0.5">{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
-          <div className="mt-2 flex items-center gap-1.5">
-            <div className="h-1.5 flex-1 bg-neutral-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-scarlet rounded-full transition-all"
-                style={{ width: total ? `${(answered / total) * 100}%` : '0%' }}
-              />
-            </div>
-            <span className="text-[10px] text-neutral-400">{answered} items</span>
+          <p className="text-[11px] text-neutral-500">{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
+
+          <div className="flex items-center justify-between pt-1">
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${STATUS_COLOR[assessment.status]}`}>
+              {STATUS_LABELS[assessment.status]}
+            </span>
+            <span className="text-[10px] text-neutral-400">{answered} answered</span>
           </div>
+
+          {nextStatus && (
+            <button
+              onClick={handleAdvanceStatus}
+              disabled={advancing}
+              className="w-full rounded border border-neutral-300 text-xs text-neutral-600 font-medium px-3 py-1.5 hover:border-scarlet hover:text-scarlet transition-colors disabled:opacity-50"
+            >
+              {advancing ? 'Saving…' : STATUS_NEXT_LABEL[assessment.status] + ' →'}
+            </button>
+          )}
+
+          {assessment.status === 'certified' && (
+            <p className="text-[10px] text-green-600 font-semibold text-center">✓ Certified</p>
+          )}
+
+          <Link
+            to={`/assessments/${assessmentId}/print`}
+            className="block text-center text-[10px] text-neutral-400 hover:text-neutral-600"
+          >
+            Print / Export PDF →
+          </Link>
         </div>
         <SectionNav
           sections={manifest.sections_manifest}
@@ -344,6 +463,9 @@ export function AssessmentPage() {
           )}
         </div>
       </main>
+
+      {/* Right pane — T&R crosswalk */}
+      <CrosswalkPanel sectionId={effectiveSectionId} />
     </div>
   )
 }

@@ -15,6 +15,7 @@ from app.schemas.assessment import (
     AssessmentOut,
     ResponseOut,
     ResponseUpsert,
+    StatusAdvance,
 )
 
 router = APIRouter(prefix="/api/assessments", tags=["assessments"])
@@ -183,6 +184,41 @@ def upsert_response(
     db.commit()
     db.refresh(response)
     return response
+
+
+# ---------------------------------------------------------------------------
+# Status progression
+# ---------------------------------------------------------------------------
+
+# Valid forward transitions only; no going backwards.
+_TRANSITIONS: dict[str, str] = {
+    "draft":             "in_progress",
+    "in_progress":       "ready_for_review",
+    "ready_for_review":  "certified",
+}
+
+
+@router.patch("/{assessment_id}/status", response_model=AssessmentOut)
+def advance_status(
+    assessment_id: str,
+    body: StatusAdvance,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    assessment = _require_assessment(db, assessment_id)
+    expected_next = _TRANSITIONS.get(assessment.status)
+    if body.status != expected_next:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Cannot transition from '{assessment.status}' to '{body.status}'",
+        )
+    assessment.status = body.status
+    if body.status == "certified":
+        assessment.certified_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(assessment)
+    unit = db.get(Unit, assessment.unit_id)
+    return _assessment_out(assessment, unit)
 
 
 # ---------------------------------------------------------------------------

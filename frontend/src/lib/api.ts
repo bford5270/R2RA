@@ -1,5 +1,6 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
 import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert } from '../types/assessment'
+import type { CrosswalkEntry } from '../types/crosswalk'
 
 const BASE = '/api'
 
@@ -94,4 +95,14 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }),
+
+  advanceStatus: (assessmentId: string, nextStatus: string) =>
+    request<Assessment>(`/assessments/${assessmentId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: nextStatus }),
+    }),
+
+  getCrosswalk: (sectionId: string) =>
+    get<CrosswalkEntry[]>(`/crosswalk/${sectionId}`),
 }

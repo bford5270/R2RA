@@ -6,6 +6,7 @@ import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
 import { CreateAssessmentPage } from './pages/CreateAssessmentPage'
 import { AssessmentPage } from './pages/AssessmentPage'
+import { PrintPage } from './pages/PrintPage'
 
 function BannerTop() {
   return (
@@ -74,6 +75,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <AssessmentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId/print"
+          element={
+            <ProtectedRoute>
+              <PrintPage />
             </ProtectedRoute>
           }
         />
