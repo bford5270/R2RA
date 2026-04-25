@@ -1,4 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
+import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert } from '../types/assessment'
 
 const BASE = '/api'
 
@@ -73,4 +74,24 @@ export const api = {
 
   register: (display_name: string, email: string, password: string, global_role = 'admin') =>
     post<AuthUser>('/auth/register', { display_name, email, password, global_role }),
+
+  // ---- assessments ----
+  createAssessment: (body: AssessmentCreate) =>
+    post<Assessment>('/assessments', body),
+
+  listAssessments: () =>
+    get<Assessment[]>('/assessments'),
+
+  getAssessment: (id: string) =>
+    get<Assessment>(`/assessments/${id}`),
+
+  listResponses: (assessmentId: string) =>
+    get<ItemResponse[]>(`/assessments/${assessmentId}/responses`),
+
+  upsertResponse: (assessmentId: string, itemId: string, body: ResponseUpsert) =>
+    request<ItemResponse>(`/assessments/${assessmentId}/responses/${itemId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
 }

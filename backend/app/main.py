@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import auth, content, health
+from app.routers import assessments, auth, content, health
 
 app = FastAPI(
     title=settings.app_name,
@@ -14,7 +14,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vite dev server
+    allow_origin_regex=r"http://localhost:\d+",  # any localhost port (dev only)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,3 +23,4 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(content.router, prefix="/api/content")
+app.include_router(assessments.router)

@@ -4,6 +4,8 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
 import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
+import { CreateAssessmentPage } from './pages/CreateAssessmentPage'
+import { AssessmentPage } from './pages/AssessmentPage'
 
 function BannerTop() {
   return (
@@ -56,6 +58,22 @@ export default function App() {
           element={
             <ProtectedRoute>
               <PreviewPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/new"
+          element={
+            <ProtectedRoute>
+              <CreateAssessmentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId"
+          element={
+            <ProtectedRoute>
+              <AssessmentPage />
             </ProtectedRoute>
           }
         />

@@ -1,0 +1,197 @@
+import uuid
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from app.auth.deps import get_current_user
+from app.database import get_db
+from app.models.assessment import Assessment, AssessmentAssignment
+from app.models.response import Response
+from app.models.unit import Unit
+from app.models.user import User
+from app.schemas.assessment import (
+    AssessmentCreate,
+    AssessmentOut,
+    ResponseOut,
+    ResponseUpsert,
+)
+
+router = APIRouter(prefix="/api/assessments", tags=["assessments"])
+
+
+def _unit_upsert(db: Session, uic: str, name: str) -> Unit:
+    unit = db.query(Unit).filter(Unit.uic == uic).first()
+    if unit is None:
+        unit = Unit(id=str(uuid.uuid4()), uic=uic, name=name)
+        db.add(unit)
+        db.flush()
+    return unit
+
+
+def _assessment_out(assessment: Assessment, unit: Unit) -> AssessmentOut:
+    return AssessmentOut(
+        id=assessment.id,
+        unit_id=assessment.unit_id,
+        unit_uic=unit.uic,
+        unit_name=unit.name,
+        mission_type=assessment.mission_type,
+        status=assessment.status,
+        service=assessment.service,
+        component=assessment.component,
+        unique_identifier=assessment.unique_identifier,
+        started_at=assessment.started_at,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Create assessment
+# ---------------------------------------------------------------------------
+
+
+@router.post("", response_model=AssessmentOut, status_code=status.HTTP_201_CREATED)
+def create_assessment(
+    body: AssessmentCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    unit = _unit_upsert(db, body.unit_uic.strip().upper(), body.unit_name.strip())
+    assessment = Assessment(
+        id=str(uuid.uuid4()),
+        unit_id=unit.id,
+        mission_type=body.mission_type,
+        lead_id=current_user.id,
+        service=body.service,
+        component=body.component,
+        unique_identifier=body.unique_identifier,
+    )
+    db.add(assessment)
+    # Lead is automatically assigned to all sections
+    assignment = AssessmentAssignment(
+        id=str(uuid.uuid4()),
+        assessment_id=assessment.id,
+        user_id=current_user.id,
+        role="lead",
+        scope_type="section",
+        scope_ids=[],  # empty = all sections
+    )
+    db.add(assignment)
+    db.commit()
+    db.refresh(assessment)
+    return _assessment_out(assessment, unit)
+
+
+# ---------------------------------------------------------------------------
+# List assessments
+# ---------------------------------------------------------------------------
+
+
+@router.get("", response_model=list[AssessmentOut])
+def list_assessments(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    rows = (
+        db.query(Assessment, Unit)
+        .join(Unit, Assessment.unit_id == Unit.id)
+        .order_by(Assessment.started_at.desc())
+        .all()
+    )
+    return [_assessment_out(a, u) for a, u in rows]
+
+
+# ---------------------------------------------------------------------------
+# Get single assessment
+# ---------------------------------------------------------------------------
+
+
+@router.get("/{assessment_id}", response_model=AssessmentOut)
+def get_assessment(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    row = (
+        db.query(Assessment, Unit)
+        .join(Unit, Assessment.unit_id == Unit.id)
+        .filter(Assessment.id == assessment_id)
+        .first()
+    )
+    if not row:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    return _assessment_out(row[0], row[1])
+
+
+# ---------------------------------------------------------------------------
+# Responses
+# ---------------------------------------------------------------------------
+
+
+@router.get("/{assessment_id}/responses", response_model=list[ResponseOut])
+def list_responses(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    responses = (
+        db.query(Response)
+        .filter(Response.assessment_id == assessment_id)
+        .all()
+    )
+    return responses
+
+
+@router.put(
+    "/{assessment_id}/responses/{item_id}",
+    response_model=ResponseOut,
+)
+def upsert_response(
+    assessment_id: str,
+    item_id: str,
+    body: ResponseUpsert,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    response = (
+        db.query(Response)
+        .filter(
+            Response.assessment_id == assessment_id,
+            Response.item_id == item_id,
+        )
+        .first()
+    )
+    if response is None:
+        response = Response(
+            id=str(uuid.uuid4()),
+            assessment_id=assessment_id,
+            item_id=item_id,
+            authored_by=current_user.id,
+            last_modified_by=current_user.id,
+        )
+        db.add(response)
+    else:
+        response.last_modified_by = current_user.id
+        response.version = response.version + 1
+
+    response.status = body.status
+    response.note = body.note
+    response.capture_data = body.capture_data
+    response.updated_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(response)
+    return response
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _require_assessment(db: Session, assessment_id: str) -> Assessment:
+    a = db.get(Assessment, assessment_id)
+    if not a:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    return a
