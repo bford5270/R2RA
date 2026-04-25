@@ -6,6 +6,7 @@ from pydantic import BaseModel, field_validator
 VALID_MISSION_TYPES = {"r2lm_non_split", "r2lm_split", "r2e", "arst"}
 VALID_RESPONSE_STATUSES = {"yes", "no", "na", "unanswered"}
 VALID_STATUSES = {"draft", "in_progress", "ready_for_review", "certified"}
+VALID_TR_STATUSES = {"go", "no_go", "na", "unanswered"}
 
 
 class AssessmentCreate(BaseModel):
@@ -68,6 +69,30 @@ class ResponseOut(BaseModel):
     status: str
     note: str | None
     capture_data: dict | None
+    authored_by: str
+    last_modified_by: str
+    version: int
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class TrResponseUpsert(BaseModel):
+    status: str
+    note: str | None = None
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: str) -> str:
+        if v not in VALID_TR_STATUSES:
+            raise ValueError(f"status must be one of {VALID_TR_STATUSES}")
+        return v
+
+
+class TrResponseOut(BaseModel):
+    event_code: str
+    status: str
+    note: str | None
     authored_by: str
     last_modified_by: str
     version: int

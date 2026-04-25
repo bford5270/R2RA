@@ -44,7 +44,9 @@
           "value": "arst",
           "label": "Austere Resuscitative Surgical Team (SOST / GST / GHOST)",
           "description": "Special Operations Surgical Team, Ground Surgical Team, or Golden Hour Offset Surgical Team. Triggers the ARSRA Appendix.",
-          "triggers": ["arsra_appendix"]
+          "triggers": [
+            "arsra_appendix"
+          ]
         }
       ]
     },
@@ -54,12 +56,30 @@
       "type": "select_one",
       "required": true,
       "options": [
-        { "value": "usa", "label": "USA" },
-        { "value": "usn", "label": "USN" },
-        { "value": "usaf", "label": "USAF" },
-        { "value": "coalition", "label": "Coalition Military" },
-        { "value": "civilian", "label": "Civilian" },
-        { "value": "contract", "label": "Contract" }
+        {
+          "value": "usa",
+          "label": "USA"
+        },
+        {
+          "value": "usn",
+          "label": "USN"
+        },
+        {
+          "value": "usaf",
+          "label": "USAF"
+        },
+        {
+          "value": "coalition",
+          "label": "Coalition Military"
+        },
+        {
+          "value": "civilian",
+          "label": "Civilian"
+        },
+        {
+          "value": "contract",
+          "label": "Contract"
+        }
       ]
     },
     {
@@ -68,32 +88,146 @@
       "type": "select_one",
       "required": true,
       "options": [
-        { "value": "active", "label": "Active" },
-        { "value": "reserve", "label": "Reserve Component" },
-        { "value": "national_guard", "label": "National Guard" }
+        {
+          "value": "active",
+          "label": "Active"
+        },
+        {
+          "value": "reserve",
+          "label": "Reserve Component"
+        },
+        {
+          "value": "national_guard",
+          "label": "National Guard"
+        }
       ]
     }
   ],
   "sections_manifest": [
-    { "id": "predeployment_prep",    "ordinal": 1,  "title": "Predeployment Prep",                                             "file": "sections/01_predeployment_prep.json" },
-    { "id": "c2",                    "ordinal": 2,  "title": "Command and Control (C2)",                                       "file": "sections/02_command_and_control.json" },
-    { "id": "mroe",                  "ordinal": 3,  "title": "Medical Rules of Engagement (MROE)",                            "file": "sections/03_mroe.json" },
-    { "id": "communications",        "ordinal": 4,  "title": "Communications",                                                "file": "sections/04_communications.json" },
-    { "id": "adjacent_support",      "ordinal": 5,  "title": "Adjacent / Co-Located Medical Support",                         "file": "sections/05_adjacent_support.json" },
-    { "id": "orsop",                 "ordinal": 6,  "title": "Operational Readiness and Standard Operating Procedures (SOPs)", "file": "sections/06_operational_readiness_sops.json" },
-    { "id": "clinical_readiness",    "ordinal": 7,  "title": "Clinical Readiness Assessment",                                 "file": "sections/07_clinical_readiness.json" },
-    { "id": "clinical_capabilities", "ordinal": 8,  "title": "Clinical Capabilities",                                         "file": "sections/08_clinical_capabilities.json" },
-    { "id": "blood_resources",       "ordinal": 9,  "title": "Blood Resources",                                               "file": "sections/09_blood_resources.json" },
-    { "id": "team_composition",      "ordinal": 10, "title": "Team Composition",                                              "file": "sections/10_team_composition.json" },
-    { "id": "critical_supplies",     "ordinal": 11, "title": "Inventory of Critical Supplies",                                "file": "sections/11_critical_supplies.json" },
-    { "id": "medical_equipment",     "ordinal": 12, "title": "Medical Equipment",                                             "file": "sections/12_medical_equipment.json" },
-    { "id": "facilities",            "ordinal": 13, "title": "Facilities",                                                    "file": "sections/13_facilities.json" },
-    { "id": "closing",               "ordinal": 14, "title": "Closing — TMD Summary",                                         "file": "sections/14_closing.json" },
-    { "id": "arsra_appendix",        "ordinal": 15, "title": "ARSRA Appendix",                                                "file": "sections/15_arsra_appendix.json", "visible_when": { "mission_type": "arst" } }
+    {
+      "id": "predeployment_prep",
+      "ordinal": 1,
+      "title": "Predeployment Prep",
+      "file": "sections/01_predeployment_prep.json",
+      "item_prefix": "pdp"
+    },
+    {
+      "id": "c2",
+      "ordinal": 2,
+      "title": "Command and Control (C2)",
+      "file": "sections/02_command_and_control.json",
+      "item_prefix": "c2"
+    },
+    {
+      "id": "mroe",
+      "ordinal": 3,
+      "title": "Medical Rules of Engagement (MROE)",
+      "file": "sections/03_mroe.json",
+      "item_prefix": "mroe"
+    },
+    {
+      "id": "communications",
+      "ordinal": 4,
+      "title": "Communications",
+      "file": "sections/04_communications.json",
+      "item_prefix": "comms"
+    },
+    {
+      "id": "adjacent_support",
+      "ordinal": 5,
+      "title": "Adjacent / Co-Located Medical Support",
+      "file": "sections/05_adjacent_support.json",
+      "item_prefix": "adj"
+    },
+    {
+      "id": "orsop",
+      "ordinal": 6,
+      "title": "Operational Readiness and Standard Operating Procedures (SOPs)",
+      "file": "sections/06_operational_readiness_sops.json",
+      "item_prefix": "orsop"
+    },
+    {
+      "id": "clinical_readiness",
+      "ordinal": 7,
+      "title": "Clinical Readiness Assessment",
+      "file": "sections/07_clinical_readiness.json",
+      "item_prefix": "cra"
+    },
+    {
+      "id": "clinical_capabilities",
+      "ordinal": 8,
+      "title": "Clinical Capabilities",
+      "file": "sections/08_clinical_capabilities.json",
+      "item_prefix": "cc"
+    },
+    {
+      "id": "blood_resources",
+      "ordinal": 9,
+      "title": "Blood Resources",
+      "file": "sections/09_blood_resources.json",
+      "item_prefix": "blood"
+    },
+    {
+      "id": "team_composition",
+      "ordinal": 10,
+      "title": "Team Composition",
+      "file": "sections/10_team_composition.json",
+      "item_prefix": "team"
+    },
+    {
+      "id": "critical_supplies",
+      "ordinal": 11,
+      "title": "Inventory of Critical Supplies",
+      "file": "sections/11_critical_supplies.json",
+      "item_prefix": "supplies"
+    },
+    {
+      "id": "medical_equipment",
+      "ordinal": 12,
+      "title": "Medical Equipment",
+      "file": "sections/12_medical_equipment.json",
+      "item_prefix": "equip"
+    },
+    {
+      "id": "facilities",
+      "ordinal": 13,
+      "title": "Facilities",
+      "file": "sections/13_facilities.json",
+      "item_prefix": "fac"
+    },
+    {
+      "id": "closing",
+      "ordinal": 14,
+      "title": "Closing \u00e2\u20ac\u201d TMD Summary",
+      "file": "sections/14_closing.json",
+      "item_prefix": "close"
+    },
+    {
+      "id": "arsra_appendix",
+      "ordinal": 15,
+      "title": "ARSRA Appendix",
+      "file": "sections/15_arsra_appendix.json",
+      "visible_when": {
+        "mission_type": "arst"
+      },
+      "item_prefix": "arsra"
+    }
   ],
   "signoff": [
-    { "role": "role2_team_chief", "label": "Role 2 Team Chief" },
-    { "role": "tmd",              "label": "Theater Trauma Director" },
-    { "role": "arst_chief",       "label": "Austere Resuscitative Surgical Team, Chief", "visible_when": { "mission_type": "arst" } }
+    {
+      "role": "role2_team_chief",
+      "label": "Role 2 Team Chief"
+    },
+    {
+      "role": "tmd",
+      "label": "Theater Trauma Director"
+    },
+    {
+      "role": "arst_chief",
+      "label": "Austere Resuscitative Surgical Team, Chief",
+      "visible_when": {
+        "mission_type": "arst"
+      }
+    }
   ]
 }

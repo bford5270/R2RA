@@ -8,11 +8,11 @@ next session can resume cleanly.
 ## Header (always current)
 
 - **Last session**: 2026-04-24
-- **Current phase**: Phase 1 — auth complete, first writable flow next
+- **Current phase**: Phase 1.5 — JTS assessment flow complete; T&R response flow live
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `eb41718` (feat(frontend): auth context, login page, and protected routes)
+- **Last commit**: (see git log — session 7 closes here)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next step is first writable flow (create-assessment)
+- **Blocked on**: nothing — evidence attachment and deeper T&R polish are next
 
 ---
 
@@ -62,19 +62,18 @@ Guardrails that repeatedly bit us in earlier sessions:
 ## Next actions (recommended order)
 
 1. ~~**Phase 1 MVP scaffolding**~~ — **done** (`0d84102`–`609b850`).
-2. ~~**Read-only JTS preview page**~~ — **done** (`45d3de1`–`b530c17`). Three-pane
-   layout, all six item types (binary, text_long, table_counts, table_yn, group,
-   select_one), acronym define-on-first-use per section, real section titles in nav.
-3. ~~**Data model migrations**~~ — **done** (`2b11da2`, `032329f`). All 9 tables
-   (users, units, assessments, assessment_assignments, responses, response_comments,
-   evidence, signatures, audit_log). Alembic applied to `r2ra_dev.db`.
-4. ~~**Auth**~~ — **done** (`df7fa95`, `eb41718`). Backend: bcrypt + JWT + TOTP
-   (enroll/confirm/unenroll) + bootstrap register. Frontend: AuthContext
-   (in-memory token, CUI posture), LoginPage (credentials → TOTP screen),
-   ProtectedRoute, Bearer injection in api.ts.
-5. **First writable flow** — create-assessment → assign-section →
-   contributor fills → lead reconciles. Start here next session.
-6. **PDF export** — JTS-faithful layout.
+2. ~~**Read-only JTS preview page**~~ — **done** (`45d3de1`–`b530c17`).
+3. ~~**Data model migrations**~~ — **done** (`2b11da2`, `032329f`).
+4. ~~**Auth**~~ — **done** (`df7fa95`, `eb41718`).
+5. ~~**Create-assessment flow + response controls**~~ — **done** (`ccbd3b3`, `0e49588`).
+6. ~~**Status progression + T&R crosswalk panel + print/PDF**~~ — **done** (`5af12be`).
+7. ~~**visible_when branching + jump-to-unanswered + T&R response flow**~~ — **done** (session 7).
+8. **Evidence attachment** — file upload per response; `evidence` table already exists.
+   Needs: `POST /api/assessments/{id}/responses/{item_id}/evidence`, file storage
+   strategy (local disk for dev, S3-compatible for deploy), thumbnail in UI.
+9. **T&R polish**: role2_relevance tagging (SME input needed), GO/NO-GO print
+   page, crosswalk bi-directional link (click wicket → jump to JTS item).
+10. **PDF export** — true JTS-form-faithful layout (vs current browser-print approach).
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
@@ -102,6 +101,113 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-24 — Session 7: visible_when branching, jump-to-unanswered, T&R PECL/MET response flow
+
+**In**: JTS assessment flow complete (create → respond → status → print). T&R crosswalk
+panel was reference-only. User clarified: T&R wickets must be independently responded
+to (GO/NO-GO) as a parallel reporting stream.
+
+**Out**:
+- **`visible_when` branching**: `arsra_appendix` section now hidden from nav and excluded
+  from print when `mission_type !== 'arst'`. `isVisible()` helper checks
+  `section.visible_when.mission_type`. Applied in `AssessmentPage` and `PrintPage`.
+- **`item_prefix` in manifest**: Added `item_prefix` field to all 15 section manifest
+  entries (e.g. `predeployment_prep → pdp`) so the frontend can identify which responses
+  belong to which section without loading all section files.
+- **Jump-to-unanswered**: Button "→ Jump to first unanswered" in assessment left pane.
+  Iterates visible sections by `item_prefix`, finds first with no responses in the
+  `responses` map, navigates there.
+- **T&R PECL/MET response flow (Phase 1.5)**:
+  - `TrResponse` SQLAlchemy model (`tr_responses` table — event_code, status: go|no_go|na|unanswered, note, versioned).
+  - Alembic migration `a1b2c3d4e5f6` applied.
+  - `GET /api/content/tr` — serves hss_tr.json with each wicket annotated with `chapter: int`
+    (derived from event-code prefix via `_CHAPTER_MAP`); `lru_cache`-backed.
+  - `GET /api/assessments/{id}/tr-responses` — list all T&R responses for an assessment.
+  - `PUT /api/assessments/{id}/tr-responses/{event_code}` — upsert; `{event_code:path}`
+    handles the embedded dashes (e.g. `HSS-OPS-7001`).
+  - `TrPage` (`/assessments/:id/tr`) — left chapter nav (10 chapters, completion count
+    per chapter), main pane with wicket cards: event_code, title, METs as mono chips,
+    GO/NO-GO/NA toggle buttons, collapsible note, expandable condition/standard/components.
+  - Status dot (green/red/grey/hollow) per wicket for at-a-glance readiness state.
+  - "T&R Assessment →" and "Print / PDF →" split buttons in AssessmentPage left pane.
+- **New frontend types**: `TrFramework`, `TrChapter`, `TrWicket`, `TrMet` in `types/tr.ts`;
+  `TrResponse`, `TrResponseUpsert`, `TrResponseStatus` in `types/assessment.ts`.
+- **api.ts** extended: `getTrFramework`, `listTrResponses`, `upsertTrResponse`.
+- TypeScript clean (0 errors). Backend verified: all new routes confirmed live.
+
+**Key decisions**:
+- T&R wickets are a separate response stream from JTS items — different status vocabulary
+  (go/no_go/na vs yes/no/na), separate table, separate page. They share the `assessment_id`
+  FK so one assessment record covers both streams.
+- Chapter grouping by event-code prefix (e.g. `HSS-MCCS-*` → Chapter 4) is hardcoded
+  in `_CHAPTER_MAP`; accurate enough for all 159 wickets. Chapters 1–2 have no wickets
+  (overview/METM only).
+
+**Operational notes**:
+- Backend restart needed after model + migration changes. Use PowerShell `Start-Process`
+  from `C:\Users\bford\R2RA\backend`.
+- The `{event_code:path}` FastAPI path type is required because event codes contain dashes;
+  without it the router would match greedily. Frontend uses `encodeURIComponent` on the
+  event code in the PUT URL.
+
+**Commits this session**: (pending commit — close checklist below)
+
+---
+
+### 2026-04-24 — Session 6: status progression, T&R crosswalk panel, print/PDF export
+
+**In**: Create-assessment + response controls done and tested.
+
+**Out**:
+- **Status progression**: forward-only `draft → in_progress → ready_for_review → certified`
+  state machine. Backend `PATCH /api/assessments/{id}/status` validates transition.
+  Frontend advance button shows `Start / Submit for Review / Certify →` per current status;
+  `certified_at` timestamp set on certify.
+- **T&R crosswalk panel**: right pane in `AssessmentPage`; fetches
+  `/api/crosswalk/{sectionId}` on section change. Shows wicket event codes with
+  confidence color (high=green, medium=yellow, low=grey) and rationale; MET refs
+  in blue. Draft notice displayed. Sections with no crosswalk show "No mappings yet."
+- **Print / PDF export**: `PrintPage` at `/assessments/:id/print`. Loads all sections
+  + responses. Cover block (unit, UIC, mission type, date, status, YES/NO/NA/answered
+  counts). Per-section ✓/✗/N/A/○ per item with notes. `print:hidden` toolbar with
+  "Print / Save as PDF" button. `break-inside-avoid-page` on section blocks.
+
+**Commits**: `5af12be` (all pushed).
+
+---
+
+### 2026-04-24 — Session 5: create-assessment flow, response controls, auth bug fix
+
+**In**: Auth complete and tested. Login was returning 500 (root cause: `api.me()` called
+before token was set).
+
+**Out**:
+- **Auth bug fix**: `LoginPage.tsx` — `setToken(res.access_token)` now called before
+  `api.me()`. Same fix applied to the TOTP-completion path. Previously `api.me()` had
+  no Bearer header → 401 → 500 surface.
+- **CORS fix**: `allow_origin_regex=r"http://localhost:\d+"` replaced hardcoded port
+  list; Vite port bumps no longer break auth.
+- **Port consolidation**: backend moved to `:8082`; `vite.config.ts` proxy target
+  updated.
+- **Create-assessment flow** (`CreateAssessmentPage`): unit UIC + name + mission-type
+  radio cards (R2 LM Non-Split / Split / R2E / ARST) + optional service/component.
+  `POST /api/assessments` with unit upsert-by-UIC on backend.
+- **HomePage**: assessment list with status badge + unit info; "+ New assessment" button.
+- **AssessmentPage** (`/assessments/:id`): three-pane layout (section nav | response
+  items | T&R crosswalk). `ResponseControls`: YES/NO/NA toggle + collapsible note +
+  debounced 600ms auto-save. `ResponseItem` dispatches all six item types.
+- Backend schemas + router extended: `AssessmentCreate`, `AssessmentOut`, `ResponseOut`,
+  `ResponseUpsert`, `StatusAdvance`; `PUT /api/assessments/{id}/responses/{item_id}`.
+
+**Key decisions**:
+- Response auto-save on toggle (immediate) and on note edit (600ms debounce). No
+  explicit "Save" button needed.
+- Status progression is forward-only; no rollback exposed in UI.
+
+**Commits**: `ccbd3b3`, `0e49588` (all pushed).
+
+---
 
 ### 2026-04-24 — Session 4: auth — backend + frontend
 

@@ -1,6 +1,7 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { CrosswalkEntry } from '../types/crosswalk'
+import type { TrFramework } from '../types/tr'
 
 const BASE = '/api'
 
@@ -105,4 +106,19 @@ export const api = {
 
   getCrosswalk: (sectionId: string) =>
     get<CrosswalkEntry[]>(`/crosswalk/${sectionId}`),
+
+  // ---- T&R framework content ----
+  getTrFramework: () =>
+    get<TrFramework>('/content/tr'),
+
+  // ---- T&R responses ----
+  listTrResponses: (assessmentId: string) =>
+    get<TrResponse[]>(`/assessments/${assessmentId}/tr-responses`),
+
+  upsertTrResponse: (assessmentId: string, eventCode: string, body: TrResponseUpsert) =>
+    request<TrResponse>(`/assessments/${assessmentId}/tr-responses/${encodeURIComponent(eventCode)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
 }

@@ -3,7 +3,13 @@ import { useParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import type { Assessment, ItemResponse } from '../types/assessment'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
-import type { Manifest, Section, AssessmentItem } from '@/types/content'
+import type { Manifest, Section, AssessmentItem, SectionManifestEntry } from '@/types/content'
+
+function isSectionVisible(entry: SectionManifestEntry, missionType: string): boolean {
+  if (!entry.visible_when) return true
+  const mt = entry.visible_when.mission_type
+  return !mt || mt === missionType
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -154,9 +160,12 @@ export function PrintPage() {
         const m = mRaw as Manifest
         setManifest(m)
 
-        setLoadingMsg(`Loading ${m.sections_manifest.length} sections…`)
+        const visibleEntries = m.sections_manifest.filter(s =>
+          isSectionVisible(s, a.mission_type)
+        )
+        setLoadingMsg(`Loading ${visibleEntries.length} sections…`)
         const loaded = await Promise.all(
-          m.sections_manifest.map(s => api.section(s.id) as Promise<Section>)
+          visibleEntries.map(s => api.section(s.id) as Promise<Section>)
         )
         setSections(loaded)
         setLoadingMsg('')

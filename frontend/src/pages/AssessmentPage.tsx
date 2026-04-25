@@ -6,9 +6,15 @@ import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
 import { AcronymText } from '@/components/preview/AcronymText'
 import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus } from '../types/assessment'
-import type { AssessmentItem, Section } from '@/types/content'
+import type { AssessmentItem, Section, SectionManifestEntry } from '@/types/content'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
+
+function isVisible(section: SectionManifestEntry, missionType: string): boolean {
+  if (!section.visible_when) return true
+  const mt = section.visible_when.mission_type
+  return !mt || mt === missionType
+}
 
 // ---------------------------------------------------------------------------
 // Response controls
@@ -377,7 +383,26 @@ export function AssessmentPage() {
     }
   }
 
-  const effectiveSectionId = activeSectionId ?? manifest?.sections_manifest[0]?.id ?? null
+  const visibleSections = assessment && manifest
+    ? manifest.sections_manifest.filter(s => isVisible(s, assessment.mission_type))
+    : manifest?.sections_manifest ?? []
+
+  const effectiveSectionId = activeSectionId ?? visibleSections[0]?.id ?? null
+
+  function jumpToUnanswered() {
+    if (!visibleSections.length) return
+    for (const s of visibleSections) {
+      const prefix = s.item_prefix
+      if (!prefix) continue
+      const hasAny = [...responses.keys()].some(k => k.startsWith(prefix + '.'))
+      if (!hasAny) {
+        setActiveSectionId(s.id)
+        return
+      }
+    }
+    // all sections have at least one response — find first with partial completion
+    setActiveSectionId(visibleSections[0].id)
+  }
 
   if (loadError) {
     return (
@@ -434,15 +459,30 @@ export function AssessmentPage() {
             <p className="text-[10px] text-green-600 font-semibold text-center">✓ Certified</p>
           )}
 
-          <Link
-            to={`/assessments/${assessmentId}/print`}
-            className="block text-center text-[10px] text-neutral-400 hover:text-neutral-600"
+          <button
+            onClick={jumpToUnanswered}
+            className="w-full rounded border border-neutral-200 text-[11px] text-neutral-500 px-3 py-1 hover:border-neutral-400 hover:text-neutral-700 transition-colors"
           >
-            Print / Export PDF →
-          </Link>
+            → Jump to first unanswered
+          </button>
+
+          <div className="flex gap-2 pt-0.5">
+            <Link
+              to={`/assessments/${assessmentId}/tr`}
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+            >
+              T&amp;R Assessment →
+            </Link>
+            <Link
+              to={`/assessments/${assessmentId}/print`}
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+            >
+              Print / PDF →
+            </Link>
+          </div>
         </div>
         <SectionNav
-          sections={manifest.sections_manifest}
+          sections={visibleSections}
           activeSectionId={effectiveSectionId}
           onSelect={setActiveSectionId}
         />

@@ -85,6 +85,7 @@ export interface SectionManifestEntry {
   ordinal: number
   title: string
   file: string
+  item_prefix?: string
   visible_when?: Record<string, string>
 }
 

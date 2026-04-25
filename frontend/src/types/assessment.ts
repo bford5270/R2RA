@@ -47,3 +47,20 @@ export interface ResponseUpsert {
   note?: string | null
   capture_data?: Record<string, unknown> | null
 }
+
+export type TrResponseStatus = 'go' | 'no_go' | 'na' | 'unanswered'
+
+export interface TrResponse {
+  event_code: string
+  status: TrResponseStatus
+  note: string | null
+  authored_by: string
+  last_modified_by: string
+  version: number
+  updated_at: string
+}
+
+export interface TrResponseUpsert {
+  status: TrResponseStatus
+  note?: string | null
+}

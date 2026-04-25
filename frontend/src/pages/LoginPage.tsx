@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { api } from '../lib/api'
+import { api, setToken } from '../lib/api'
 import { useAuth } from '../lib/auth'
 
 type Screen = 'credentials' | 'totp'
@@ -31,6 +31,7 @@ export function LoginPage() {
         // focus the TOTP input on next paint
         setTimeout(() => totpRef.current?.focus(), 50)
       } else {
+        setToken(res.access_token)
         const user = await api.me()
         login(res.access_token, user)
         navigate('/', { replace: true })
@@ -48,6 +49,7 @@ export function LoginPage() {
     setBusy(true)
     try {
       const res = await api.totpComplete(partialToken, totpCode)
+      setToken(res.access_token)
       const user = await api.me()
       login(res.access_token, user)
       navigate('/', { replace: true })

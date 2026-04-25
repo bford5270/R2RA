@@ -10,12 +10,15 @@ from app.models.assessment import Assessment, AssessmentAssignment
 from app.models.response import Response
 from app.models.unit import Unit
 from app.models.user import User
+from app.models.tr_response import TrResponse
 from app.schemas.assessment import (
     AssessmentCreate,
     AssessmentOut,
     ResponseOut,
     ResponseUpsert,
     StatusAdvance,
+    TrResponseOut,
+    TrResponseUpsert,
 )
 
 router = APIRouter(prefix="/api/assessments", tags=["assessments"])
@@ -219,6 +222,57 @@ def advance_status(
     db.refresh(assessment)
     unit = db.get(Unit, assessment.unit_id)
     return _assessment_out(assessment, unit)
+
+
+# ---------------------------------------------------------------------------
+# T&R responses
+# ---------------------------------------------------------------------------
+
+
+@router.get("/{assessment_id}/tr-responses", response_model=list[TrResponseOut])
+def list_tr_responses(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    return db.query(TrResponse).filter(TrResponse.assessment_id == assessment_id).all()
+
+
+@router.put("/{assessment_id}/tr-responses/{event_code:path}", response_model=TrResponseOut)
+def upsert_tr_response(
+    assessment_id: str,
+    event_code: str,
+    body: TrResponseUpsert,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    tr = (
+        db.query(TrResponse)
+        .filter(TrResponse.assessment_id == assessment_id, TrResponse.event_code == event_code)
+        .first()
+    )
+    if tr is None:
+        tr = TrResponse(
+            id=str(uuid.uuid4()),
+            assessment_id=assessment_id,
+            event_code=event_code,
+            authored_by=current_user.id,
+            last_modified_by=current_user.id,
+        )
+        db.add(tr)
+    else:
+        tr.last_modified_by = current_user.id
+        tr.version = tr.version + 1
+
+    tr.status = body.status
+    tr.note = body.note
+    tr.updated_at = datetime.now(timezone.utc)
+
+    db.commit()
+    db.refresh(tr)
+    return tr
 
 
 # ---------------------------------------------------------------------------
