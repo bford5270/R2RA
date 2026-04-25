@@ -10,7 +10,7 @@ next session can resume cleanly.
 - **Last session**: 2026-04-24
 - **Current phase**: Phase 1.5 — JTS assessment flow complete; T&R response flow live
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: (see git log — session 7 closes here)
+- **Last commit**: `09f5c67` (feat: visible_when branching, jump-to-unanswered, T&R PECL/MET response flow)
 - **Open PR**: none yet
 - **Blocked on**: nothing — evidence attachment and deeper T&R polish are next
 
@@ -151,7 +151,7 @@ to (GO/NO-GO) as a parallel reporting stream.
   without it the router would match greedily. Frontend uses `encodeURIComponent` on the
   event code in the PUT URL.
 
-**Commits this session**: (pending commit — close checklist below)
+**Commits this session**: `09f5c67` (pushed).
 
 ---
 
