@@ -3,7 +3,10 @@ import { useParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import type { Assessment, ItemResponse } from '../types/assessment'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
-import type { Manifest, Section, AssessmentItem, SectionManifestEntry } from '@/types/content'
+import type {
+  Manifest, Section, AssessmentItem, SectionManifestEntry,
+  BinaryItem, TableYnItem, TableCountsItem,
+} from '@/types/content'
 
 function isSectionVisible(entry: SectionManifestEntry, missionType: string): boolean {
   if (!entry.visible_when) return true
@@ -12,30 +15,175 @@ function isSectionVisible(entry: SectionManifestEntry, missionType: string): boo
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Column header row — rendered once per section
 // ---------------------------------------------------------------------------
 
-function statusSymbol(s: string | undefined) {
-  switch (s) {
-    case 'yes': return '✓'
-    case 'no':  return '✗'
-    case 'na':  return 'N/A'
-    default:    return '○'
-  }
-}
-
-function statusClass(s: string | undefined) {
-  switch (s) {
-    case 'yes': return 'text-green-700 font-bold'
-    case 'no':  return 'text-red-700 font-bold'
-    case 'na':  return 'text-neutral-500'
-    default:    return 'text-neutral-300'
-  }
+function ColHeaders() {
+  return (
+    <div className="flex gap-2 items-center border-b-2 border-neutral-300 pb-0.5 mb-1">
+      <span className="text-[9px] font-mono text-neutral-400 shrink-0 w-14" />
+      <span className="flex-1" />
+      <div className="flex shrink-0 text-[8px] font-bold uppercase tracking-wide text-neutral-500">
+        <span className="w-7 text-center">YES</span>
+        <span className="w-7 text-center">NO</span>
+        <span className="w-8 text-center">N/A</span>
+      </div>
+    </div>
+  )
 }
 
 // ---------------------------------------------------------------------------
-// Item renderers (print-only, no interactive controls)
+// Status cells for binary items
 // ---------------------------------------------------------------------------
+
+function YNACells({ status }: { status: string | undefined }) {
+  return (
+    <div className="flex shrink-0">
+      <span className="w-7 text-center text-[11px] font-bold text-green-700">
+        {status === 'yes' ? '✓' : ''}
+      </span>
+      <span className="w-7 text-center text-[11px] font-bold text-red-700">
+        {status === 'no' ? '✗' : ''}
+      </span>
+      <span className="w-8 text-center text-[10px] text-neutral-500">
+        {status === 'na' ? 'N/A' : ''}
+      </span>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Individual item renderers
+// ---------------------------------------------------------------------------
+
+function PrintBinaryRow({
+  item,
+  resp,
+  nested = false,
+}: {
+  item: BinaryItem
+  resp: ItemResponse | undefined
+  nested?: boolean
+}) {
+  const captureData = resp?.capture_data as Record<string, string> | null | undefined
+  const hasCaptureValues = item.capture && captureData &&
+    item.capture.some(f => captureData[f.id])
+
+  return (
+    <>
+      <div className={`flex gap-2 items-start py-0.5 border-b border-neutral-100 ${nested ? 'pl-4' : ''}`}>
+        <span className="text-[8px] font-mono text-neutral-300 shrink-0 w-14 pt-0.5 leading-tight">{item.id}</span>
+        <p className="flex-1 text-[11px] text-neutral-800 leading-snug">{item.prompt}</p>
+        <YNACells status={resp?.status} />
+      </div>
+      {hasCaptureValues && (
+        <div className={`flex gap-2 pb-0.5 border-b border-neutral-100 ${nested ? 'pl-4' : ''}`}>
+          <span className="w-14 shrink-0" />
+          <div className="flex flex-wrap gap-x-4 text-[10px] text-neutral-600">
+            {item.capture!.map(f => {
+              const val = captureData![f.id]
+              if (!val) return null
+              return (
+                <span key={f.id}>
+                  <span className="text-neutral-400">{f.label}:</span> {val}
+                </span>
+              )
+            })}
+          </div>
+        </div>
+      )}
+      {resp?.note && (
+        <div className={`flex gap-2 pb-0.5 border-b border-neutral-100 ${nested ? 'pl-4' : ''}`}>
+          <span className="w-14 shrink-0" />
+          <p className="text-[10px] text-neutral-500 italic leading-snug">Note: {resp.note}</p>
+        </div>
+      )}
+    </>
+  )
+}
+
+function PrintTableYn({
+  item,
+  resp,
+}: {
+  item: TableYnItem
+  resp: ItemResponse | undefined
+}) {
+  return (
+    <div className="py-1 border-b border-neutral-100">
+      <div className="flex gap-2 items-start">
+        <span className="text-[8px] font-mono text-neutral-300 shrink-0 w-14 pt-0.5">{item.id}</span>
+        <div className="flex-1">
+          <p className="text-[11px] font-semibold text-neutral-700 mb-1">{item.label}</p>
+          <div className="ml-2 space-y-0">
+            {item.rows.map(row => (
+              <div key={row.id} className="flex items-center gap-1 py-px border-b border-neutral-50 last:border-0">
+                <span className="text-[9px] text-neutral-400 w-5 shrink-0">{row.id}</span>
+                <span className="flex-1 text-[10px] text-neutral-700">{row.label}</span>
+                <div className="flex shrink-0">
+                  <span className="w-7 text-center text-[10px]">□</span>
+                  <span className="w-7 text-center text-[10px]">□</span>
+                  <span className="w-8 text-center text-[10px]">□</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          {resp?.note && (
+            <p className="text-[10px] text-neutral-500 italic mt-1 pl-1 border-l border-neutral-200">
+              Note: {resp.note}
+            </p>
+          )}
+        </div>
+        <YNACells status={resp?.status} />
+      </div>
+    </div>
+  )
+}
+
+function PrintTableCounts({
+  item,
+  resp,
+}: {
+  item: TableCountsItem
+  resp: ItemResponse | undefined
+}) {
+  return (
+    <div className="py-1 border-b border-neutral-100">
+      <div className="flex gap-2 items-start">
+        <span className="text-[8px] font-mono text-neutral-300 shrink-0 w-14 pt-0.5">{item.id}</span>
+        <div className="flex-1">
+          <p className="text-[11px] font-semibold text-neutral-700 mb-1">{item.label}</p>
+          <table className="w-full text-[9px] border-collapse">
+            <thead>
+              <tr>
+                <th className="text-left text-neutral-500 pb-0.5 pr-2 w-1/3">Item</th>
+                {item.columns.map(c => (
+                  <th key={c.id} className="text-center text-neutral-500 pb-0.5 w-8">{c.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {item.rows.map(row => (
+                <tr key={row.id} className="border-t border-neutral-100">
+                  <td className="py-px pr-2 text-neutral-700">{row.label}</td>
+                  {item.columns.map(c => (
+                    <td key={c.id} className="py-px text-center text-neutral-300">—</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {resp?.note && (
+            <p className="text-[10px] text-neutral-500 italic mt-1 pl-1 border-l border-neutral-200">
+              Note: {resp.note}
+            </p>
+          )}
+        </div>
+        <YNACells status={resp?.status} />
+      </div>
+    </div>
+  )
+}
 
 function PrintItem({
   item,
@@ -47,12 +195,11 @@ function PrintItem({
   nested?: boolean
 }) {
   const resp = responses.get(item.id)
-  const indent = nested ? 'pl-4' : ''
 
   if (item.type === 'group') {
     return (
-      <div className={`${indent} mb-2`}>
-        <p className="text-[9px] font-semibold uppercase tracking-wide text-neutral-500 mb-1">
+      <div className={nested ? 'pl-4' : ''}>
+        <p className="text-[9px] font-bold uppercase tracking-wide text-neutral-400 mt-2 mb-0.5">
           {item.label}
         </p>
         {item.sub_items.map(sub => (
@@ -62,31 +209,40 @@ function PrintItem({
     )
   }
 
-  const prompt =
-    item.type === 'binary' ? item.prompt :
-    item.type === 'text_long' ? item.label :
-    item.type === 'select_one' ? item.prompt :
-    'label' in item ? item.label : item.id
+  if (item.type === 'binary') {
+    return <PrintBinaryRow item={item} resp={resp} nested={nested} />
+  }
 
+  if (item.type === 'table_yn') {
+    return <PrintTableYn item={item} resp={resp} />
+  }
+
+  if (item.type === 'table_counts') {
+    return <PrintTableCounts item={item} resp={resp} />
+  }
+
+  // text_long and select_one
+  const label = 'label' in item ? item.label : 'prompt' in item ? item.prompt : item.id
   return (
-    <div className={`${indent} py-1 border-b border-neutral-100 last:border-0`}>
+    <div className={`py-1.5 border-b border-neutral-100 ${nested ? 'pl-4' : ''}`}>
       <div className="flex gap-2 items-start">
-        <span className={`text-xs shrink-0 w-6 text-center mt-0.5 ${statusClass(resp?.status)}`}>
-          {statusSymbol(resp?.status)}
-        </span>
+        <span className="text-[8px] font-mono text-neutral-300 shrink-0 w-14 pt-0.5">{item.id}</span>
         <div className="flex-1">
-          <p className="text-[11px] text-neutral-800 leading-snug">{prompt}</p>
-          {resp?.note && (
-            <p className="text-[10px] text-neutral-500 italic mt-0.5 pl-1 border-l border-neutral-200">
-              {resp.note}
-            </p>
+          <p className="text-[11px] text-neutral-700 leading-snug italic">{label}</p>
+          {resp?.note ? (
+            <p className="text-[11px] text-neutral-800 mt-1 leading-snug">{resp.note}</p>
+          ) : (
+            <p className="text-[10px] text-neutral-300 mt-1">—</p>
           )}
         </div>
-        <span className="text-[9px] font-mono text-neutral-300 shrink-0">{item.id}</span>
       </div>
     </div>
   )
 }
+
+// ---------------------------------------------------------------------------
+// Section renderer
+// ---------------------------------------------------------------------------
 
 function PrintSection({
   section,
@@ -95,28 +251,40 @@ function PrintSection({
   section: Section
   responses: Map<string, ItemResponse>
 }) {
-  const allItems: AssessmentItem[] = [
+  // Count binary/selectable items for the section summary
+  function countable(items: AssessmentItem[]): AssessmentItem[] {
+    return items.flatMap(i => i.type === 'group' ? countable(i.sub_items) : [i])
+  }
+  const allItems = countable([
     ...section.items,
     ...(section.sections?.flatMap(s => s.items) ?? []),
-  ]
+  ])
   const answered = allItems.filter(i => {
     const r = responses.get(i.id)
     return r && r.status !== 'unanswered'
   }).length
   const total = allItems.length
 
+  // Does this section have any binary items? (drives column headers)
+  const hasBinary = allItems.some(i => i.type === 'binary' || i.type === 'select_one')
+
   return (
     <div className="mb-6 break-inside-avoid-page">
-      <div className="flex items-baseline justify-between mb-1 border-b-2 border-neutral-200 pb-1">
-        <h2 className="text-sm font-bold text-neutral-900">{section.title}</h2>
-        <span className="text-[10px] text-neutral-400">{answered}/{total}</span>
+      {/* Section header */}
+      <div className="flex items-baseline justify-between mb-1 border-b-2 border-neutral-800 pb-1">
+        <h2 className="text-[12px] font-bold text-neutral-900 uppercase tracking-wide">
+          {typeof section.ordinal === 'number' ? `${section.ordinal}. ` : ''}{section.title}
+        </h2>
+        <span className="text-[9px] text-neutral-400 shrink-0 ml-4">{answered}/{total}</span>
       </div>
 
+      {hasBinary && <ColHeaders />}
+
       {section.sections?.map(sub => (
-        <div key={sub.id} className="mb-3">
-          <h3 className="text-[10px] font-semibold uppercase tracking-wide text-neutral-500 mb-1">
+        <div key={sub.id} className="mb-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-neutral-500 mt-2 mb-0.5">
             {sub.title}
-          </h3>
+          </p>
           {sub.items.map(item => (
             <PrintItem key={item.id} item={item} responses={responses} />
           ))}
@@ -126,6 +294,73 @@ function PrintSection({
       {section.items.map(item => (
         <PrintItem key={item.id} item={item} responses={responses} />
       ))}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Signature block
+// ---------------------------------------------------------------------------
+
+function SignatureBlock({ assessment }: { assessment: Assessment }) {
+  const date = new Date().toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  })
+
+  function SigLine({ label, wide = false }: { label: string; wide?: boolean }) {
+    return (
+      <div className={`${wide ? 'col-span-2' : ''}`}>
+        <div className="border-b border-neutral-700 h-6 mb-0.5" />
+        <p className="text-[9px] text-neutral-500 uppercase tracking-wide">{label}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-8 pt-4 border-t-2 border-neutral-800">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-700 mb-3">
+        Assessment Certification
+      </p>
+      <p className="text-[10px] text-neutral-600 mb-4 leading-snug">
+        The undersigned certify that this assessment was conducted in accordance with JTS guidance
+        and that all entries are accurate and complete to the best of our knowledge.
+      </p>
+
+      <div className="mb-5">
+        <p className="text-[9px] font-bold uppercase tracking-wide text-neutral-500 mb-2">
+          Theater Medical Director / Lead Assessor
+        </p>
+        <div className="grid grid-cols-4 gap-4">
+          <SigLine label="Last Name, First, MI" wide />
+          <SigLine label="Rank / Rate" />
+          <SigLine label="Date" />
+          <SigLine label="Signature" wide />
+          <SigLine label="Branch / Component" />
+          <SigLine label="Phone / DSN" />
+        </div>
+      </div>
+
+      <div className="mb-5">
+        <p className="text-[9px] font-bold uppercase tracking-wide text-neutral-500 mb-2">
+          Unit Commanding Officer / OIC Acknowledgment
+        </p>
+        <div className="grid grid-cols-4 gap-4">
+          <SigLine label="Last Name, First, MI" wide />
+          <SigLine label="Rank / Rate" />
+          <SigLine label="Date" />
+          <SigLine label="Signature" wide />
+          <SigLine label="Unit UIC" />
+          <SigLine label="Command" />
+        </div>
+      </div>
+
+      <div className="text-[9px] text-neutral-400 space-y-0.5 mt-4">
+        <p>Unit: <strong className="text-neutral-600">{assessment.unit_name}</strong> &nbsp;|&nbsp; UIC: <strong className="text-neutral-600">{assessment.unit_uic}</strong></p>
+        <p>Mission Type: <strong className="text-neutral-600">{MISSION_TYPE_LABELS[assessment.mission_type]}</strong> &nbsp;|&nbsp; Assessment Date: <strong className="text-neutral-600">{date}</strong></p>
+        {assessment.unique_identifier && (
+          <p>Assessment ID: <strong className="text-neutral-600">{assessment.unique_identifier}</strong></p>
+        )}
+      </div>
     </div>
   )
 }
@@ -213,7 +448,7 @@ export function PrintPage() {
         </div>
         <button
           onClick={() => window.print()}
-          className="rounded bg-scarlet text-white text-xs font-semibold px-4 py-1.5 hover:bg-scarlet-dark transition-colors"
+          className="rounded bg-scarlet text-white text-xs font-semibold px-4 py-1.5 hover:opacity-90 transition-opacity"
         >
           Print / Save as PDF
         </button>
@@ -223,24 +458,27 @@ export function PrintPage() {
       <div className="max-w-4xl mx-auto px-8 py-8 print:px-6 print:py-4">
 
         {/* Cover block */}
-        <div className="mb-8 pb-6 border-b-2 border-neutral-300">
+        <div className="mb-8 pb-6 border-b-2 border-neutral-800">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-2">
+            CONTROLLED UNCLASSIFIED INFORMATION // BASIC
+          </p>
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                CONTROLLED UNCLASSIFIED INFORMATION // BASIC
-              </p>
-              <h1 className="text-xl font-bold text-neutral-900">
+              <h1 className="text-xl font-bold text-neutral-900 leading-tight">
                 JTS Role 2 Readiness Assessment
               </h1>
               <p className="text-sm text-neutral-600 mt-0.5">{manifest.subtitle}</p>
+              <p className="text-[10px] text-neutral-400 mt-1">{manifest.framework_id} v{manifest.version}</p>
             </div>
-            <div className="text-right text-xs text-neutral-500 space-y-0.5">
-              <p className="font-mono font-bold text-neutral-700">{assessment.unit_uic}</p>
-              <p>{assessment.unit_name}</p>
+            <div className="text-right text-xs text-neutral-600 space-y-0.5">
+              <p className="font-mono font-bold text-neutral-800 text-sm">{assessment.unit_uic}</p>
+              <p className="font-semibold">{assessment.unit_name}</p>
               <p>{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
-              {assessment.service && <p>{assessment.service}{assessment.component ? ` / ${assessment.component}` : ''}</p>}
-              <p className="mt-1 text-neutral-400">{date}</p>
-              <p className={`font-semibold mt-1 ${assessment.status === 'certified' ? 'text-green-700' : 'text-neutral-500'}`}>
+              {assessment.service && (
+                <p>{assessment.service}{assessment.component ? ` / ${assessment.component}` : ''}</p>
+              )}
+              <p className="text-neutral-400">{date}</p>
+              <p className={`font-bold mt-1 ${assessment.status === 'certified' ? 'text-green-700' : 'text-neutral-500'}`}>
                 {assessment.status.replace(/_/g, ' ').toUpperCase()}
               </p>
             </div>
@@ -262,7 +500,8 @@ export function PrintPage() {
           </div>
 
           <p className="mt-3 text-[9px] text-neutral-400 italic">
-            Unofficial — not endorsed by USMC, Navy, DHA, or JTS. Crosswalk mappings are draft and require SME review.
+            Unofficial tool — not endorsed by USMC, Navy, DHA, or JTS.
+            Verify all entries against official JTS Role 2 Readiness Assessment form before submission.
           </p>
         </div>
 
@@ -270,6 +509,9 @@ export function PrintPage() {
         {sections.map(section => (
           <PrintSection key={section.id} section={section} responses={responses} />
         ))}
+
+        {/* Signature block */}
+        <SignatureBlock assessment={assessment} />
 
         {/* Footer */}
         <div className="mt-8 pt-4 border-t border-neutral-200 text-[9px] text-neutral-400 flex justify-between">
