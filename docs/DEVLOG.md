@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-24
-- **Current phase**: Phase 1.5 — JTS assessment flow complete; T&R response flow live
+- **Last session**: 2026-04-27
+- **Current phase**: Phase 1.5 complete — evidence attachment + T&R print + crosswalk linking done
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `09f5c67` (feat: visible_when branching, jump-to-unanswered, T&R PECL/MET response flow)
+- **Last commit**: `8d3376f` (feat: crosswalk bi-directional link)
 - **Open PR**: none yet
-- **Blocked on**: nothing — evidence attachment and deeper T&R polish are next
+- **Blocked on**: nothing — PDF export (true form-faithful) and multi-assessor role assignment are next
 
 ---
 
@@ -68,12 +68,16 @@ Guardrails that repeatedly bit us in earlier sessions:
 5. ~~**Create-assessment flow + response controls**~~ — **done** (`ccbd3b3`, `0e49588`).
 6. ~~**Status progression + T&R crosswalk panel + print/PDF**~~ — **done** (`5af12be`).
 7. ~~**visible_when branching + jump-to-unanswered + T&R response flow**~~ — **done** (session 7).
-8. **Evidence attachment** — file upload per response; `evidence` table already exists.
-   Needs: `POST /api/assessments/{id}/responses/{item_id}/evidence`, file storage
-   strategy (local disk for dev, S3-compatible for deploy), thumbnail in UI.
-9. **T&R polish**: role2_relevance tagging (SME input needed), GO/NO-GO print
-   page, crosswalk bi-directional link (click wicket → jump to JTS item).
-10. **PDF export** — true JTS-form-faithful layout (vs current browser-print approach).
+8. ~~**Evidence attachment**~~ — **done** (`54d6569`). Local-disk storage, SHA-256
+   integrity, 10 MB cap, MIME allowlist (JPEG/PNG/WebP/GIF/PDF/TXT). Authenticated
+   blob URL fetch for image thumbnails. Paperclip toggle in ResponseControls.
+9. ~~**T&R polish**~~ — **done** (`a3eb74b`, `8d3376f`). T&R print/PDF page
+   (cover + per-chapter GO/NO-GO table). Crosswalk panel wicket codes are now links
+   to `/tr?wicket=<code>`; TrPage auto-switches chapter, scrolls to, and highlights
+   the target wicket with a scarlet ring.
+10. **PDF export** — true JTS-form-faithful layout (browser-print is current workaround).
+11. **Multi-assessor role assignment** — section-level claim/assign flow; contributor
+    vs lead reconciliation.
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
@@ -101,6 +105,55 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 8: evidence attachment, T&R print page, crosswalk bi-directional link
+
+**In**: Phase 1.5 complete. Evidence table existed in DB; no upload endpoints or UI.
+T&R page had no print export. Crosswalk panel showed wicket codes as plain text.
+
+**Out**:
+- **Evidence attachment** (`54d6569`):
+  - `config.py`: `uploads_dir` (./uploads), `max_upload_bytes` (10 MB) settings.
+  - `evidence.py` router: `POST /api/assessments/{id}/responses/{item_id}/evidence`
+    (multipart upload → `uploads/{evidence_id}/{filename}` on disk; SHA-256 integrity;
+    MIME allowlist: JPEG/PNG/WebP/GIF/PDF/TXT); `GET /api/evidence/{id}/file`
+    (authenticated `FileResponse`); `DELETE` removes file + trims `evidence_ids` on
+    response row.
+  - `EvidencePanel` component: lazy-loads evidence list per item; uses exported
+    `authHeaders()` to fetch blob URLs for authenticated image thumbnails; file icon
+    for non-images; click to download; inline ✕ delete; + Attach file button.
+  - `ResponseControls`: paperclip 📎 button toggles `EvidencePanel`; `assessmentId`
+    threaded through `ResponseItem` → `ResponseSectionView` → `ResponseControls`.
+  - `api.ts`: `listEvidence`, `uploadEvidence` (FormData), `deleteEvidence`,
+    `evidenceFileUrl`; `postForm` helper; `authHeaders` exported.
+  - `.gitignore`: `backend/uploads/` excluded.
+
+- **T&R print page** (`a3eb74b`):
+  - `TrPrintPage` at `/assessments/:id/tr/print`: cover block (unit, UIC, mission
+    type, date, GO/NO-GO/N/A/answered counts), per-chapter wicket list with status
+    symbols, event codes, titles, METs, and notes. Same CUI/disclaimer footer.
+  - Print toolbar with "Print / Save as PDF" button, hidden on print.
+  - "Print / Export PDF →" link added to TrPage left-pane header.
+
+- **Crosswalk bi-directional link** (`8d3376f`):
+  - Crosswalk panel: wicket event codes are now scarlet `↗` links to
+    `/assessments/:id/tr?wicket=<event_code>`.
+  - TrPage: reads `?wicket=` search param; switches active chapter to the matched
+    wicket's chapter on load; `WicketCard` scrolls into view (smooth) and renders
+    with scarlet ring + tinted background when it matches the linked wicket.
+
+**Key decisions**:
+- Evidence stored locally under `backend/uploads/{evidence_id}/{filename}`. `blob_ref`
+  column stores the relative path so it can be swapped for an S3 key later without
+  schema changes.
+- File serving requires auth (Bearer header); frontend fetches blob and creates object
+  URL rather than using a bare `<img src>` since we have no cookie auth.
+- Crosswalk link uses `?wicket=` query param (not a hash/fragment) so React Router
+  can read it without any server changes.
+
+**Commits**: `54d6569`, `a3eb74b`, `8d3376f` (all pushed).
+
+---
 
 ### 2026-04-24 — Session 7: visible_when branching, jump-to-unanswered, T&R PECL/MET response flow
 
