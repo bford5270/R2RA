@@ -1,6 +1,7 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
 import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { ReadinessRow } from '../types/reports'
+import type { LibraryItem } from '../types/library'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
@@ -189,4 +190,23 @@ export const api = {
   // ---- reports ----
   readinessReport: () =>
     get<ReadinessRow[]>('/reports/readiness'),
+
+  // ---- unit library ----
+  listLibrary: (uic: string) =>
+    get<LibraryItem[]>(`/units/${encodeURIComponent(uic)}/library`),
+
+  uploadLibraryItem: (uic: string, file: File, label: string, category: string, description: string) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('label', label)
+    fd.append('category', category)
+    fd.append('description', description)
+    return postForm<LibraryItem>(`/units/${encodeURIComponent(uic)}/library`, fd)
+  },
+
+  deleteLibraryItem: (uic: string, itemId: string) =>
+    del<void>(`/units/${encodeURIComponent(uic)}/library/${itemId}`),
+
+  libraryFileUrl: (uic: string, itemId: string) =>
+    `/api/units/${encodeURIComponent(uic)}/library/${itemId}/file`,
 }

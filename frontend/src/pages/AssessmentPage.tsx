@@ -1028,6 +1028,12 @@ export function AssessmentPage() {
               Audit log →
             </Link>
           </div>
+          <Link
+            to={`/units/${assessment.unit_uic}/library`}
+            className="w-full text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1 block"
+          >
+            Unit document library →
+          </Link>
           <TeamPanel
             assessmentId={assessmentId!}
             leadId={assessment.lead_id ?? ''}

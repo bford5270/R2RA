@@ -12,6 +12,7 @@ import { TrPrintPage } from './pages/TrPrintPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AuditPage } from './pages/AuditPage'
 import { ReadinessPage } from './pages/ReadinessPage'
+import { UnitLibraryPage } from './pages/UnitLibraryPage'
 
 function BannerTop() {
   return (
@@ -128,6 +129,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ReadinessPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/units/:uic/library"
+          element={
+            <ProtectedRoute>
+              <UnitLibraryPage />
             </ProtectedRoute>
           }
         />

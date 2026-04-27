@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 11)
-- **Current phase**: Phase 1.5 complete — OIC sign-off / certification lock shipped
+- **Last session**: 2026-04-27 (Session 12)
+- **Current phase**: HHQ readiness dashboard shipped
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `557ca09` (feat: Phase 1.5 — OIC sign-off, certification lock)
+- **Last commit**: `5c5064b` (feat: HHQ readiness dashboard)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next: HHQ rollup dashboard (Strategy Phase 2) or evidence library
+- **Blocked on**: nothing — next: standing evidence library or crosswalk editor
 
 ---
 
@@ -118,6 +118,34 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 12: HHQ readiness dashboard
+
+**In**: Phase 2 (strategy) not started. All assessments fully functional and certifiable.
+
+**Out**:
+- `backend/app/routers/reports.py`: `GET /api/reports/readiness` — latest assessment per unit,
+  aggregated by unit, response counts (yes/no/na/unanswered) grouped by item_id prefix.
+  Returned sorted by unit_name. No new models or migrations needed.
+- `ReadinessPage` at `/reports/readiness`:
+  - Header summary: total units / certified / in-progress count badges.
+  - Heatmap table: rows = units (link to assessment), cols = sections from manifest;
+    color scale: green (≥90% answered, mostly YES), yellow-50/yellow-100 (partial), red (many NO), gray (none).
+    Cell tooltip shows section title + raw counts. Sticky first column.
+  - Date column: certified_at in green, started_at otherwise.
+  - Domain gap analysis panel (certified units only): stacked bar per section (green=YES, red=NO)
+    across all certified units. Shows unit count per section.
+- "Readiness" nav link added to HomePage header (all roles).
+
+**Key decisions**:
+- Section grouping uses `item_id.split('.')[0]` — works because all item IDs follow
+  `{prefix}.{ordinal}` format (pdp.1, c2.3, cra.2.a, etc.).
+- Latest-per-unit computed in Python (sort by started_at desc, first-seen per unit_id) rather
+  than a SQL window function — simpler with SQLite.
+
+**Commits**: `5c5064b` (pushed).
+
+---
 
 ### 2026-04-27 — Session 11: Phase 1.5 — OIC sign-off + certification lock
 
