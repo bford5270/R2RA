@@ -9,6 +9,7 @@ import { AssessmentPage } from './pages/AssessmentPage'
 import { PrintPage } from './pages/PrintPage'
 import { TrPage } from './pages/TrPage'
 import { TrPrintPage } from './pages/TrPrintPage'
+import { AdminUsersPage } from './pages/AdminUsersPage'
 
 function BannerTop() {
   return (
@@ -101,6 +102,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <TrPrintPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute>
+              <AdminUsersPage />
             </ProtectedRoute>
           }
         />

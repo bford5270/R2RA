@@ -17,7 +17,7 @@ function statusBadge(status: string) {
 
 export function HomePage() {
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const [assessments, setAssessments] = useState<Assessment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -43,6 +43,14 @@ export function HomePage() {
           >
             Form preview
           </Link>
+          {user?.global_role === 'admin' && (
+            <Link
+              to="/admin/users"
+              className="text-xs text-neutral-500 hover:text-neutral-700"
+            >
+              Users
+            </Link>
+          )}
           <button
             onClick={logout}
             className="text-xs text-neutral-500 hover:text-neutral-700"

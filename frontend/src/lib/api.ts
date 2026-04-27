@@ -3,7 +3,7 @@ import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert, TrResp
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
-import type { UserOut, AssignmentOut, AssignmentUpsert } from '../types/user'
+import type { UserOut, UserUpdate, AssignmentOut, AssignmentUpsert } from '../types/user'
 
 const BASE = '/api'
 
@@ -144,8 +144,18 @@ export const api = {
   evidenceFileUrl: (evidenceId: string) => `/api/evidence/${evidenceId}/file`,
 
   // ---- users ----
-  listUsers: () =>
-    get<UserOut[]>('/users'),
+  listUsers: (all = false) =>
+    get<UserOut[]>(`/users${all ? '?all=true' : ''}`),
+
+  updateUser: (userId: string, body: UserUpdate) =>
+    request<UserOut>(`/users/${userId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
+  createUser: (display_name: string, email: string, password: string, global_role: string) =>
+    post<UserOut>('/users', { display_name, email, password, global_role }),
 
   // ---- assignments ----
   listAssignments: (assessmentId: string) =>

@@ -107,8 +107,22 @@ class UserOut(BaseModel):
     display_name: str
     email: str
     global_role: str
+    is_active: bool
+    created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class UserUpdate(BaseModel):
+    is_active: bool | None = None
+    global_role: str | None = None
+
+
+class UserCreate(BaseModel):
+    display_name: str
+    email: str
+    password: str
+    global_role: str = "assessor"
 
 
 class AssignmentOut(BaseModel):

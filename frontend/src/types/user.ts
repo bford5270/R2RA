@@ -3,6 +3,13 @@ export interface UserOut {
   display_name: string
   email: string
   global_role: string
+  is_active: boolean
+  created_at: string
+}
+
+export interface UserUpdate {
+  is_active?: boolean
+  global_role?: string
 }
 
 export interface AssignmentOut {
