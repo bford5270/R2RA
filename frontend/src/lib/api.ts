@@ -2,6 +2,7 @@ import type { AuthUser, LoginResponse } from '../types/auth'
 import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
+import type { EvidenceItem } from '../types/evidence'
 
 const BASE = '/api'
 
@@ -11,7 +12,7 @@ export function setToken(t: string | null) {
   _token = t
 }
 
-function authHeaders(): Record<string, string> {
+export function authHeaders(): Record<string, string> {
   return _token ? { Authorization: `Bearer ${_token}` } : {}
 }
 
@@ -45,6 +46,10 @@ function post<T>(path: string, body: unknown) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
+}
+
+function postForm<T>(path: string, formData: FormData) {
+  return request<T>(path, { method: 'POST', body: formData })
 }
 
 function del<T>(path: string) {
@@ -121,4 +126,19 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }),
+
+  // ---- evidence ----
+  listEvidence: (assessmentId: string, itemId: string) =>
+    get<EvidenceItem[]>(`/assessments/${assessmentId}/responses/${itemId}/evidence`),
+
+  uploadEvidence: (assessmentId: string, itemId: string, file: File) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    return postForm<EvidenceItem>(`/assessments/${assessmentId}/responses/${itemId}/evidence`, fd)
+  },
+
+  deleteEvidence: (assessmentId: string, itemId: string, evidenceId: string) =>
+    del<void>(`/assessments/${assessmentId}/responses/${itemId}/evidence/${evidenceId}`),
+
+  evidenceFileUrl: (evidenceId: string) => `/api/evidence/${evidenceId}/file`,
 }

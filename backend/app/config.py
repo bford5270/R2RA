@@ -14,6 +14,11 @@ class Settings(BaseSettings):
 
     content_dir: str = "../content"
 
+    # Local file storage for evidence uploads (dev); swap for S3 in prod
+    uploads_dir: str = "./uploads"
+    # Max upload size in bytes (default 10 MB)
+    max_upload_bytes: int = 10 * 1024 * 1024
+
     # Classification banner text — CUI Basic
     cui_banner: str = "CONTROLLED UNCLASSIFIED INFORMATION // BASIC"
 

@@ -5,6 +5,7 @@ import { useManifest, useSection } from '@/hooks/useContent'
 import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
 import { AcronymText } from '@/components/preview/AcronymText'
+import { EvidencePanel } from '@/components/EvidencePanel'
 import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus } from '../types/assessment'
 import type { AssessmentItem, Section, SectionManifestEntry } from '@/types/content'
 import type { CrosswalkEntry } from '../types/crosswalk'
@@ -23,14 +24,16 @@ function isVisible(section: SectionManifestEntry, missionType: string): boolean 
 type SaveState = 'idle' | 'saving' | 'saved' | 'error'
 
 interface ResponseControlsProps {
+  assessmentId: string
   itemId: string
   current: ItemResponse | undefined
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
 }
 
-function ResponseControls({ itemId, current, onSave }: ResponseControlsProps) {
+function ResponseControls({ assessmentId, itemId, current, onSave }: ResponseControlsProps) {
   const [note, setNote] = useState(current?.note ?? '')
   const [showNote, setShowNote] = useState(!!current?.note)
+  const [showAttach, setShowAttach] = useState(false)
   const [saveState, setSaveState] = useState<SaveState>('idle')
   const noteTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const status = current?.status ?? 'unanswered'
@@ -91,6 +94,14 @@ function ResponseControls({ itemId, current, onSave }: ResponseControlsProps) {
         >
           {showNote ? 'hide note' : 'add note'}
         </button>
+        <button
+          type="button"
+          onClick={() => setShowAttach(v => !v)}
+          className="text-[11px] text-neutral-400 hover:text-neutral-600"
+          title="Attach evidence"
+        >
+          📎
+        </button>
         {saveState === 'saving' && <span className="text-[10px] text-neutral-400 ml-auto">saving…</span>}
         {saveState === 'saved'  && <span className="text-[10px] text-green-600 ml-auto">saved</span>}
         {saveState === 'error'  && <span className="text-[10px] text-red-500 ml-auto">error</span>}
@@ -105,6 +116,10 @@ function ResponseControls({ itemId, current, onSave }: ResponseControlsProps) {
           className="w-full rounded border border-neutral-200 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-scarlet/40 focus:border-scarlet resize-none"
         />
       )}
+
+      {showAttach && (
+        <EvidencePanel assessmentId={assessmentId} itemId={itemId} />
+      )}
     </div>
   )
 }
@@ -114,13 +129,14 @@ function ResponseControls({ itemId, current, onSave }: ResponseControlsProps) {
 // ---------------------------------------------------------------------------
 
 interface ResponseItemProps {
+  assessmentId: string
   item: AssessmentItem
   responses: Map<string, ItemResponse>
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
   nested?: boolean
 }
 
-function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemProps) {
+function ResponseItem({ assessmentId, item, responses, onSave, nested = false }: ResponseItemProps) {
   const indent = nested ? 'pl-4 border-l border-neutral-100 ml-2' : ''
 
   if (item.type === 'group') {
@@ -131,7 +147,7 @@ function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemP
         </p>
         <div className="space-y-0">
           {item.sub_items.map(sub => (
-            <ResponseItem key={sub.id} item={sub} responses={responses} onSave={onSave} nested />
+            <ResponseItem key={sub.id} assessmentId={assessmentId} item={sub} responses={responses} onSave={onSave} nested />
           ))}
         </div>
       </div>
@@ -160,7 +176,7 @@ function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemP
             ))}
           </div>
         )}
-        <ResponseControls itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
       </div>
     )
   }
@@ -171,7 +187,7 @@ function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemP
         <p className="text-sm text-neutral-800 leading-snug mb-2">
           <AcronymText text={item.label} />
         </p>
-        <ResponseControls itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
       </div>
     )
   }
@@ -193,7 +209,7 @@ function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemP
             </span>
           ))}
         </div>
-        <ResponseControls itemId={item.id} current={current} onSave={onSave} />
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={current} onSave={onSave} />
       </div>
     )
   }
@@ -208,7 +224,7 @@ function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemP
       <p className="text-xs text-neutral-400 italic mb-2">
         {item.type === 'table_counts' ? 'Count table — record overall assessment below' : 'Y/N table — record overall assessment below'}
       </p>
-      <ResponseControls itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
+      <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
     </div>
   )
 }
@@ -218,10 +234,12 @@ function ResponseItem({ item, responses, onSave, nested = false }: ResponseItemP
 // ---------------------------------------------------------------------------
 
 function ResponseSectionView({
+  assessmentId,
   section,
   responses,
   onSave,
 }: {
+  assessmentId: string
   section: Section
   responses: Map<string, ItemResponse>
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
@@ -234,12 +252,12 @@ function ResponseSectionView({
           <div key={sub.id} className="mb-4">
             <h3 className="text-sm font-semibold text-neutral-700 mb-1 mt-3">{sub.title}</h3>
             {sub.items.map(item => (
-              <ResponseItem key={item.id} item={item} responses={responses} onSave={onSave} />
+              <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} />
             ))}
           </div>
         ))}
         {section.items.map(item => (
-          <ResponseItem key={item.id} item={item} responses={responses} onSave={onSave} />
+          <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} />
         ))}
       </div>
     </AcronymProvider>
@@ -496,6 +514,7 @@ export function AssessmentPage() {
           )}
           {section && (
             <ResponseSectionView
+              assessmentId={assessmentId!}
               section={section}
               responses={responses}
               onSave={handleSave}
