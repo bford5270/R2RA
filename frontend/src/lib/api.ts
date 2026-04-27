@@ -1,5 +1,6 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
 import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { ReadinessRow } from '../types/reports'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
@@ -184,4 +185,8 @@ export const api = {
   // ---- audit log ----
   listAuditLog: (assessmentId: string) =>
     get<AuditLogEntry[]>(`/assessments/${assessmentId}/audit`),
+
+  // ---- reports ----
+  readinessReport: () =>
+    get<ReadinessRow[]>('/reports/readiness'),
 }

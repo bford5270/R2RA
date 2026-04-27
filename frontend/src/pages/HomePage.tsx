@@ -38,6 +38,12 @@ export function HomePage() {
         </div>
         <div className="flex items-center gap-3">
           <Link
+            to="/reports/readiness"
+            className="text-xs text-neutral-500 hover:text-neutral-700"
+          >
+            Readiness
+          </Link>
+          <Link
             to="/preview"
             className="text-xs text-neutral-500 hover:text-neutral-700"
           >

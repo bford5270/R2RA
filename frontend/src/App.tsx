@@ -11,6 +11,7 @@ import { TrPage } from './pages/TrPage'
 import { TrPrintPage } from './pages/TrPrintPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AuditPage } from './pages/AuditPage'
+import { ReadinessPage } from './pages/ReadinessPage'
 
 function BannerTop() {
   return (
@@ -119,6 +120,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <AuditPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports/readiness"
+          element={
+            <ProtectedRoute>
+              <ReadinessPage />
             </ProtectedRoute>
           }
         />
