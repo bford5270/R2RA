@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 12)
-- **Current phase**: HHQ dashboard + evidence library shipped
+- **Last session**: 2026-04-27 (Session 13)
+- **Current phase**: Crosswalk SME editor complete; all Phase 2 features shipped
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `e90ba13` (feat: standing unit evidence library)
+- **Last commit**: `ab16455` (feat: crosswalk SME editor — DB-backed override layer + admin UI)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next: crosswalk editor or password-change / TOTP UX
+- **Blocked on**: Phase 3 pending stakeholder input (enclave, sponsor, SME review)
 
 ---
 
@@ -86,11 +86,16 @@ Guardrails that repeatedly bit us in earlier sessions:
 13. ~~**Audit log**~~ — **done** (`780b367`). Hash-chained audit log, wired into all mutations.
 14. ~~**User management**~~ — **done** (`de6355b`). Admin UI: create/deactivate/role-change accounts.
 
+### Phase 2 additions (complete)
+
+15. ~~**Profile / security settings**~~ — **done** (`c151ea7`). Password change + TOTP enroll/remove. `refreshUser()` in AuthContext so header badge updates. Auth-in-memory only, consistent with CUI posture.
+16. ~~**Crosswalk SME editor**~~ — **done** (`ab16455`). See session 13 log.
+
 ### Phase 3 — pending stakeholder input
 
 - **Hosting enclave** decision (drives CAC/smartcard auth integration).
 - **Sponsor identification** (flips evocative → USMC-branded).
-- **SME crosswalk review** (v0.1 → approved for field use).
+- **SME crosswalk review** (v0.1 → approved for field use; editor now exists to do this in-app).
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
@@ -118,6 +123,35 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 13: crosswalk SME editor + profile/security settings
+
+**In**: Profile page and crosswalk editor both unstarted. `MetRef.mct_task` in TS types didn't match the YAML `id` field.
+
+**Out**:
+- **Profile / security settings** (`c151ea7`):
+  - `POST /api/auth/change-password`: verifies current password (bcrypt), requires new ≥ 8 chars.
+  - `ProfilePage` at `/profile`: avatar initials, display_name/email/role. `PasswordSection` — 3-field form (current, new, confirm). `TotpSection` — shows raw secret + otpauth URI as copyable code blocks on enroll (no third-party QR library — consistent with no-external-CDN CUI posture); confirm with 6-digit input; unenroll with confirm dialog.
+  - `refreshUser()` added to `AuthContext`; called after TOTP changes so user state reflects new `totp_enrolled`.
+  - User display_name in HomePage header is now a link to `/profile`.
+
+- **Crosswalk SME editor** (`ab16455`):
+  - Migration `d4e5f6a7b8c9`: `crosswalk_overrides` (jts_item PK, wickets JSON, mets JSON, note, edited_by, edited_at) + `crosswalk_meta` (key/value singleton for status).
+  - `crosswalk_editor.py` router (admin-only): `GET /full` (all 59 items merged with DB overrides + metadata), `PUT /{item}` (save override), `DELETE /{item}` (revert to YAML base), `PATCH /status` (draft/approved toggle), `GET /export.yaml` (merged YAML download for committing).
+  - `crosswalk.py` read endpoint now merges DB overrides transparently — assessors see SME edits immediately, no restart needed.
+  - `CrosswalkEditorPage` at `/admin/crosswalk` (admin nav link in HomePage header):
+    - Left sidebar: 59 items grouped by section (pdp/c2/mroe/comms/orsop/cra/cc/blood/fac/arsra), amber dot on edited items, wicket count badge.
+    - Right panel: inline wicket/MET row editors (event_code · confidence · rationale); note textarea; Save/Revert per item.
+    - Top bar: status badge, "Mark approved"/"Reset to draft" toggle, "Export YAML" (auth-gated fetch → blob download).
+  - Fixed `MetRef.mct_task` → `MetRef.id` in TS types and assessor crosswalk panel display.
+
+**Key decisions**:
+- DB overlay (not YAML-write-back) keeps the file in version control as the authoritative canonical source; the editor is a working layer. Export + commit is the intentional path to make edits permanent.
+- `lru_cache` on `_load_crosswalk()` is still valid — YAML base is static between restarts; DB override query runs per-request but is a single indexed lookup.
+
+**Commits**: `c151ea7` (profile), `ab16455` (crosswalk editor) — both pushed.
+
+---
 
 ### 2026-04-27 — Session 12 (continued): standing unit evidence library
 
