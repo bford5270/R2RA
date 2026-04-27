@@ -132,6 +132,23 @@ def totp_confirm(
     db.commit()
 
 
+@router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
+def change_password(
+    body: dict,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Change the current user's password. Requires current password."""
+    current_pw = body.get("current_password", "")
+    new_pw = body.get("new_password", "")
+    if not verify_password(current_pw, current_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+    if len(new_pw) < 8:
+        raise HTTPException(status_code=422, detail="New password must be at least 8 characters")
+    current_user.hashed_password = hash_password(new_pw)
+    db.commit()
+
+
 @router.delete("/totp", status_code=status.HTTP_204_NO_CONTENT)
 def totp_unenroll(
     current_user: User = Depends(get_current_user),

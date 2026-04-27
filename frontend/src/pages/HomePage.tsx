@@ -57,6 +57,12 @@ export function HomePage() {
               Users
             </Link>
           )}
+          <Link
+            to="/profile"
+            className="text-xs text-neutral-500 hover:text-neutral-700"
+          >
+            {user?.display_name ?? 'Account'}
+          </Link>
           <button
             onClick={logout}
             className="text-xs text-neutral-500 hover:text-neutral-700"

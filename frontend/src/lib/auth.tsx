@@ -1,13 +1,14 @@
 import { createContext, useCallback, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { AuthUser } from '../types/auth'
-import { setToken } from './api'
+import { api, setToken } from './api'
 
 interface AuthState {
   user: AuthUser | null
   isAuthenticated: boolean
   login: (token: string, user: AuthUser) => void
   logout: () => void
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -27,8 +28,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const fresh = await api.me()
+      setUser(fresh)
+    } catch {
+      // ignore — user stays as-is
+    }
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: user !== null, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: user !== null, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

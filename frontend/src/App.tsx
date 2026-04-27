@@ -13,6 +13,7 @@ import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AuditPage } from './pages/AuditPage'
 import { ReadinessPage } from './pages/ReadinessPage'
 import { UnitLibraryPage } from './pages/UnitLibraryPage'
+import { ProfilePage } from './pages/ProfilePage'
 
 function BannerTop() {
   return (
@@ -129,6 +130,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ReadinessPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

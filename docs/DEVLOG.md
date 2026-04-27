@@ -8,11 +8,11 @@ next session can resume cleanly.
 ## Header (always current)
 
 - **Last session**: 2026-04-27 (Session 12)
-- **Current phase**: HHQ readiness dashboard shipped
+- **Current phase**: HHQ dashboard + evidence library shipped
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `5c5064b` (feat: HHQ readiness dashboard)
+- **Last commit**: `e90ba13` (feat: standing unit evidence library)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next: standing evidence library or crosswalk editor
+- **Blocked on**: nothing — next: crosswalk editor or password-change / TOTP UX
 
 ---
 
@@ -118,6 +118,34 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 12 (continued): standing unit evidence library
+
+**In**: Phase 3 evidence library not started. Existing evidence table is per-assessment only.
+
+**Out**:
+- `unit_evidence` model + migration `c3d4e5f6a7b8`: per-unit document shelf; columns:
+  id, unit_id (FK), category (roster|cert|sop|equipment|eval|other), label, description,
+  blob_ref, hash, filename, content_type, uploaded_by, uploaded_at.
+- `unit_library.py` router: `GET/POST /api/units/{uic}/library`, `DELETE /{uic}/library/{id}`,
+  `GET /{uic}/library/{id}/file`. Same MIME allowlist (JPEG/PNG/WebP/GIF/PDF/TXT) + 10 MB cap.
+  Files stored under `uploads/library/{item_id}/{filename}`.
+- `UnitLibraryPage` at `/units/:uic/library`:
+  - Upload form: label (required), category select, file picker, optional description.
+  - Category filter pills (All / Roster / Cert / SOP / Equipment / Eval / Other) with counts.
+  - `ItemRow`: file-type icon, label as authenticated-fetch link (blob URL popup), category badge,
+    description, filename + date + hash truncated. ✕ delete with confirm dialog.
+- "Unit document library →" link added to AssessmentPage sidebar.
+- Route `/units/:uic/library` registered in App.tsx.
+
+**Key decisions**:
+- Separate `unit_evidence` table (not extending `evidence`) keeps assessment evidence
+  and standing library cleanly separated; future S3 swap is identical in both paths.
+- File served via authenticated fetch → blob URL to preserve JWT-gated access.
+
+**Commits**: `e90ba13` (pushed).
+
+---
 
 ### 2026-04-27 — Session 12: HHQ readiness dashboard
 
