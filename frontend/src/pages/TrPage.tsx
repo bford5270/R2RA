@@ -285,6 +285,12 @@ export function TrPage() {
           <div className="pt-1 text-[10px] text-neutral-400 space-y-0.5">
             <p>{totalAnswered} / {tr.wickets.length} answered · <span className="text-green-600 font-semibold">{goCount} GO</span> · <span className="text-red-600 font-semibold">{noGoCount} NO-GO</span></p>
           </div>
+          <Link
+            to={`/assessments/${assessmentId}/tr/print`}
+            className="block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1 mt-1"
+          >
+            Print / Export PDF →
+          </Link>
         </div>
 
         <div className="px-2 pt-2 pb-1 border-b border-neutral-100">

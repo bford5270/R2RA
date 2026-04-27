@@ -8,6 +8,7 @@ import { CreateAssessmentPage } from './pages/CreateAssessmentPage'
 import { AssessmentPage } from './pages/AssessmentPage'
 import { PrintPage } from './pages/PrintPage'
 import { TrPage } from './pages/TrPage'
+import { TrPrintPage } from './pages/TrPrintPage'
 
 function BannerTop() {
   return (
@@ -92,6 +93,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <TrPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId/tr/print"
+          element={
+            <ProtectedRoute>
+              <TrPrintPage />
             </ProtectedRoute>
           }
         />
