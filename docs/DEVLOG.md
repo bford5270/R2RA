@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 10)
-- **Current phase**: Phase 2 complete — audit log + offline bundle shipped
+- **Last session**: 2026-04-27 (Session 11)
+- **Current phase**: Phase 1.5 complete — OIC sign-off / certification lock shipped
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `780b367` (feat: audit log + offline bundle)
+- **Last commit**: `557ca09` (feat: Phase 1.5 — OIC sign-off, certification lock)
 - **Open PR**: none yet
-- **Blocked on**: nothing — Phase 2 done; Phase 3 = hosting enclave, CAC integration
+- **Blocked on**: nothing — next: HHQ rollup dashboard (Strategy Phase 2) or evidence library
 
 ---
 
@@ -118,6 +118,42 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 11: Phase 1.5 — OIC sign-off + certification lock
+
+**In**: Phase 1.5 unstarted. Signature model + table existed. No sign-off flow, no lock.
+
+**Out**:
+- **Migration** (`b2c3d4e5f6a7`): added `print_name String(200)` to `signatures` table.
+- **Certification lock**: `upsert_response` and `upsert_tr_response` return HTTP 403 if
+  `assessment.status == "certified"`. Hard-enforced server-side.
+- **`advance_status` → certified**: requires `print_name` (non-empty); creates `Signature` row
+  with `print_name`, `signer_role`, `method=local`, `signed_at`, and `payload_hash` (SHA-256
+  of sorted response snapshot). `_snapshot_hash()` helper in assessments router.
+- **`SignatureOut` schema** + `GET /api/assessments/{id}/signatures` endpoint.
+- **`certified_at`** added to `AssessmentOut` (already on model, just not serialized).
+- **`api.certify()`** / `api.listSignatures()` added to frontend api.ts.
+- **CertifyModal**: full-screen overlay with print_name input (pre-filled from user's
+  display_name), signing capacity dropdown (Lead Assessor / TMD / Unit OIC / ARST Chief),
+  certification statement checkbox, and "Certify Assessment" submit. Opens when
+  "Advance to Certified" is clicked from `ready_for_review`.
+- **ResponseControls locked prop**: disables YES/NO/NA buttons + note textarea when
+  `locked=true`; shows "✓ Certified — read-only" label. Threaded through
+  ResponseItem → ResponseSectionView → AssessmentPage (pass `assessment.status === 'certified'`).
+- **Sidebar certification block**: green card replaces simple "✓ Certified" — shows print_name,
+  capacity label, date, and truncated payload_hash for chain-of-custody reference.
+- Jump-to-unanswered button hidden when certified (irrelevant on a locked assessment).
+
+**Key decisions**:
+- `print_name` stored on `Signature` (not just via user join) so the official signed name
+  is preserved even if the user's display_name changes.
+- Import/certify path remains lead-only for now; OIC role enforcement deferred.
+- Payload hash is SHA-256 of item_id/status/note/version tuples sorted by item_id — stable
+  enough for integrity verification without being too brittle to schema changes.
+
+**Commits**: `557ca09` (pushed).
+
+---
 
 ### 2026-04-27 — Session 10: audit log + offline bundle
 
