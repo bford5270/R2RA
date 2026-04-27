@@ -21,6 +21,18 @@ export interface Assessment {
   component: string | null
   unique_identifier: string | null
   started_at: string
+  certified_at: string | null
+}
+
+export interface SignatureOut {
+  id: string
+  assessment_id: string
+  role: string
+  signer_id: string
+  print_name: string | null
+  method: string
+  signed_at: string
+  payload_hash: string
 }
 
 export interface AssessmentCreate {

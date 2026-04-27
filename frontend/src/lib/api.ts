@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
@@ -109,6 +109,16 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: nextStatus }),
     }),
+
+  certify: (assessmentId: string, printName: string, signerRole: string) =>
+    request<Assessment>(`/assessments/${assessmentId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'certified', print_name: printName, signer_role: signerRole }),
+    }),
+
+  listSignatures: (assessmentId: string) =>
+    get<SignatureOut[]>(`/assessments/${assessmentId}/signatures`),
 
   getCrosswalk: (sectionId: string) =>
     get<CrosswalkEntry[]>(`/crosswalk/${sectionId}`),

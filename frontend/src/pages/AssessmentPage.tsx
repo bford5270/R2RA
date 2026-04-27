@@ -8,7 +8,7 @@ import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
 import { AcronymText } from '@/components/preview/AcronymText'
 import { EvidencePanel } from '@/components/EvidencePanel'
-import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus } from '../types/assessment'
+import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus, SignatureOut } from '../types/assessment'
 import type { AssessmentItem, Section, SectionManifestEntry } from '@/types/content'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { UserOut, AssignmentOut } from '../types/user'
@@ -30,10 +30,11 @@ interface ResponseControlsProps {
   assessmentId: string
   itemId: string
   current: ItemResponse | undefined
+  locked: boolean
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
 }
 
-function ResponseControls({ assessmentId, itemId, current, onSave }: ResponseControlsProps) {
+function ResponseControls({ assessmentId, itemId, current, locked, onSave }: ResponseControlsProps) {
   const [note, setNote] = useState(current?.note ?? '')
   const [showNote, setShowNote] = useState(!!current?.note)
   const [showAttach, setShowAttach] = useState(false)
@@ -79,29 +80,35 @@ function ResponseControls({ assessmentId, itemId, current, onSave }: ResponseCon
 
   return (
     <div className="mt-2 flex flex-col gap-1.5">
+      {locked && (
+        <p className="text-[10px] text-green-600 font-semibold">✓ Certified — read-only</p>
+      )}
       <div className="flex items-center gap-1.5">
         {(['yes', 'no', 'na'] as ResponseStatus[]).map(s => (
           <button
             key={s}
             type="button"
-            onClick={() => handleToggle(s)}
-            className={`${btnBase} ${status === s ? active(s) : inactive}`}
+            onClick={() => !locked && handleToggle(s)}
+            disabled={locked}
+            className={`${btnBase} ${status === s ? active(s) : inactive} ${locked ? 'opacity-50 cursor-default' : ''}`}
           >
             {s.toUpperCase()}
           </button>
         ))}
-        <button
-          type="button"
-          onClick={() => setShowNote(v => !v)}
-          className="text-[11px] text-neutral-400 hover:text-neutral-600 ml-1"
-        >
-          {showNote ? 'hide note' : 'add note'}
-        </button>
+        {!locked && (
+          <button
+            type="button"
+            onClick={() => setShowNote(v => !v)}
+            className="text-[11px] text-neutral-400 hover:text-neutral-600 ml-1"
+          >
+            {showNote ? 'hide note' : 'add note'}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setShowAttach(v => !v)}
           className="text-[11px] text-neutral-400 hover:text-neutral-600"
-          title="Attach evidence"
+          title="View evidence"
         >
           📎
         </button>
@@ -115,8 +122,9 @@ function ResponseControls({ assessmentId, itemId, current, onSave }: ResponseCon
           rows={2}
           placeholder="Note…"
           value={note}
-          onChange={e => handleNoteChange(e.target.value)}
-          className="w-full rounded border border-neutral-200 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-scarlet/40 focus:border-scarlet resize-none"
+          readOnly={locked}
+          onChange={e => !locked && handleNoteChange(e.target.value)}
+          className={`w-full rounded border border-neutral-200 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-scarlet/40 focus:border-scarlet resize-none ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
         />
       )}
 
@@ -135,12 +143,13 @@ interface ResponseItemProps {
   assessmentId: string
   item: AssessmentItem
   responses: Map<string, ItemResponse>
+  locked: boolean
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
   onSaveCapture: (itemId: string, captureData: Record<string, unknown>) => Promise<void>
   nested?: boolean
 }
 
-function ResponseItem({ assessmentId, item, responses, onSave, onSaveCapture, nested = false }: ResponseItemProps) {
+function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCapture, nested = false }: ResponseItemProps) {
   const indent = nested ? 'pl-4 border-l border-neutral-100 ml-2' : ''
 
   // Capture field state — hooks must be unconditional; only used for binary items with capture fields
@@ -169,7 +178,7 @@ function ResponseItem({ assessmentId, item, responses, onSave, onSaveCapture, ne
         </p>
         <div className="space-y-0">
           {item.sub_items.map(sub => (
-            <ResponseItem key={sub.id} assessmentId={assessmentId} item={sub} responses={responses} onSave={onSave} onSaveCapture={onSaveCapture} nested />
+            <ResponseItem key={sub.id} assessmentId={assessmentId} item={sub} responses={responses} locked={locked} onSave={onSave} onSaveCapture={onSaveCapture} nested />
           ))}
         </div>
       </div>
@@ -200,7 +209,7 @@ function ResponseItem({ assessmentId, item, responses, onSave, onSaveCapture, ne
             ))}
           </div>
         )}
-        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
       </div>
     )
   }
@@ -211,7 +220,7 @@ function ResponseItem({ assessmentId, item, responses, onSave, onSaveCapture, ne
         <p className="text-sm text-neutral-800 leading-snug mb-2">
           <AcronymText text={item.label} />
         </p>
-        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
       </div>
     )
   }
@@ -261,12 +270,14 @@ function ResponseSectionView({
   assessmentId,
   section,
   responses,
+  locked,
   onSave,
   onSaveCapture,
 }: {
   assessmentId: string
   section: Section
   responses: Map<string, ItemResponse>
+  locked: boolean
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
   onSaveCapture: (itemId: string, captureData: Record<string, unknown>) => Promise<void>
 }) {
@@ -278,12 +289,12 @@ function ResponseSectionView({
           <div key={sub.id} className="mb-4">
             <h3 className="text-sm font-semibold text-neutral-700 mb-1 mt-3">{sub.title}</h3>
             {sub.items.map(item => (
-              <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} onSaveCapture={onSaveCapture} />
+              <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} locked={locked} onSave={onSave} onSaveCapture={onSaveCapture} />
             ))}
           </div>
         ))}
         {section.items.map(item => (
-          <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} onSaveCapture={onSaveCapture} />
+          <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} locked={locked} onSave={onSave} onSaveCapture={onSaveCapture} />
         ))}
       </div>
     </AcronymProvider>
@@ -376,6 +387,127 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
         ))}
       </div>
     </aside>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Certify modal
+// ---------------------------------------------------------------------------
+
+const SIGNER_ROLES = [
+  { value: 'lead_assessor',    label: 'Lead Assessor / Certifier' },
+  { value: 'tmd',              label: 'TMD Representative' },
+  { value: 'unit_oic',         label: 'Unit OIC / SMO' },
+  { value: 'arst_chief',       label: 'ARST Chief' },
+]
+
+function CertifyModal({
+  assessmentId,
+  defaultName,
+  onCertified,
+  onCancel,
+}: {
+  assessmentId: string
+  defaultName: string
+  onCertified: (a: Assessment) => void
+  onCancel: () => void
+}) {
+  const [printName, setPrintName] = useState(defaultName)
+  const [signerRole, setSignerRole] = useState('lead_assessor')
+  const [confirmed, setConfirmed] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!confirmed) { setError('Check the certification statement.'); return }
+    if (!printName.trim()) { setError('Print name is required.'); return }
+    setSaving(true)
+    setError(null)
+    try {
+      const updated = await api.certify(assessmentId, printName.trim(), signerRole)
+      onCertified(updated)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Certification failed.')
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6 space-y-4"
+      >
+        <div>
+          <h2 className="text-base font-bold text-neutral-900">Sign and Certify</h2>
+          <p className="text-xs text-neutral-500 mt-0.5">
+            This action locks the assessment. Responses cannot be modified after certification.
+          </p>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-1">
+            Official printed name / rank / title
+          </label>
+          <input
+            required
+            value={printName}
+            onChange={e => setPrintName(e.target.value)}
+            className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+            placeholder="e.g. Capt. Jane Smith, USMC, TMD"
+          />
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-1">
+            Signing capacity
+          </label>
+          <select
+            value={signerRole}
+            onChange={e => setSignerRole(e.target.value)}
+            className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+          >
+            {SIGNER_ROLES.map(r => (
+              <option key={r.value} value={r.value}>{r.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={confirmed}
+            onChange={e => setConfirmed(e.target.checked)}
+            className="mt-0.5 accent-scarlet"
+          />
+          <span className="text-xs text-neutral-700 leading-snug">
+            I certify that this Role 2 Readiness Assessment is complete, accurate to the best of
+            my knowledge, and reflects the current capabilities of the assessed unit.
+          </span>
+        </label>
+
+        {error && <p className="text-xs text-red-600">{error}</p>}
+
+        <div className="flex gap-2 pt-1">
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex-1 rounded bg-scarlet text-white text-sm font-semibold py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+          >
+            {saving ? 'Certifying…' : 'Certify Assessment'}
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={saving}
+            className="flex-1 rounded border border-neutral-200 text-sm text-neutral-600 py-2 hover:border-neutral-400 transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
 
@@ -714,8 +846,10 @@ export function AssessmentPage() {
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [responses, setResponses] = useState<Map<string, ItemResponse>>(new Map())
   const [assignments, setAssignments] = useState<AssignmentOut[]>([])
+  const [signatures, setSignatures] = useState<SignatureOut[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
   const [advancing, setAdvancing] = useState(false)
+  const [showCertifyModal, setShowCertifyModal] = useState(false)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -723,10 +857,12 @@ export function AssessmentPage() {
       api.getAssessment(assessmentId),
       api.listResponses(assessmentId),
       api.listAssignments(assessmentId),
-    ]).then(([a, rs, asgns]) => {
+      api.listSignatures(assessmentId),
+    ]).then(([a, rs, asgns, sigs]) => {
       setAssessment(a)
       setResponses(new Map(rs.map(r => [r.item_id, r])))
       setAssignments(asgns)
+      setSignatures(sigs)
     }).catch(err => setLoadError(err instanceof Error ? err.message : 'Failed to load'))
   }, [assessmentId])
 
@@ -758,6 +894,10 @@ export function AssessmentPage() {
     if (!assessment || !assessmentId) return
     const next = STATUS_NEXT[assessment.status]
     if (!next) return
+    if (next === 'certified') {
+      setShowCertifyModal(true)
+      return
+    }
     setAdvancing(true)
     try {
       const updated = await api.advanceStatus(assessmentId, next)
@@ -841,16 +981,32 @@ export function AssessmentPage() {
             </button>
           )}
 
-          {assessment.status === 'certified' && (
-            <p className="text-[10px] text-green-600 font-semibold text-center">✓ Certified</p>
+          {assessment.status === 'certified' && signatures.length > 0 && (
+            <div className="rounded border border-green-200 bg-green-50 p-2 space-y-0.5">
+              <p className="text-[10px] font-bold text-green-700 uppercase tracking-wide">✓ Certified</p>
+              {signatures.map(sig => (
+                <div key={sig.id}>
+                  <p className="text-[10px] text-green-800 font-semibold">{sig.print_name}</p>
+                  <p className="text-[9px] text-green-600">
+                    {SIGNER_ROLES.find(r => r.value === sig.role)?.label ?? sig.role} ·{' '}
+                    {new Date(sig.signed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                  <p className="text-[8px] text-green-400 font-mono truncate" title={sig.payload_hash}>
+                    {sig.payload_hash.slice(0, 16)}…
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
 
-          <button
-            onClick={jumpToUnanswered}
-            className="w-full rounded border border-neutral-200 text-[11px] text-neutral-500 px-3 py-1 hover:border-neutral-400 hover:text-neutral-700 transition-colors"
-          >
-            → Jump to first unanswered
-          </button>
+          {assessment.status !== 'certified' && (
+            <button
+              onClick={jumpToUnanswered}
+              className="w-full rounded border border-neutral-200 text-[11px] text-neutral-500 px-3 py-1 hover:border-neutral-400 hover:text-neutral-700 transition-colors"
+            >
+              → Jump to first unanswered
+            </button>
+          )}
 
           <div className="flex gap-2 pt-0.5">
             <Link
@@ -902,6 +1058,7 @@ export function AssessmentPage() {
               assessmentId={assessmentId!}
               section={section}
               responses={responses}
+              locked={assessment?.status === 'certified'}
               onSave={handleSave}
               onSaveCapture={handleSaveCapture}
             />
@@ -911,6 +1068,19 @@ export function AssessmentPage() {
 
       {/* Right pane — T&R crosswalk */}
       <CrosswalkPanel sectionId={effectiveSectionId} assessmentId={assessmentId!} />
+
+      {showCertifyModal && (
+        <CertifyModal
+          assessmentId={assessmentId!}
+          defaultName={currentUser?.display_name ?? ''}
+          onCertified={updated => {
+            setAssessment(updated)
+            setShowCertifyModal(false)
+            api.listSignatures(assessmentId!).then(setSignatures)
+          }}
+          onCancel={() => setShowCertifyModal(false)}
+        />
+      )}
     </div>
   )
 }

@@ -18,5 +18,7 @@ class Signature(Base):
     # method: local | totp | cac
     method: Mapped[str] = mapped_column(String(10))
     signed_at: Mapped[datetime] = mapped_column(DateTime)
+    # official printed name/title (e.g. "Capt. Jane Smith, USMC, TMD")
+    print_name: Mapped[str | None] = mapped_column(String(200), nullable=True)
     # sha256 of the assessment snapshot at time of signing
     payload_hash: Mapped[str] = mapped_column(String(64))

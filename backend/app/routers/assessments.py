@@ -11,7 +11,11 @@ from app.models.response import Response
 from app.models.unit import Unit
 from app.models.user import User
 from app.models.tr_response import TrResponse
+import hashlib
+import json
+
 from app.audit import append_entry
+from app.models.signature import Signature
 from app.schemas.assessment import (
     AssessmentCreate,
     AssessmentOut,
@@ -20,12 +24,29 @@ from app.schemas.assessment import (
     AuditLogOut,
     ResponseOut,
     ResponseUpsert,
+    SignatureOut,
     StatusAdvance,
     TrResponseOut,
     TrResponseUpsert,
 )
 
 router = APIRouter(prefix="/api/assessments", tags=["assessments"])
+
+
+def _snapshot_hash(db: Session, assessment_id: str) -> str:
+    """SHA-256 of a stable JSON snapshot of all responses at time of signing."""
+    responses = (
+        db.query(Response)
+        .filter(Response.assessment_id == assessment_id)
+        .order_by(Response.item_id)
+        .all()
+    )
+    payload = json.dumps(
+        [{"item_id": r.item_id, "status": r.status, "note": r.note, "version": r.version}
+         for r in responses],
+        sort_keys=True,
+    )
+    return hashlib.sha256(payload.encode()).hexdigest()
 
 
 def _unit_upsert(db: Session, uic: str, name: str) -> Unit:
@@ -162,7 +183,9 @@ def upsert_response(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id)
+    if assessment.status == "certified":
+        raise HTTPException(status_code=403, detail="Assessment is certified and locked")
     response = (
         db.query(Response)
         .filter(
@@ -227,10 +250,28 @@ def advance_status(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Cannot transition from '{assessment.status}' to '{body.status}'",
         )
-    old_status = assessment.status
-    assessment.status = body.status
     if body.status == "certified":
-        assessment.certified_at = datetime.now(timezone.utc)
+        if not body.print_name or not body.print_name.strip():
+            raise HTTPException(status_code=422, detail="print_name is required when certifying")
+
+    old_status = assessment.status
+    now = datetime.now(timezone.utc)
+    assessment.status = body.status
+
+    if body.status == "certified":
+        assessment.certified_at = now
+        sig = Signature(
+            id=str(uuid.uuid4()),
+            assessment_id=assessment_id,
+            role=body.signer_role or "lead_assessor",
+            signer_id=current_user.id,
+            print_name=body.print_name.strip(),
+            method="local",
+            signed_at=now,
+            payload_hash=_snapshot_hash(db, assessment_id),
+        )
+        db.add(sig)
+
     append_entry(
         db, current_user.id, "assessment.status", "assessment",
         assessment_id, {"status": old_status}, {"status": body.status},
@@ -264,7 +305,9 @@ def upsert_tr_response(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id)
+    if assessment.status == "certified":
+        raise HTTPException(status_code=403, detail="Assessment is certified and locked")
     tr = (
         db.query(TrResponse)
         .filter(TrResponse.assessment_id == assessment_id, TrResponse.event_code == event_code)
@@ -413,6 +456,26 @@ def delete_assignment(
     )
     db.delete(assignment)
     db.commit()
+
+
+# ---------------------------------------------------------------------------
+# Signatures
+# ---------------------------------------------------------------------------
+
+
+@router.get("/{assessment_id}/signatures", response_model=list[SignatureOut])
+def list_signatures(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    return (
+        db.query(Signature)
+        .filter(Signature.assessment_id == assessment_id)
+        .order_by(Signature.signed_at.desc())
+        .all()
+    )
 
 
 # ---------------------------------------------------------------------------

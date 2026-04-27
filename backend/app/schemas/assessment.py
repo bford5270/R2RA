@@ -37,12 +37,16 @@ class AssessmentOut(BaseModel):
     component: str | None
     unique_identifier: str | None
     started_at: datetime
+    certified_at: datetime | None = None
 
     model_config = {"from_attributes": True}
 
 
 class StatusAdvance(BaseModel):
     status: str
+    # Required when status == "certified"
+    print_name: str | None = None
+    signer_role: str | None = None
 
     @field_validator("status")
     @classmethod
@@ -140,6 +144,19 @@ class AssignmentOut(BaseModel):
 class AssignmentUpsert(BaseModel):
     role: str = "contributor"
     scope_ids: list[str] = []
+
+
+class SignatureOut(BaseModel):
+    id: str
+    assessment_id: str
+    role: str
+    signer_id: str
+    print_name: str | None
+    method: str
+    signed_at: datetime
+    payload_hash: str
+
+    model_config = {"from_attributes": True}
 
 
 class AuditLogOut(BaseModel):
