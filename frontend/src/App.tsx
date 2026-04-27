@@ -14,6 +14,7 @@ import { AuditPage } from './pages/AuditPage'
 import { ReadinessPage } from './pages/ReadinessPage'
 import { UnitLibraryPage } from './pages/UnitLibraryPage'
 import { ProfilePage } from './pages/ProfilePage'
+import { CrosswalkEditorPage } from './pages/CrosswalkEditorPage'
 
 function BannerTop() {
   return (
@@ -138,6 +139,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/crosswalk"
+          element={
+            <ProtectedRoute>
+              <CrosswalkEditorPage />
             </ProtectedRoute>
           }
         />

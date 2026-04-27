@@ -378,8 +378,8 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
               </div>
             ))}
             {entry.mets?.map(m => (
-              <div key={m.mct_task} className="mb-1 pl-2 border-l-2 border-blue-100">
-                <span className="font-mono text-blue-600 text-[10px]">MCT {m.mct_task}</span>
+              <div key={m.id} className="mb-1 pl-2 border-l-2 border-blue-100">
+                <span className="font-mono text-blue-600 text-[10px]">{m.id}</span>
                 <span className={`ml-1.5 text-[10px] ${confidenceColor(m.confidence)}`}>{m.confidence}</span>
               </div>
             ))}

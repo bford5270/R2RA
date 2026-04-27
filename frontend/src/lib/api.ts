@@ -2,7 +2,7 @@ import type { AuthUser, LoginResponse } from '../types/auth'
 import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
-import type { CrosswalkEntry } from '../types/crosswalk'
+import type { CrosswalkEntry, CrosswalkEditorFull } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
 import type { UserOut, UserUpdate, AssignmentOut, AssignmentUpsert } from '../types/user'
@@ -199,6 +199,32 @@ export const api = {
   totpConfirm: (secret: string, code: string) =>
     post<void>('/auth/totp/confirm', { secret, code }),
   totpUnenroll: () => del<void>('/auth/totp'),
+
+  // ---- crosswalk editor (admin only) ----
+  crosswalkEditorFull: () =>
+    get<CrosswalkEditorFull>('/crosswalk-editor/full'),
+
+  crosswalkEditorStatus: () =>
+    get<{ status: string }>('/crosswalk-editor/status'),
+
+  crosswalkEditorSetStatus: (status: string) =>
+    request<{ status: string }>('/crosswalk-editor/status', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    }),
+
+  crosswalkEditorSave: (jtsItem: string, body: { wickets: unknown[]; mets: unknown[]; note: string }) =>
+    request<CrosswalkEntry>(`/crosswalk-editor/${encodeURIComponent(jtsItem)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
+  crosswalkEditorRevert: (jtsItem: string) =>
+    del<{ jts_item: string; reverted: boolean }>(`/crosswalk-editor/${encodeURIComponent(jtsItem)}`),
+
+  crosswalkEditorExportUrl: () => `${BASE}/crosswalk-editor/export.yaml`,
 
   // ---- unit library ----
   listLibrary: (uic: string) =>
