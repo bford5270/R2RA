@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../lib/api'
+import { useAuth } from '../lib/auth'
 import { useManifest, useSection } from '@/hooks/useContent'
 import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
@@ -9,6 +10,7 @@ import { EvidencePanel } from '@/components/EvidencePanel'
 import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus } from '../types/assessment'
 import type { AssessmentItem, Section, SectionManifestEntry } from '@/types/content'
 import type { CrosswalkEntry } from '../types/crosswalk'
+import type { UserOut, AssignmentOut } from '../types/user'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 
 function isVisible(section: SectionManifestEntry, missionType: string): boolean {
@@ -377,12 +379,207 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
 }
 
 // ---------------------------------------------------------------------------
+// Team panel
+// ---------------------------------------------------------------------------
+
+function initials(name: string): string {
+  return name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('')
+}
+
+function TeamPanel({
+  assessmentId,
+  leadId,
+  currentUserId,
+  assignments,
+  visibleSections,
+  onAssignmentsChange,
+}: {
+  assessmentId: string
+  leadId: string
+  currentUserId: string
+  assignments: AssignmentOut[]
+  visibleSections: SectionManifestEntry[]
+  onAssignmentsChange: (updated: AssignmentOut[]) => void
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+  const [allUsers, setAllUsers] = useState<UserOut[]>([])
+  const [selectedUserId, setSelectedUserId] = useState('')
+  const [selectedSections, setSelectedSections] = useState<string[]>([])
+  const [saving, setSaving] = useState(false)
+  const isLead = currentUserId === leadId
+
+  useEffect(() => {
+    if (showForm && allUsers.length === 0) {
+      api.listUsers().then(setAllUsers).catch(() => {})
+    }
+  }, [showForm, allUsers.length])
+
+  const contributors = assignments.filter(a => a.role !== 'lead')
+  const lead = assignments.find(a => a.role === 'lead')
+
+  async function handleAssign() {
+    if (!selectedUserId) return
+    setSaving(true)
+    try {
+      const updated = await api.upsertAssignment(assessmentId, selectedUserId, {
+        role: 'contributor',
+        scope_ids: selectedSections,
+      })
+      const next = [...assignments.filter(a => a.user_id !== selectedUserId), updated]
+      onAssignmentsChange(next)
+      setShowForm(false)
+      setSelectedUserId('')
+      setSelectedSections([])
+    } catch {
+      // leave form open on error
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleRemove(a: AssignmentOut) {
+    try {
+      await api.deleteAssignment(assessmentId, a.id)
+      onAssignmentsChange(assignments.filter(x => x.id !== a.id))
+    } catch {
+      // ignore
+    }
+  }
+
+  function toggleSection(id: string) {
+    setSelectedSections(prev =>
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    )
+  }
+
+  const unassignedUsers = allUsers.filter(u =>
+    u.id !== leadId && !assignments.some(a => a.user_id === u.id)
+  )
+
+  return (
+    <div className="border-t border-neutral-100 pt-2 mt-1">
+      <button
+        onClick={() => setExpanded(v => !v)}
+        className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-600"
+      >
+        <span>Team ({assignments.length})</span>
+        <span>{expanded ? '▲' : '▼'}</span>
+      </button>
+
+      {expanded && (
+        <div className="px-3 pb-2 space-y-1.5">
+          {/* Lead */}
+          {lead && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-scarlet text-white text-[9px] font-bold shrink-0">
+                {initials(lead.display_name)}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold text-neutral-700 truncate">{lead.display_name}</p>
+                <p className="text-[9px] text-neutral-400">Lead Assessor</p>
+              </div>
+            </div>
+          )}
+
+          {/* Contributors */}
+          {contributors.map(a => (
+            <div key={a.id} className="flex items-start gap-2">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-[9px] font-bold shrink-0 mt-0.5">
+                {initials(a.display_name)}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] font-semibold text-neutral-700 truncate">{a.display_name}</p>
+                <p className="text-[9px] text-neutral-400">
+                  {a.scope_ids.length === 0
+                    ? 'All sections'
+                    : a.scope_ids.map(id => visibleSections.find(s => s.id === id)?.title ?? id).join(', ')}
+                </p>
+              </div>
+              {isLead && (
+                <button
+                  onClick={() => handleRemove(a)}
+                  className="text-[10px] text-neutral-300 hover:text-red-500 shrink-0 mt-0.5"
+                  title="Remove assignment"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          ))}
+
+          {/* Add contributor button (lead only) */}
+          {isLead && !showForm && (
+            <button
+              onClick={() => setShowForm(true)}
+              className="w-full text-[10px] text-neutral-400 hover:text-scarlet border border-dashed border-neutral-200 hover:border-scarlet rounded py-1 transition-colors"
+            >
+              + Add contributor
+            </button>
+          )}
+
+          {/* Assignment form */}
+          {isLead && showForm && (
+            <div className="border border-neutral-200 rounded p-2 space-y-2 bg-neutral-50">
+              <select
+                value={selectedUserId}
+                onChange={e => setSelectedUserId(e.target.value)}
+                className="w-full text-xs rounded border border-neutral-200 px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+              >
+                <option value="">Select person…</option>
+                {unassignedUsers.map(u => (
+                  <option key={u.id} value={u.id}>{u.display_name}</option>
+                ))}
+              </select>
+
+              <div className="space-y-1">
+                <p className="text-[9px] text-neutral-400 font-semibold uppercase tracking-wide">Assign sections (empty = all)</p>
+                <div className="max-h-32 overflow-y-auto space-y-0.5">
+                  {visibleSections.map(s => (
+                    <label key={s.id} className="flex items-center gap-1.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedSections.includes(s.id)}
+                        onChange={() => toggleSection(s.id)}
+                        className="w-3 h-3 accent-scarlet"
+                      />
+                      <span className="text-[10px] text-neutral-700 leading-snug">{s.title}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-1.5">
+                <button
+                  onClick={handleAssign}
+                  disabled={!selectedUserId || saving}
+                  className="flex-1 rounded bg-scarlet text-white text-[10px] font-semibold py-1 hover:opacity-90 disabled:opacity-50"
+                >
+                  {saving ? 'Saving…' : 'Assign'}
+                </button>
+                <button
+                  onClick={() => { setShowForm(false); setSelectedUserId(''); setSelectedSections([]) }}
+                  className="flex-1 rounded border border-neutral-200 text-[10px] text-neutral-500 py-1 hover:border-neutral-400"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 export function AssessmentPage() {
   const { assessmentId } = useParams<{ assessmentId: string }>()
   const navigate = useNavigate()
+  const { user: currentUser } = useAuth()
   const { data: manifest, isLoading: manifestLoading } = useManifest()
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null)
   const { data: section, isLoading: sectionLoading } = useSection(
@@ -391,6 +588,7 @@ export function AssessmentPage() {
 
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [responses, setResponses] = useState<Map<string, ItemResponse>>(new Map())
+  const [assignments, setAssignments] = useState<AssignmentOut[]>([])
   const [loadError, setLoadError] = useState<string | null>(null)
   const [advancing, setAdvancing] = useState(false)
 
@@ -399,9 +597,11 @@ export function AssessmentPage() {
     Promise.all([
       api.getAssessment(assessmentId),
       api.listResponses(assessmentId),
-    ]).then(([a, rs]) => {
+      api.listAssignments(assessmentId),
+    ]).then(([a, rs, asgns]) => {
       setAssessment(a)
       setResponses(new Map(rs.map(r => [r.item_id, r])))
+      setAssignments(asgns)
     }).catch(err => setLoadError(err instanceof Error ? err.message : 'Failed to load'))
   }, [assessmentId])
 
@@ -541,12 +741,21 @@ export function AssessmentPage() {
               Print / PDF →
             </Link>
           </div>
+          <TeamPanel
+            assessmentId={assessmentId!}
+            leadId={assessment.lead_id ?? ''}
+            currentUserId={currentUser?.id ?? ''}
+            assignments={assignments}
+            visibleSections={visibleSections}
+            onAssignmentsChange={setAssignments}
+          />
         </div>
         <SectionNav
           sections={visibleSections}
           activeSectionId={effectiveSectionId}
           onSelect={setActiveSectionId}
           responses={responses}
+          assignments={assignments}
         />
       </aside>
 

@@ -14,6 +14,8 @@ from app.models.tr_response import TrResponse
 from app.schemas.assessment import (
     AssessmentCreate,
     AssessmentOut,
+    AssignmentOut,
+    AssignmentUpsert,
     ResponseOut,
     ResponseUpsert,
     StatusAdvance,
@@ -40,6 +42,7 @@ def _assessment_out(assessment: Assessment, unit: Unit) -> AssessmentOut:
         unit_uic=unit.uic,
         unit_name=unit.name,
         mission_type=assessment.mission_type,
+        lead_id=assessment.lead_id,
         status=assessment.status,
         service=assessment.service,
         component=assessment.component,
@@ -285,3 +288,97 @@ def _require_assessment(db: Session, assessment_id: str) -> Assessment:
     if not a:
         raise HTTPException(status_code=404, detail="Assessment not found")
     return a
+
+
+def _assignment_out(a: AssessmentAssignment, u: User) -> AssignmentOut:
+    return AssignmentOut(
+        id=a.id,
+        assessment_id=a.assessment_id,
+        user_id=a.user_id,
+        display_name=u.display_name,
+        email=u.email,
+        role=a.role,
+        scope_ids=a.scope_ids or [],
+        status=a.status,
+        assigned_at=a.assigned_at,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Assignments
+# ---------------------------------------------------------------------------
+
+
+@router.get("/{assessment_id}/assignments", response_model=list[AssignmentOut])
+def list_assignments(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    rows = (
+        db.query(AssessmentAssignment, User)
+        .join(User, AssessmentAssignment.user_id == User.id)
+        .filter(AssessmentAssignment.assessment_id == assessment_id)
+        .all()
+    )
+    return [_assignment_out(a, u) for a, u in rows]
+
+
+@router.put("/{assessment_id}/assignments/{user_id}", response_model=AssignmentOut)
+def upsert_assignment(
+    assessment_id: str,
+    user_id: str,
+    body: AssignmentUpsert,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    assessment = _require_assessment(db, assessment_id)
+    if assessment.lead_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the lead assessor can manage assignments")
+    user = db.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    assignment = (
+        db.query(AssessmentAssignment)
+        .filter(
+            AssessmentAssignment.assessment_id == assessment_id,
+            AssessmentAssignment.user_id == user_id,
+        )
+        .first()
+    )
+    if assignment is None:
+        assignment = AssessmentAssignment(
+            id=str(uuid.uuid4()),
+            assessment_id=assessment_id,
+            user_id=user_id,
+            role=body.role,
+            scope_ids=body.scope_ids,
+            status="assigned",
+        )
+        db.add(assignment)
+    else:
+        assignment.role = body.role
+        assignment.scope_ids = body.scope_ids
+    db.commit()
+    db.refresh(assignment)
+    return _assignment_out(assignment, user)
+
+
+@router.delete("/{assessment_id}/assignments/{assignment_id}", status_code=204)
+def delete_assignment(
+    assessment_id: str,
+    assignment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    assessment = _require_assessment(db, assessment_id)
+    if assessment.lead_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Only the lead assessor can manage assignments")
+    assignment = db.get(AssessmentAssignment, assignment_id)
+    if not assignment or assignment.assessment_id != assessment_id:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    if assignment.role == "lead":
+        raise HTTPException(status_code=400, detail="Cannot remove the lead assignment")
+    db.delete(assignment)
+    db.commit()

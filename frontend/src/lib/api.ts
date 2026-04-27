@@ -3,6 +3,7 @@ import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert, TrResp
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
+import type { UserOut, AssignmentOut, AssignmentUpsert } from '../types/user'
 
 const BASE = '/api'
 
@@ -141,4 +142,22 @@ export const api = {
     del<void>(`/assessments/${assessmentId}/responses/${itemId}/evidence/${evidenceId}`),
 
   evidenceFileUrl: (evidenceId: string) => `/api/evidence/${evidenceId}/file`,
+
+  // ---- users ----
+  listUsers: () =>
+    get<UserOut[]>('/users'),
+
+  // ---- assignments ----
+  listAssignments: (assessmentId: string) =>
+    get<AssignmentOut[]>(`/assessments/${assessmentId}/assignments`),
+
+  upsertAssignment: (assessmentId: string, userId: string, body: AssignmentUpsert) =>
+    request<AssignmentOut>(`/assessments/${assessmentId}/assignments/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
+  deleteAssignment: (assessmentId: string, assignmentId: string) =>
+    del<void>(`/assessments/${assessmentId}/assignments/${assignmentId}`),
 }

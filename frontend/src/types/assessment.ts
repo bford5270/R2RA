@@ -15,6 +15,7 @@ export interface Assessment {
   unit_uic: string
   unit_name: string
   mission_type: MissionType
+  lead_id: string
   status: AssessmentStatus
   service: string | null
   component: string | null

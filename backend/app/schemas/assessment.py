@@ -31,6 +31,7 @@ class AssessmentOut(BaseModel):
     unit_uic: str
     unit_name: str
     mission_type: str
+    lead_id: str
     status: str
     service: str | None
     component: str | None
@@ -99,3 +100,29 @@ class TrResponseOut(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class UserOut(BaseModel):
+    id: str
+    display_name: str
+    email: str
+    global_role: str
+
+    model_config = {"from_attributes": True}
+
+
+class AssignmentOut(BaseModel):
+    id: str
+    assessment_id: str
+    user_id: str
+    display_name: str
+    email: str
+    role: str
+    scope_ids: list[str]
+    status: str
+    assigned_at: datetime
+
+
+class AssignmentUpsert(BaseModel):
+    role: str = "contributor"
+    scope_ids: list[str] = []
