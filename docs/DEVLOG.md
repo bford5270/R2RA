@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 9)
-- **Current phase**: Phase 1 complete — all 11 planned items shipped
+- **Last session**: 2026-04-27 (Session 10)
+- **Current phase**: Phase 2 complete — audit log + offline bundle shipped
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `a22437b` (feat: multi-assessor role assignment)
+- **Last commit**: `780b367` (feat: audit log + offline bundle)
 - **Open PR**: none yet
-- **Blocked on**: nothing — next priorities are offline mode / audit log / user management
+- **Blocked on**: nothing — Phase 2 done; Phase 3 = hosting enclave, CAC integration
 
 ---
 
@@ -80,11 +80,17 @@ Guardrails that repeatedly bit us in earlier sessions:
     table_yn rows rendered as reference checklist; signature/certification block.
 11. ~~**Multi-assessor role assignment**~~ — **done** (`a22437b`). See session 9 log.
 
-### Phase 2 — next priorities
+### Phase 2 — complete
 
-12. **Offline mode** — Service Worker shell + IndexedDB + encrypted `.r2ra` bundle.
-13. **Audit log** — append-only, hash-chained mutations (actor, before/after, timestamp).
-14. **User management** — admin UI to create/deactivate accounts (currently seeded only).
+12. ~~**Offline mode**~~ — **done** (`780b367`). Service Worker + AES-GCM encrypted `.r2ra` bundle.
+13. ~~**Audit log**~~ — **done** (`780b367`). Hash-chained audit log, wired into all mutations.
+14. ~~**User management**~~ — **done** (`de6355b`). Admin UI: create/deactivate/role-change accounts.
+
+### Phase 3 — pending stakeholder input
+
+- **Hosting enclave** decision (drives CAC/smartcard auth integration).
+- **Sponsor identification** (flips evocative → USMC-branded).
+- **SME crosswalk review** (v0.1 → approved for field use).
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
@@ -112,6 +118,45 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 10: audit log + offline bundle
+
+**In**: Phase 2 priorities — audit log and offline mode. Admin user management already
+shipped in Session 9 (items 13+14). Audit log model existed; no helper or endpoints. No SW.
+
+**Out**:
+- **Audit log** (`780b367`):
+  - `backend/app/audit.py`: `append_entry(db, actor_id, action, entity_type, entity_id,
+    before, after)` — SHA-256 hash-chain (prev row's hash → new hash), single-call helper.
+  - Wired into 5 mutation endpoints: `upsert_response`, `upsert_tr_response`, `advance_status`,
+    `upsert_assignment`, `delete_assignment`. before/after payloads capture status/note/role.
+  - `AuditLogOut` schema added; `GET /api/assessments/{id}/audit` returns last 200 entries
+    (scoped by `entity_id.startswith(assessment_id)`), newest-first.
+  - `AuditPage` (`/assessments/:id/audit`): collapsible entry rows showing timestamp, action
+    badge, before→after diff summary; expand shows raw JSON + entity/actor info.
+  - "Audit log →" link added to AssessmentPage sidebar nav.
+
+- **Offline mode** (`780b367`):
+  - `public/sw.js`: registers as service worker; cache-first for static assets (stale-while-
+    revalidate), network-first for navigation (falls back to cached `/index.html`), transparent
+    for all `/api/` calls. Auto-deletes old cache versions on activate.
+  - SW registered on window `load` in `main.tsx`.
+  - `lib/bundle.ts`: `encryptBundle(payload, passphrase)` → PBKDF2-SHA256 (250k iter) →
+    AES-GCM 256-bit; binary layout: `salt(16) | iv(12) | ciphertext`. `decryptBundle` reverses.
+  - `BundlePanel` in AssessmentPage sidebar: collapsible; passphrase input; Export button
+    fetches assessment + responses + tr_responses + assignments → encrypts → downloads `.r2ra`;
+    Import file picker + Decrypt button shows unit/count summary on success.
+
+**Key decisions**:
+- Import is decrypt-and-verify only (Phase 2). Full offline write-back (IndexedDB + sync)
+  deferred to Phase 3; the `.r2ra` format is forward-compatible.
+- SW does not intercept `/api/` so auth token management is unaffected.
+- Audit log does NOT filter by assessment at the DB layer for flexibility;
+  the endpoint filter is `entity_id.like(f"{assessment_id}%")` which covers all sub-entities.
+
+**Commits**: `780b367` (pushed).
+
+---
 
 ### 2026-04-27 — Session 9: capture fields, section dots, form-faithful print, multi-assessor
 
