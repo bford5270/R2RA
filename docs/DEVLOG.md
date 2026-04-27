@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27
-- **Current phase**: Phase 1.5 complete — evidence attachment + T&R print + crosswalk linking done
+- **Last session**: 2026-04-27 (Session 9)
+- **Current phase**: Phase 1 complete — all 11 planned items shipped
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `8d3376f` (feat: crosswalk bi-directional link)
+- **Last commit**: `a22437b` (feat: multi-assessor role assignment)
 - **Open PR**: none yet
-- **Blocked on**: nothing — PDF export (true form-faithful) and multi-assessor role assignment are next
+- **Blocked on**: nothing — next priorities are offline mode / audit log / user management
 
 ---
 
@@ -75,9 +75,16 @@ Guardrails that repeatedly bit us in earlier sessions:
    (cover + per-chapter GO/NO-GO table). Crosswalk panel wicket codes are now links
    to `/tr?wicket=<code>`; TrPage auto-switches chapter, scrolls to, and highlights
    the target wicket with a scarlet ring.
-10. **PDF export** — true JTS-form-faithful layout (browser-print is current workaround).
-11. **Multi-assessor role assignment** — section-level claim/assign flow; contributor
-    vs lead reconciliation.
+10. ~~**PDF export**~~ — **done** (`7953f29`). PrintPage redesigned: binary items in
+    tabular YES/NO/N/A column layout with item ID margin; capture field values shown;
+    table_yn rows rendered as reference checklist; signature/certification block.
+11. ~~**Multi-assessor role assignment**~~ — **done** (`a22437b`). See session 9 log.
+
+### Phase 2 — next priorities
+
+12. **Offline mode** — Service Worker shell + IndexedDB + encrypted `.r2ra` bundle.
+13. **Audit log** — append-only, hash-chained mutations (actor, before/after, timestamp).
+14. **User management** — admin UI to create/deactivate accounts (currently seeded only).
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
@@ -105,6 +112,39 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 9: capture fields, section dots, form-faithful print, multi-assessor
+
+**In**: Phase 1.5 — evidence/T&R/crosswalk done; capture inputs uncontrolled; section nav had
+no progress indicators; print was simplified list; multi-assessor had data model but no UI.
+
+**Out**:
+- **Capture field saving** (`9d4630c`): binary item `capture` fields are now controlled inputs
+  with 600ms debounce, saving via `handleSaveCapture` → `PUT /responses/{id}` with `capture_data`.
+- **Section completion indicators** (`9d4630c`): `SectionNav` now shows a green/gray 1.5px dot
+  per section based on whether any responses exist for that section's `item_prefix`.
+- **Form-faithful JTS print layout** (`7953f29`): `PrintPage` redesigned with columnar YES/NO/N/A
+  layout for binary items; table_yn rows shown as reference checklist; table_counts as summary
+  table; capture field values shown inline; certification/signature block at end with blank lines
+  for TMD Assessor + Unit OIC signatures.
+- **Multi-assessor role assignment** (`a22437b`):
+  - Backend: `lead_id` added to `AssessmentOut`; `GET /api/users`; `GET/PUT/DELETE
+    /api/assessments/{id}/assignments`; `AssignmentOut`/`AssignmentUpsert`/`UserOut` schemas.
+  - Frontend: `types/user.ts`; `api.ts` — listUsers/listAssignments/upsertAssignment/deleteAssignment;
+    `AssessmentPage` loads assignments in initial fetch; `TeamPanel` component (collapsible) in
+    left pane — lead sees current team with initials avatars, can add contributor via user picker +
+    section checkboxes, can remove contributors; `SectionNav` shows assignee initials badge per
+    section alongside the completion dot.
+
+**Key decisions**:
+- `assessment.lead_id` exposed on `AssessmentOut` so frontend can gate lead-only actions
+  without a separate `/me` comparison.
+- Contributors with `scope_ids: []` are treated as assigned to all sections.
+- No per-section authorization enforcement on `upsert_response` yet — that's Phase 2.
+
+**Commits**: `9d4630c`, `7953f29`, `a22437b` (all pushed).
+
+---
 
 ### 2026-04-27 — Session 8: evidence attachment, T&R print page, crosswalk bi-directional link
 
