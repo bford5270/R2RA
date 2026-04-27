@@ -1,39 +1,60 @@
 import type { SectionManifestEntry } from '@/types/content'
+import type { ItemResponse } from '@/types/assessment'
 
 interface Props {
   sections: SectionManifestEntry[]
   activeSectionId: string | null
   onSelect: (id: string) => void
+  responses?: Map<string, ItemResponse>
 }
 
-export function SectionNav({ sections, activeSectionId, onSelect }: Props) {
+export function SectionNav({ sections, activeSectionId, onSelect, responses }: Props) {
+  function hasSectionAnswered(s: SectionManifestEntry): boolean {
+    if (!responses || !s.item_prefix) return false
+    const prefix = s.item_prefix + '.'
+    for (const [id, r] of responses.entries()) {
+      if (id.startsWith(prefix) && r.status !== 'unanswered') return true
+    }
+    return false
+  }
+
   return (
     <nav aria-label="Form sections" className="flex flex-col gap-0.5 py-2">
-      {sections.map((s) => (
-        <button
-          key={s.id}
-          onClick={() => onSelect(s.id)}
-          className={[
-            'flex items-center gap-2 px-3 py-2 rounded text-sm text-left transition-colors',
-            activeSectionId === s.id
-              ? 'bg-scarlet text-white font-semibold'
-              : 'text-neutral-700 hover:bg-neutral-100',
-          ].join(' ')}
-          aria-current={activeSectionId === s.id ? 'page' : undefined}
-        >
-          <span
+      {sections.map((s) => {
+        const isActive = activeSectionId === s.id
+        const hasAnswered = hasSectionAnswered(s)
+        return (
+          <button
+            key={s.id}
+            onClick={() => onSelect(s.id)}
             className={[
-              'inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold shrink-0 border',
-              activeSectionId === s.id
-                ? 'border-white/40 text-white'
-                : 'border-neutral-300 text-neutral-400',
+              'flex items-center gap-2 px-3 py-2 rounded text-sm text-left transition-colors',
+              isActive
+                ? 'bg-scarlet text-white font-semibold'
+                : 'text-neutral-700 hover:bg-neutral-100',
             ].join(' ')}
+            aria-current={isActive ? 'page' : undefined}
           >
-            {s.ordinal}
-          </span>
-          <span className="leading-snug">{s.title}</span>
-        </button>
-      ))}
+            <span
+              className={[
+                'inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold shrink-0 border',
+                isActive
+                  ? 'border-white/40 text-white'
+                  : 'border-neutral-300 text-neutral-400',
+              ].join(' ')}
+            >
+              {s.ordinal}
+            </span>
+            <span className="flex-1 leading-snug">{s.title}</span>
+            {!isActive && (
+              <span
+                className={`w-1.5 h-1.5 rounded-full shrink-0 ${hasAnswered ? 'bg-green-500' : 'bg-neutral-200'}`}
+                title={hasAnswered ? 'Has responses' : 'No responses yet'}
+              />
+            )}
+          </button>
+        )
+      })}
     </nav>
   )
 }

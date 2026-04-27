@@ -133,11 +133,30 @@ interface ResponseItemProps {
   item: AssessmentItem
   responses: Map<string, ItemResponse>
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
+  onSaveCapture: (itemId: string, captureData: Record<string, unknown>) => Promise<void>
   nested?: boolean
 }
 
-function ResponseItem({ assessmentId, item, responses, onSave, nested = false }: ResponseItemProps) {
+function ResponseItem({ assessmentId, item, responses, onSave, onSaveCapture, nested = false }: ResponseItemProps) {
   const indent = nested ? 'pl-4 border-l border-neutral-100 ml-2' : ''
+
+  // Capture field state — hooks must be unconditional; only used for binary items with capture fields
+  const captureTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const existingCapture = (item.type === 'binary' && item.capture)
+    ? (responses.get(item.id)?.capture_data ?? {}) as Record<string, string>
+    : {}
+  const [captureValues, setCaptureValues] = useState<Record<string, string>>(
+    item.type === 'binary' && item.capture
+      ? Object.fromEntries(item.capture.map(f => [f.id, String(existingCapture[f.id] ?? '')]))
+      : {}
+  )
+
+  function handleCaptureChange(fieldId: string, value: string) {
+    const next = { ...captureValues, [fieldId]: value }
+    setCaptureValues(next)
+    if (captureTimer.current) clearTimeout(captureTimer.current)
+    captureTimer.current = setTimeout(() => { onSaveCapture(item.id, next) }, 600)
+  }
 
   if (item.type === 'group') {
     return (
@@ -147,7 +166,7 @@ function ResponseItem({ assessmentId, item, responses, onSave, nested = false }:
         </p>
         <div className="space-y-0">
           {item.sub_items.map(sub => (
-            <ResponseItem key={sub.id} assessmentId={assessmentId} item={sub} responses={responses} onSave={onSave} nested />
+            <ResponseItem key={sub.id} assessmentId={assessmentId} item={sub} responses={responses} onSave={onSave} onSaveCapture={onSaveCapture} nested />
           ))}
         </div>
       </div>
@@ -169,6 +188,8 @@ function ResponseItem({ assessmentId, item, responses, onSave, nested = false }:
                 </label>
                 <input
                   type="text"
+                  value={captureValues[field.id] ?? ''}
+                  onChange={e => handleCaptureChange(field.id, e.target.value)}
                   className="flex-1 h-7 rounded border border-neutral-200 px-2 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
                   placeholder="—"
                 />
@@ -238,11 +259,13 @@ function ResponseSectionView({
   section,
   responses,
   onSave,
+  onSaveCapture,
 }: {
   assessmentId: string
   section: Section
   responses: Map<string, ItemResponse>
   onSave: (itemId: string, status: ResponseStatus, note: string | null) => Promise<void>
+  onSaveCapture: (itemId: string, captureData: Record<string, unknown>) => Promise<void>
 }) {
   return (
     <AcronymProvider key={section.id}>
@@ -252,12 +275,12 @@ function ResponseSectionView({
           <div key={sub.id} className="mb-4">
             <h3 className="text-sm font-semibold text-neutral-700 mb-1 mt-3">{sub.title}</h3>
             {sub.items.map(item => (
-              <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} />
+              <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} onSaveCapture={onSaveCapture} />
             ))}
           </div>
         ))}
         {section.items.map(item => (
-          <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} />
+          <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} onSave={onSave} onSaveCapture={onSaveCapture} />
         ))}
       </div>
     </AcronymProvider>
@@ -392,6 +415,20 @@ export function AssessmentPage() {
     setResponses(prev => new Map(prev).set(itemId, updated))
   }, [assessmentId])
 
+  const handleSaveCapture = useCallback(async (
+    itemId: string,
+    captureData: Record<string, unknown>,
+  ) => {
+    if (!assessmentId) return
+    const current = responses.get(itemId)
+    const updated = await api.upsertResponse(assessmentId, itemId, {
+      status: current?.status ?? 'unanswered',
+      note: current?.note ?? null,
+      capture_data: captureData,
+    })
+    setResponses(prev => new Map(prev).set(itemId, updated))
+  }, [assessmentId, responses])
+
   async function handleAdvanceStatus() {
     if (!assessment || !assessmentId) return
     const next = STATUS_NEXT[assessment.status]
@@ -509,6 +546,7 @@ export function AssessmentPage() {
           sections={visibleSections}
           activeSectionId={effectiveSectionId}
           onSelect={setActiveSectionId}
+          responses={responses}
         />
       </aside>
 
@@ -524,6 +562,7 @@ export function AssessmentPage() {
               section={section}
               responses={responses}
               onSave={handleSave}
+              onSaveCapture={handleSaveCapture}
             />
           )}
         </div>
