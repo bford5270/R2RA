@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../lib/api'
+import { encryptBundle, decryptBundle } from '../lib/bundle'
 import { useAuth } from '../lib/auth'
 import { useManifest, useSection } from '@/hooks/useContent'
 import { SectionNav } from '@/components/preview/SectionNav'
@@ -379,6 +380,130 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
 }
 
 // ---------------------------------------------------------------------------
+// Bundle export/import
+// ---------------------------------------------------------------------------
+
+function BundlePanel({ assessmentId }: { assessmentId: string }) {
+  const [open, setOpen] = useState(false)
+  const [passphrase, setPassphrase] = useState('')
+  const [importFile, setImportFile] = useState<File | null>(null)
+  const [status, setStatus] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  async function handleExport() {
+    if (!passphrase.trim()) { setStatus('Enter a passphrase first.'); return }
+    setBusy(true)
+    setStatus(null)
+    try {
+      const [assessment, responses, trResponses, assignments] = await Promise.all([
+        api.getAssessment(assessmentId),
+        api.listResponses(assessmentId),
+        api.listTrResponses(assessmentId),
+        api.listAssignments(assessmentId),
+      ])
+      const payload = {
+        version: 1,
+        exported_at: new Date().toISOString(),
+        assessment,
+        responses,
+        tr_responses: trResponses,
+        assignments,
+      }
+      const encrypted = await encryptBundle(payload, passphrase)
+      const blob = new Blob([encrypted], { type: 'application/octet-stream' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `r2ra-${assessmentId.slice(0, 8)}.r2ra`
+      a.click()
+      URL.revokeObjectURL(url)
+      setStatus('Bundle exported.')
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : 'Export failed.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function handleImport() {
+    if (!importFile) { setStatus('Select a .r2ra file first.'); return }
+    if (!passphrase.trim()) { setStatus('Enter the passphrase.'); return }
+    setBusy(true)
+    setStatus(null)
+    try {
+      const buf = await importFile.arrayBuffer()
+      const data = await decryptBundle(new Uint8Array(buf), passphrase) as {
+        version: number
+        exported_at: string
+        assessment: { unit_name: string; unit_uic: string }
+        responses: unknown[]
+        tr_responses: unknown[]
+      }
+      setStatus(
+        `Decrypted bundle — ${data.assessment.unit_name} (${data.assessment.unit_uic}), ` +
+        `${data.responses.length} responses, exported ${new Date(data.exported_at).toLocaleString()}.`
+      )
+    } catch {
+      setStatus('Decryption failed — wrong passphrase or corrupted file.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="pt-2">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-600 px-1 py-1"
+      >
+        <span>Bundle</span>
+        <span>{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        <div className="space-y-2 pt-1">
+          <input
+            type="password"
+            value={passphrase}
+            onChange={e => setPassphrase(e.target.value)}
+            placeholder="Passphrase"
+            className="w-full rounded border border-neutral-200 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+          />
+          <button
+            onClick={handleExport}
+            disabled={busy}
+            className="w-full rounded border border-neutral-200 text-[10px] text-neutral-500 px-2 py-1 hover:border-neutral-400 hover:text-neutral-700 disabled:opacity-50 transition-colors"
+          >
+            {busy ? '…' : '↓ Export encrypted bundle'}
+          </button>
+          <label className="block">
+            <span className="text-[10px] text-neutral-400 block mb-0.5">Import .r2ra</span>
+            <input
+              type="file"
+              accept=".r2ra"
+              onChange={e => setImportFile(e.target.files?.[0] ?? null)}
+              className="text-[10px] w-full"
+            />
+          </label>
+          {importFile && (
+            <button
+              onClick={handleImport}
+              disabled={busy}
+              className="w-full rounded border border-neutral-200 text-[10px] text-neutral-500 px-2 py-1 hover:border-neutral-400 hover:text-neutral-700 disabled:opacity-50 transition-colors"
+            >
+              {busy ? '…' : '↑ Decrypt bundle'}
+            </button>
+          )}
+          {status && (
+            <p className="text-[10px] text-neutral-500 break-words">{status}</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Team panel
 // ---------------------------------------------------------------------------
 
@@ -740,6 +865,12 @@ export function AssessmentPage() {
             >
               Print / PDF →
             </Link>
+            <Link
+              to={`/assessments/${assessmentId}/audit`}
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+            >
+              Audit log →
+            </Link>
           </div>
           <TeamPanel
             assessmentId={assessmentId!}
@@ -749,6 +880,7 @@ export function AssessmentPage() {
             visibleSections={visibleSections}
             onAssignmentsChange={setAssignments}
           />
+          <BundlePanel assessmentId={assessmentId!} />
         </div>
         <SectionNav
           sections={visibleSections}

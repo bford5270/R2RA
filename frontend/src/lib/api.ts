@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, ItemResponse, ResponseUpsert, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { TrFramework } from '../types/tr'
 import type { EvidenceItem } from '../types/evidence'
@@ -170,4 +170,8 @@ export const api = {
 
   deleteAssignment: (assessmentId: string, assignmentId: string) =>
     del<void>(`/assessments/${assessmentId}/assignments/${assignmentId}`),
+
+  // ---- audit log ----
+  listAuditLog: (assessmentId: string) =>
+    get<AuditLogEntry[]>(`/assessments/${assessmentId}/audit`),
 }

@@ -65,3 +65,14 @@ export interface TrResponseUpsert {
   status: TrResponseStatus
   note?: string | null
 }
+
+export interface AuditLogEntry {
+  id: string
+  actor_id: string | null
+  action: string
+  entity_type: string
+  entity_id: string
+  before: Record<string, unknown> | null
+  after: Record<string, unknown> | null
+  ts: string
+}

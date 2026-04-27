@@ -140,3 +140,16 @@ class AssignmentOut(BaseModel):
 class AssignmentUpsert(BaseModel):
     role: str = "contributor"
     scope_ids: list[str] = []
+
+
+class AuditLogOut(BaseModel):
+    id: str
+    actor_id: str | None
+    action: str
+    entity_type: str
+    entity_id: str
+    before: dict | None
+    after: dict | None
+    ts: datetime
+
+    model_config = {"from_attributes": True}

@@ -11,11 +11,13 @@ from app.models.response import Response
 from app.models.unit import Unit
 from app.models.user import User
 from app.models.tr_response import TrResponse
+from app.audit import append_entry
 from app.schemas.assessment import (
     AssessmentCreate,
     AssessmentOut,
     AssignmentOut,
     AssignmentUpsert,
+    AuditLogOut,
     ResponseOut,
     ResponseUpsert,
     StatusAdvance,
@@ -169,6 +171,7 @@ def upsert_response(
         )
         .first()
     )
+    before = None
     if response is None:
         response = Response(
             id=str(uuid.uuid4()),
@@ -179,6 +182,7 @@ def upsert_response(
         )
         db.add(response)
     else:
+        before = {"status": response.status, "note": response.note}
         response.last_modified_by = current_user.id
         response.version = response.version + 1
 
@@ -187,6 +191,11 @@ def upsert_response(
     response.capture_data = body.capture_data
     response.updated_at = datetime.now(timezone.utc)
 
+    after = {"status": body.status, "note": body.note}
+    append_entry(
+        db, current_user.id, "response.upsert", "response",
+        f"{assessment_id}/{item_id}", before, after,
+    )
     db.commit()
     db.refresh(response)
     return response
@@ -218,9 +227,14 @@ def advance_status(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Cannot transition from '{assessment.status}' to '{body.status}'",
         )
+    old_status = assessment.status
     assessment.status = body.status
     if body.status == "certified":
         assessment.certified_at = datetime.now(timezone.utc)
+    append_entry(
+        db, current_user.id, "assessment.status", "assessment",
+        assessment_id, {"status": old_status}, {"status": body.status},
+    )
     db.commit()
     db.refresh(assessment)
     unit = db.get(Unit, assessment.unit_id)
@@ -256,6 +270,7 @@ def upsert_tr_response(
         .filter(TrResponse.assessment_id == assessment_id, TrResponse.event_code == event_code)
         .first()
     )
+    tr_before = None
     if tr is None:
         tr = TrResponse(
             id=str(uuid.uuid4()),
@@ -266,6 +281,7 @@ def upsert_tr_response(
         )
         db.add(tr)
     else:
+        tr_before = {"status": tr.status, "note": tr.note}
         tr.last_modified_by = current_user.id
         tr.version = tr.version + 1
 
@@ -273,6 +289,10 @@ def upsert_tr_response(
     tr.note = body.note
     tr.updated_at = datetime.now(timezone.utc)
 
+    append_entry(
+        db, current_user.id, "tr_response.upsert", "tr_response",
+        f"{assessment_id}/{event_code}", tr_before, {"status": body.status, "note": body.note},
+    )
     db.commit()
     db.refresh(tr)
     return tr
@@ -347,6 +367,7 @@ def upsert_assignment(
         )
         .first()
     )
+    assign_before = None
     if assignment is None:
         assignment = AssessmentAssignment(
             id=str(uuid.uuid4()),
@@ -358,8 +379,13 @@ def upsert_assignment(
         )
         db.add(assignment)
     else:
+        assign_before = {"role": assignment.role, "scope_ids": assignment.scope_ids}
         assignment.role = body.role
         assignment.scope_ids = body.scope_ids
+    append_entry(
+        db, current_user.id, "assignment.upsert", "assignment",
+        f"{assessment_id}/{user_id}", assign_before, {"role": body.role, "scope_ids": body.scope_ids},
+    )
     db.commit()
     db.refresh(assignment)
     return _assignment_out(assignment, user)
@@ -380,5 +406,35 @@ def delete_assignment(
         raise HTTPException(status_code=404, detail="Assignment not found")
     if assignment.role == "lead":
         raise HTTPException(status_code=400, detail="Cannot remove the lead assignment")
+    append_entry(
+        db, current_user.id, "assignment.delete", "assignment",
+        f"{assessment_id}/{assignment.user_id}",
+        {"role": assignment.role, "user_id": assignment.user_id}, None,
+    )
     db.delete(assignment)
     db.commit()
+
+
+# ---------------------------------------------------------------------------
+# Audit log
+# ---------------------------------------------------------------------------
+
+
+from app.models.audit_log import AuditLog as AuditLogModel  # noqa: E402
+
+
+@router.get("/{assessment_id}/audit", response_model=list[AuditLogOut])
+def get_audit_log(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _require_assessment(db, assessment_id)
+    rows = (
+        db.query(AuditLogModel)
+        .filter(AuditLogModel.entity_id.like(f"{assessment_id}%"))
+        .order_by(AuditLogModel.ts.desc())
+        .limit(200)
+        .all()
+    )
+    return rows

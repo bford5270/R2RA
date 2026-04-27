@@ -6,6 +6,12 @@ import { AuthProvider } from './lib/auth'
 import App from './App'
 import './index.css'
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {/* ignore in dev */})
+  })
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { staleTime: 60_000, retry: 1 },
