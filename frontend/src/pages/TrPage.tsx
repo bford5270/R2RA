@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import type { Assessment } from '../types/assessment'
 import type { TrResponse, TrResponseStatus } from '../types/assessment'
@@ -108,13 +108,22 @@ function WicketCard({
   wicket,
   response,
   onSave,
+  highlighted = false,
 }: {
   wicket: TrWicket
   response: TrResponse | undefined
+  highlighted?: boolean
   onSave: (eventCode: string, status: TrResponseStatus, note: string | null) => Promise<void>
 }) {
   const [expanded, setExpanded] = useState(false)
+  const cardRef = useRef<HTMLDivElement | null>(null)
   const status = response?.status ?? 'unanswered'
+
+  useEffect(() => {
+    if (highlighted && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlighted])
 
   const statusDot: Record<string, string> = {
     go:          'bg-green-500',
@@ -124,7 +133,13 @@ function WicketCard({
   }
 
   return (
-    <div className="border border-neutral-200 rounded-lg p-4 mb-3">
+    <div
+      ref={cardRef}
+      className={[
+        'border rounded-lg p-4 mb-3 transition-colors',
+        highlighted ? 'border-scarlet ring-1 ring-scarlet/30 bg-scarlet/5' : 'border-neutral-200',
+      ].join(' ')}
+    >
       <div className="flex items-start gap-3">
         <span
           className={`mt-1.5 w-2.5 h-2.5 rounded-full shrink-0 ${statusDot[status]}`}
@@ -206,12 +221,15 @@ function WicketCard({
 
 export function TrPage() {
   const { assessmentId } = useParams<{ assessmentId: string }>()
+  const [searchParams] = useSearchParams()
+  const linkedWicket = searchParams.get('wicket')
 
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [tr, setTr] = useState<TrFramework | null>(null)
   const [responses, setResponses] = useState<Map<string, TrResponse>>(new Map())
   const [activeChapter, setActiveChapter] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const highlightRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -223,11 +241,15 @@ export function TrPage() {
       setAssessment(a)
       setTr(framework)
       setResponses(new Map(rs.map(r => [r.event_code, r])))
-      // Default to first chapter that has wickets
-      const firstCh = framework.chapters[0]?.number ?? null
-      setActiveChapter(firstCh)
+      // If arriving via crosswalk link, jump to that wicket's chapter
+      if (linkedWicket) {
+        const target = framework.wickets.find(w => w.event_code === linkedWicket)
+        setActiveChapter(target?.chapter ?? framework.chapters[0]?.number ?? null)
+      } else {
+        setActiveChapter(framework.chapters[0]?.number ?? null)
+      }
     }).catch(err => setLoadError(err instanceof Error ? err.message : 'Failed to load'))
-  }, [assessmentId])
+  }, [assessmentId, linkedWicket])
 
   const handleSave = useCallback(async (
     eventCode: string,
@@ -349,6 +371,7 @@ export function TrPage() {
                   key={w.event_code}
                   wicket={w}
                   response={responses.get(w.event_code)}
+                  highlighted={linkedWicket === w.event_code}
                   onSave={handleSave}
                 />
               ))}

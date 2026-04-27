@@ -295,7 +295,7 @@ const STATUS_COLOR: Record<string, string> = {
 // Crosswalk panel
 // ---------------------------------------------------------------------------
 
-function CrosswalkPanel({ sectionId }: { sectionId: string | null }) {
+function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null; assessmentId: string }) {
   const [entries, setEntries] = useState<CrosswalkEntry[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -327,7 +327,13 @@ function CrosswalkPanel({ sectionId }: { sectionId: string | null }) {
             <p className="font-mono text-neutral-500 text-[10px] mb-1">{entry.jts_item}</p>
             {entry.wickets.map(w => (
               <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-200">
-                <span className="font-mono text-neutral-700">{w.event_code}</span>
+                <Link
+                  to={`/assessments/${assessmentId}/tr?wicket=${encodeURIComponent(w.event_code)}`}
+                  className="font-mono text-scarlet hover:underline text-[10px]"
+                  title="Open in T&R Assessment"
+                >
+                  {w.event_code} ↗
+                </Link>
                 <span className={`ml-1.5 text-[10px] font-semibold ${confidenceColor(w.confidence)}`}>
                   {w.confidence}
                 </span>
@@ -524,7 +530,7 @@ export function AssessmentPage() {
       </main>
 
       {/* Right pane — T&R crosswalk */}
-      <CrosswalkPanel sectionId={effectiveSectionId} />
+      <CrosswalkPanel sectionId={effectiveSectionId} assessmentId={assessmentId!} />
     </div>
   )
 }
