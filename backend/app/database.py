@@ -4,12 +4,20 @@ from typing import Generator
 
 from app.config import settings
 
-# Strip async driver prefix for the sync engine used by FastAPI + Alembic
-_sync_url = settings.database_url.replace("sqlite+aiosqlite", "sqlite")
+# Strip async driver prefixes — we use sync SQLAlchemy throughout
+_sync_url = (
+    settings.database_url
+    .replace("sqlite+aiosqlite", "sqlite")
+    .replace("postgresql+asyncpg", "postgresql")
+)
+
+# SQLite requires check_same_thread=False; Postgres does not accept it
+_is_sqlite = _sync_url.startswith("sqlite")
+_connect_args = {"check_same_thread": False} if _is_sqlite else {}
 
 engine = create_engine(
     _sync_url,
-    connect_args={"check_same_thread": False},  # required for SQLite
+    connect_args=_connect_args,
     echo=settings.debug,
 )
 

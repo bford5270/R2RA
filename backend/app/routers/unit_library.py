@@ -1,18 +1,17 @@
 """
 Per-unit standing evidence library.
-Files stored alongside assessment evidence under settings.uploads_dir.
+Storage is handled by app.storage (local disk in dev, S3 in prod).
+blob_ref convention: library/{item_id}/{filename}
 """
 import hashlib
-import shutil
 import uuid
-from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app import storage
 from app.auth.deps import get_current_user
 from app.config import settings
 from app.database import get_db
@@ -44,12 +43,6 @@ class LibraryItemOut(BaseModel):
     uploaded_at: str
 
     model_config = {"from_attributes": True}
-
-
-def _uploads_root() -> Path:
-    p = Path(settings.uploads_dir).resolve()
-    p.mkdir(parents=True, exist_ok=True)
-    return p
 
 
 def _require_unit(db: Session, uic: str) -> Unit:
@@ -119,12 +112,10 @@ def upload_library_item(
 
     sha256 = hashlib.sha256(content).hexdigest()
     item_id = str(uuid.uuid4())
+    safe_name = (file.filename or "upload").rsplit("/", 1)[-1]
+    key = f"library/{item_id}/{safe_name}"
 
-    dest_dir = _uploads_root() / "library" / item_id
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    safe_name = Path(file.filename or "upload").name
-    dest = dest_dir / safe_name
-    dest.write_bytes(content)
+    storage.put(key, content, file.content_type)
 
     item = UnitEvidence(
         id=item_id,
@@ -132,7 +123,7 @@ def upload_library_item(
         category=category,
         label=label.strip(),
         description=description.strip() or None,
-        blob_ref=str(dest.relative_to(_uploads_root().parent)),
+        blob_ref=key,
         hash=sha256,
         filename=safe_name,
         content_type=file.content_type,
@@ -157,10 +148,7 @@ def serve_library_file(
         raise HTTPException(status_code=404, detail="Item not found")
     if not item.blob_ref:
         raise HTTPException(status_code=404, detail="No file attached")
-    path = _uploads_root().parent / item.blob_ref
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="File not found on disk")
-    return FileResponse(path, media_type=item.content_type, filename=item.filename)
+    return storage.serve(item.blob_ref, item.filename, item.content_type)
 
 
 @router.delete("/{uic}/library/{item_id}", status_code=204)
@@ -176,12 +164,7 @@ def delete_library_item(
         raise HTTPException(status_code=404, detail="Item not found")
 
     if item.blob_ref:
-        file_path = _uploads_root().parent / item.blob_ref
-        item_dir = file_path.parent
-        if file_path.exists():
-            file_path.unlink()
-        if item_dir.exists() and not any(item_dir.iterdir()):
-            shutil.rmtree(item_dir, ignore_errors=True)
+        storage.delete(item.blob_ref)
 
     db.delete(item)
     db.commit()

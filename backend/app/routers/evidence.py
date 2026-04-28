@@ -1,18 +1,16 @@
 """
-Evidence attachment — upload files or text notes to a response.
+Evidence attachment — upload files to a response item.
 
-Storage: local disk at settings.uploads_dir/{evidence_id}/{filename}
-Future: swap blob_ref for an S3 key and update _serve() accordingly.
+Storage is handled by app.storage (local disk in dev, S3 in prod).
+blob_ref is the logical storage key: evidence/{evidence_id}/{filename}
 """
 import hashlib
-import shutil
 import uuid
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
-from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
+from app import storage
 from app.auth.deps import get_current_user
 from app.config import settings
 from app.database import get_db
@@ -30,16 +28,9 @@ ALLOWED_CONTENT_TYPES = {
 }
 
 
-def _uploads_root() -> Path:
-    p = Path(settings.uploads_dir).resolve()
-    p.mkdir(parents=True, exist_ok=True)
-    return p
-
-
 # ---------------------------------------------------------------------------
 # Upload
 # ---------------------------------------------------------------------------
-
 
 @router.post(
     "/api/assessments/{assessment_id}/responses/{item_id}/evidence",
@@ -60,30 +51,25 @@ def upload_evidence(
             detail=f"Unsupported file type '{file.content_type}'. Allowed: JPEG, PNG, WebP, GIF, PDF, TXT.",
         )
 
-    # Read content once for size check + hash
     content = file.file.read()
     if len(content) > settings.max_upload_bytes:
         raise HTTPException(
             status_code=413,
-            detail=f"File exceeds {settings.max_upload_bytes // (1024*1024)} MB limit.",
+            detail=f"File exceeds {settings.max_upload_bytes // (1024 * 1024)} MB limit.",
         )
 
     sha256 = hashlib.sha256(content).hexdigest()
     ev_id = str(uuid.uuid4())
+    safe_name = (file.filename or "upload").rsplit("/", 1)[-1]
+    key = f"evidence/{ev_id}/{safe_name}"
 
-    # Persist to disk
-    dest_dir = _uploads_root() / ev_id
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    safe_name = Path(file.filename or "upload").name  # strip any path components
-    dest = dest_dir / safe_name
-    dest.write_bytes(content)
+    storage.put(key, content, file.content_type)
 
-    # DB record
     ev = Evidence(
         id=ev_id,
         assessment_id=assessment_id,
         type="photo" if file.content_type.startswith("image/") else "document",
-        blob_ref=str(dest.relative_to(_uploads_root().parent)),
+        blob_ref=key,
         hash=sha256,
         filename=safe_name,
         content_type=file.content_type,
@@ -91,7 +77,6 @@ def upload_evidence(
     )
     db.add(ev)
 
-    # Append evidence_id to the response (create response row if missing)
     resp = (
         db.query(Response)
         .filter(Response.assessment_id == assessment_id, Response.item_id == item_id)
@@ -119,9 +104,8 @@ def upload_evidence(
 
 
 # ---------------------------------------------------------------------------
-# Serve file
+# List
 # ---------------------------------------------------------------------------
-
 
 @router.get("/api/assessments/{assessment_id}/responses/{item_id}/evidence")
 def list_evidence(
@@ -144,6 +128,10 @@ def list_evidence(
     return [_ev_out(e) for e in evs]
 
 
+# ---------------------------------------------------------------------------
+# Serve
+# ---------------------------------------------------------------------------
+
 @router.get("/api/evidence/{evidence_id}/file")
 def serve_evidence_file(
     evidence_id: str,
@@ -153,18 +141,17 @@ def serve_evidence_file(
     ev = db.get(Evidence, evidence_id)
     if ev is None:
         raise HTTPException(status_code=404, detail="Evidence not found")
-    path = _uploads_root().parent / ev.blob_ref
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="File not found on disk")
-    return FileResponse(path, media_type=ev.content_type, filename=ev.filename)
+    return storage.serve(ev.blob_ref, ev.filename, ev.content_type)
 
 
 # ---------------------------------------------------------------------------
 # Delete
 # ---------------------------------------------------------------------------
 
-
-@router.delete("/api/assessments/{assessment_id}/responses/{item_id}/evidence/{evidence_id}", status_code=204)
+@router.delete(
+    "/api/assessments/{assessment_id}/responses/{item_id}/evidence/{evidence_id}",
+    status_code=204,
+)
 def delete_evidence(
     assessment_id: str,
     item_id: str,
@@ -179,16 +166,8 @@ def delete_evidence(
     if ev.assessment_id != assessment_id:
         raise HTTPException(status_code=403, detail="Evidence does not belong to this assessment")
 
-    # Remove from disk
-    if ev.blob_ref:
-        file_path = _uploads_root().parent / ev.blob_ref
-        ev_dir = file_path.parent
-        if file_path.exists():
-            file_path.unlink()
-        if ev_dir.exists() and not any(ev_dir.iterdir()):
-            shutil.rmtree(ev_dir, ignore_errors=True)
+    storage.delete(ev.blob_ref)
 
-    # Remove from response.evidence_ids
     resp = (
         db.query(Response)
         .filter(Response.assessment_id == assessment_id, Response.item_id == item_id)
@@ -204,7 +183,6 @@ def delete_evidence(
 # ---------------------------------------------------------------------------
 # Helper
 # ---------------------------------------------------------------------------
-
 
 def _ev_out(ev: Evidence) -> dict:
     return {

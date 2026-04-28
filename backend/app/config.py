@@ -7,17 +7,23 @@ class Settings(BaseSettings):
     app_name: str = "R2RA"
     debug: bool = False
 
-    database_url: str = "sqlite+aiosqlite:///./r2ra_dev.db"
+    # SQLite for local dev; set DATABASE_URL=postgresql://... for production
+    database_url: str = "sqlite:///./r2ra_dev.db"
 
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 480  # 8-hour field shift
 
     content_dir: str = "../content"
 
-    # Local file storage for evidence uploads (dev); swap for S3 in prod
+    # Local file storage fallback (used when AWS_S3_BUCKET is not set)
     uploads_dir: str = "./uploads"
-    # Max upload size in bytes (default 10 MB)
-    max_upload_bytes: int = 10 * 1024 * 1024
+    max_upload_bytes: int = 10 * 1024 * 1024  # 10 MB
+
+    # S3 — leave blank to use local disk (dev default)
+    aws_s3_bucket: str = ""
+    aws_region: str = "us-gov-west-1"
+    aws_access_key_id: str = ""
+    aws_secret_access_key: str = ""
 
     # Classification banner text — CUI Basic
     cui_banner: str = "CONTROLLED UNCLASSIFIED INFORMATION // BASIC"
