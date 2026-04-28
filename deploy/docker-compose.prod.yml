@@ -9,11 +9,13 @@ services:
     env_file: ../.env
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - CONTENT_DIR=/content
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - uploads:/app/uploads
+      - ../content:/content:ro
     expose:
       - "8000"
 
