@@ -154,7 +154,7 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
 
   // Capture field state — hooks must be unconditional; only used for binary items with capture fields
   const captureTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const existingCapture = ((item.type === 'binary' && item.capture) || item.type === 'table_yn')
+  const existingCapture = ((item.type === 'binary' && item.capture) || item.type === 'table_yn' || item.type === 'table_counts')
     ? (responses.get(item.id)?.capture_data ?? {}) as Record<string, string>
     : {}
   const [captureValues, setCaptureValues] = useState<Record<string, string>>(
@@ -162,6 +162,8 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
       ? Object.fromEntries(item.capture.map(f => [f.id, String(existingCapture[f.id] ?? '')]))
       : item.type === 'table_yn'
       ? Object.fromEntries(item.rows.map(r => [r.id, String(existingCapture[r.id] ?? '')]))
+      : item.type === 'table_counts'
+      ? Object.fromEntries(item.rows.flatMap(r => item.columns.map(c => [`${r.id}__${c.id}`, String(existingCapture[`${r.id}__${c.id}`] ?? '')])))
       : {}
   )
 
@@ -288,15 +290,44 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
     )
   }
 
-  // table_counts — show label + top-level YES/NO/NA
-  const label = (item as { label?: string; id: string }).label ?? item.id
+  if (item.type === 'table_counts') {
+    return (
+      <div className={`py-3 border-b border-neutral-100 last:border-0 ${indent}`}>
+        <p className="text-sm font-medium text-neutral-800 leading-snug mb-2">
+          <AcronymText text={item.label} />
+        </p>
+        <div className="divide-y divide-neutral-100 rounded border border-neutral-200 overflow-hidden">
+          {item.rows.map(row => (
+            <div key={row.id} className="flex items-center gap-2 px-3 py-1.5 bg-white">
+              <span className="flex-1 text-xs text-neutral-700">
+                <AcronymText text={row.label} />
+              </span>
+              {item.columns.map(col => (
+                <input
+                  key={col.id}
+                  type="number"
+                  min={0}
+                  disabled={locked}
+                  value={captureValues[`${row.id}__${col.id}`] ?? ''}
+                  onChange={e => handleCaptureChange(`${row.id}__${col.id}`, e.target.value)}
+                  className="w-16 h-6 rounded border border-neutral-200 px-2 text-xs text-right focus:outline-none focus:ring-1 focus:ring-scarlet/40 disabled:opacity-50"
+                  placeholder="—"
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  // unknown type safety net
+  const label = (item as unknown as { label?: string; id: string }).label ?? (item as unknown as { id: string }).id
   return (
     <div className={`py-3 border-b border-neutral-100 last:border-0 ${indent}`}>
       <p className="text-sm text-neutral-800 leading-snug mb-1">
         <AcronymText text={label} />
       </p>
-      <p className="text-xs text-neutral-400 italic mb-2">Count table — record overall assessment below</p>
-      <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
     </div>
   )
 }
