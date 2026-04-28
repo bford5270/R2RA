@@ -7,10 +7,10 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 13)
-- **Current phase**: Crosswalk SME editor complete; all Phase 2 features shipped
+- **Last session**: 2026-04-27 (Session 14)
+- **Current phase**: Content layer complete — crosswalk v0.2 + role2_relevance tagged
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `ab16455` (feat: crosswalk SME editor — DB-backed override layer + admin UI)
+- **Last commit**: `3737c5f` (content: crosswalk v0.2 + role2_relevance tagging)
 - **Open PR**: none yet
 - **Blocked on**: Phase 3 pending stakeholder input (enclave, sponsor, SME review)
 
@@ -99,13 +99,10 @@ Guardrails that repeatedly bit us in earlier sessions:
 
 ### Content-side follow-ups (can parallelize with Phase 1)
 
-- **T&R Role-2 relevance tagging** (`role2_relevance: core|supporting|
-  adjacent|none`) — requires medical SME.
-- **Deeper crosswalk** for Ch 5 / 6 / 7 wickets (currently sparse).
-- **MET catalog expansion** — fill in MCT families beyond 1.x and 4.5.x
-  as they surface.
-- **Parser cleanups**: a few wickets have multi-column runover in their
-  `description`. Fix with column-aware extraction.
+- ~~**T&R Role-2 relevance tagging**~~ — **done** (`3737c5f`). All 159 wickets tagged.
+- ~~**Deeper crosswalk**~~ — **done** (`3737c5f`). v0.2 with Ch 5/6/7/8/9 coverage.
+- ~~**MET catalog expansion**~~ — **done** (already complete; all 9 T&R METs + hierarchy parents in catalog).
+- ~~**Parser cleanups**~~ — **done** (investigated; no actual runover issues in current JSON).
 
 ---
 
@@ -123,6 +120,39 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 14: content layer — crosswalk v0.2 + role2_relevance tagging
+
+**In**: Content-side follow-ups all outstanding. Crosswalk v0.1 was sparse (cra 1/13, cc 2/6, blood 2/4, fac 2/5, arsra 0/3). `role2_relevance` field absent from all 159 wickets. MET catalog and parser were investigated and found complete/clean.
+
+**Out**:
+- **Crosswalk v0.2** (`content/crosswalk/jts_r2__hss_tr.yaml`):
+  - Added Ch 5 (Med Common Skills), Ch 6 (L03A), Ch 7 (Clinical), Ch 8 (NEC 8427), Ch 9 (NEC 8403) wicket mappings throughout.
+  - cra: 1/13 → 9/13. Added CLIN-HSS-2104, L03A-PCC-2001, 8427-MED-2002/2005, L03A-EFWB-2001, L03A-TCCC-2004 across 8 new entries. Remaining 4 are IT/admin/theater-policy with explicit notes.
+  - cc: 2/6 → 6/6. Added 8403-MED-2105 (sterilization), 8403-MED-2101 (surgical), L03A-PCC-2008 (hypothermia), HSS-SVCS-3003 (holding), 8427-MED-2007 (ACLS).
+  - blood: 2/4 → 4/4. Added L03A-EFWB-2001/2002/2003, 8427-MED-2006 to blood.wbb; L03A-EFWB-2002/8427-MED-2006 to blood.storage; L03A-EFWB-2003/8427-MED-2006 to blood.prep.
+  - fac: 2/5 → 5/7 (added fac.climate.backup, fac.power.backup, fac.mascal with HSS-SVCS-3002).
+  - orsop: added orsop.uxo (HSS-MCCS-1015/1016), orsop.hn_transfer (HSS-SVCS-3004/HSS-MED-2007), enhanced orsop.medevac.
+  - arsra: 0/3 → 3/3. weapons (HSS-MCCS-1001/2001), nav (HSS-MCCS-1013/2003), cbrn (HSS-CBRN-1001/1002).
+  - Updated coverage summary comment.
+
+- **role2_relevance tagging** (`content/frameworks/hss_tr.json`):
+  - Added `role2_relevance` field to all 159 wickets via `scripts/tag_role2_relevance.py`.
+  - Distribution: core 60 / supporting 40 / adjacent 35 / none 24.
+  - Core clusters: all of Ch 6 L03A (PCC + TCCC series), Ch 7 CLIN-HSS, Ch 3 collective events, Ch 5 key clinical skills, Ch 8/9 NEC events.
+  - None: Ch 4 MATN martial arts, MC heritage/history events.
+  - Adjacent: Ch 10 Mountain Warfare, Ch 4 weapons/tactics (useful in field but not the medical mission).
+
+- **MET catalog** — confirmed complete (all 9 T&R METs + 6 hierarchy parents in catalog.json). No changes needed.
+- **Parser cleanups** — investigated; no actual runover or formatting issues in current hss_tr.json. No changes needed.
+
+**Key decisions**:
+- `role2_relevance` is a first curatorial pass, not a final SME ruling. Script is committed so tags can be regenerated cleanly after SME review.
+- Wickets that are credential/admin/IT/policy artifacts carry explicit `note:` fields rather than empty wicket lists, so assessors understand why there's no T&R mapping.
+
+**Commits**: `3737c5f` (pushed).
+
+---
 
 ### 2026-04-27 — Session 13: crosswalk SME editor + profile/security settings
 
