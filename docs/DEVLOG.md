@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 14)
-- **Current phase**: Content layer complete — crosswalk v0.2 + role2_relevance tagged
+- **Last session**: 2026-04-27 (Session 15)
+- **Current phase**: Production-ready — storage abstraction, Postgres, Docker, GovCloud runbook
 - **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `3737c5f` (content: crosswalk v0.2 + role2_relevance tagging)
+- **Last commit**: `1122b32` (feat: production deployment — S3 storage, Postgres, Docker, GovCloud runbook)
 - **Open PR**: none yet
-- **Blocked on**: Phase 3 pending stakeholder input (enclave, sponsor, SME review)
+- **Blocked on**: Phase 3 pending stakeholder input (enclave, sponsor, SME review); GovCloud account setup
 
 ---
 
@@ -91,9 +91,16 @@ Guardrails that repeatedly bit us in earlier sessions:
 15. ~~**Profile / security settings**~~ — **done** (`c151ea7`). Password change + TOTP enroll/remove. `refreshUser()` in AuthContext so header badge updates. Auth-in-memory only, consistent with CUI posture.
 16. ~~**Crosswalk SME editor**~~ — **done** (`ab16455`). See session 13 log.
 
+### Phase 2.5 — production deployment (complete)
+
+17. ~~**Storage abstraction**~~ — **done** (`1122b32`). See session 15 log.
+18. ~~**Postgres support**~~ — **done** (`1122b32`).
+19. ~~**Containerization + GovCloud runbook**~~ — **done** (`1122b32`).
+
 ### Phase 3 — pending stakeholder input
 
 - **Hosting enclave** decision (drives CAC/smartcard auth integration).
+- **GovCloud account** setup (provision EC2, RDS, S3 per `docs/DEPLOY.md`).
 - **Sponsor identification** (flips evocative → USMC-branded).
 - **SME crosswalk review** (v0.1 → approved for field use; editor now exists to do this in-app).
 
@@ -120,6 +127,33 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-04-27 — Session 15: production deployment — S3, Postgres, Docker, GovCloud
+
+**In**: All feature work done. User confirmed AWS GovCloud (us-gov-west-1) as target hosting environment, wants to get a unit using this soon. Session 14 left the app dev-only (SQLite, local disk).
+
+**Out**:
+
+- **`backend/app/storage.py`** (new): storage abstraction. `put/serve/delete` switch between local disk and S3 based on `AWS_S3_BUCKET` env var. S3 uploads use AES-256 server-side encryption. boto3 is lazily imported (only used in prod). blob_ref convention: `evidence/{id}/{filename}`, `library/{id}/{filename}`.
+- **`backend/app/database.py`** (updated): strips `+aiosqlite`/`+asyncpg` driver prefixes from DATABASE_URL. `check_same_thread=False` applied only for SQLite (Postgres rejects it).
+- **`backend/app/config.py`** (updated): `aws_s3_bucket`, `aws_region`, `aws_access_key_id`, `aws_secret_access_key` env vars (all default to empty string → local disk in dev).
+- **`backend/app/routers/evidence.py`** (rewritten): removed all direct disk I/O; uses `storage.put/serve/delete`.
+- **`backend/app/routers/unit_library.py`** (rewritten): same pattern. Removed `_uploads_root()`, `shutil`, direct `Path` writes.
+- **`backend/pyproject.toml`**: `[prod]` optional-dependency group — `psycopg2-binary>=2.9`, `boto3>=1.34`.
+- **`backend/Dockerfile`**: `python:3.12-slim`, installs `libpq-dev` + `.[prod]`, `uvicorn` entrypoint.
+- **`deploy/docker-compose.prod.yml`**: api + postgres + nginx services; Postgres healthcheck; named volumes for DB and uploads.
+- **`deploy/nginx.conf`**: TLS redirect, TLSv1.2/1.3, `X-CUI-Banner` header, `X-Frame-Options`, HSTS, 15 MB upload limit, SPA fallback.
+- **`.env.example`**: all env vars documented with inline comments.
+- **`docs/DEPLOY.md`**: step-by-step GovCloud runbook — S3 bucket + encryption, IAM least-privilege user, EC2 provisioning, TLS, deploy commands, update procedure, backup, cost table (~$25–50/mo).
+
+**Key decisions**:
+- Containerized Postgres in docker-compose sufficient for pilot; migrate to RDS before any production data volume.
+- blob_ref stored as logical key (not filesystem path) so same value works for both local disk and S3.
+- boto3 not installed in dev (lazy import guards); psycopg2-binary in `[prod]` extras keeps dev lightweight.
+
+**Commits**: `1122b32` (pushed).
+
+---
 
 ### 2026-04-27 — Session 14: content layer — crosswalk v0.2 + role2_relevance tagging
 
