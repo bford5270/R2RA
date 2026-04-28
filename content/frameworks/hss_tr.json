@@ -111,7 +111,8 @@
           "HSS-SVCS-6001 Establish role 2 health services support capability"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-OPS-7002",
@@ -163,7 +164,8 @@
           "HSS-PLAN-6001 Plan for operations"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-PLAN-7001",
@@ -219,7 +221,8 @@
           "HSS-PLAN-6001 Plan for operations"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-OPS-6001",
@@ -280,7 +283,8 @@
           "HSS-SVCS-5001 Establish role 2 health services support capability"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-OPS-6002",
@@ -325,7 +329,8 @@
           "HSS-SVCS-5001 Establish role 2 health services support capabilities"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-PLAN-6001",
@@ -378,7 +383,8 @@
           "HSS-SVCS-5001 Establish role 2 health services support capability"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-6001",
@@ -437,7 +443,8 @@
           "HSS-SVCS-5001 Establish role 2 health services support capability"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-OPS-5001",
@@ -496,7 +503,8 @@
           "HSS-SVCS-4005 Coordinate patient movement"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-5001",
@@ -553,7 +561,8 @@
           "HSS-SVCS-4005 Coordinate patient movement"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-4001",
@@ -615,7 +624,8 @@
           "HSS-SVCS-3004 Conduct casualty evacuation"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-4002",
@@ -674,7 +684,8 @@
           "HSS-SVCS-3004 Conduct casualty evacuation"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-SVCS-4003",
@@ -744,7 +755,8 @@
           "HSS-SVCS-3004 Conduct casualty evacuation"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-SVCS-4004",
@@ -811,7 +823,8 @@
           "HSS-SVCS-3004 Conduct casualty evacuation"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-4005",
@@ -858,7 +871,8 @@
           "HSS-SVCS-3004 Conduct casualty evacuation"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-3001",
@@ -925,7 +939,8 @@
           "L03A-HSS-2101 Perform dental care"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-3002",
@@ -994,7 +1009,8 @@
           "L03A-HSS-2101 Perform dental care"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-3003",
@@ -1060,7 +1076,8 @@
           "L03A-HSS-2101 Perform dental care"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-SVCS-3004",
@@ -1120,7 +1137,8 @@
           "HSS-DENT-3004 YES Support a mass casualty 3-21"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-DENT-3001",
@@ -1180,7 +1198,8 @@
           "L03A-HSS-2101 Perform dental care"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-DENT-3002",
@@ -1239,7 +1258,8 @@
           "L03A-HSS-2101 Perform dental care"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-DENT-3003",
@@ -1290,7 +1310,8 @@
           "HSS-MED-2104 Conduct sustainment training"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-DENT-3004",
@@ -1396,7 +1417,8 @@
           "HSS-MCCS-2005 Prepare a bivouac 4-45"
         ]
       },
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-CBRN-1001",
@@ -1415,7 +1437,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1447,7 +1469,8 @@
         "Corpsman",
         "Range OIC/RSO"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-CBRN-1002",
@@ -1466,7 +1489,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1499,7 +1522,8 @@
         "Advanced Training is available at Fort Detrick Medical Management of CBRN.",
         "Providers are encouraged to attend when unit needs permit."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1001",
@@ -1518,7 +1542,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1550,7 +1574,8 @@
         "MCRP 3-01.2 Pistol Marksmanship",
         "TM 9-1005-317-10 Operator's Manual, Pistol, Semiautomatic, 9mm, M9\nSUPPORT REQUIREMENTS:\nORDNANCE:\nDODIC QUANTITY\nA359 Cartridge, 9mm Dummy M917 3 rounds per Sailor\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to officer personnel only. Enlisted personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1002",
@@ -1569,7 +1594,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1598,7 +1623,8 @@
         "MCRP 3-01.2 Pistol Marksmanship",
         "TM 9-1005-317-10 Operator's Manual, Pistol, Semiautomatic, 9mm, M9\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to officer personnel only. Enlisted personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1003",
@@ -1617,7 +1643,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1645,7 +1671,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 3-01.2 Pistol Marksmanship\nSUPPORT REQUIREMENTS:\nORDNANCE:\nDODIC QUANTITY\nA363 Cartridge, 9mm Ball M882 50 rounds per Sailor\nRANGE/TRAINING AREA:\nFacility Code 17570 Pistol Known Distance (KD) Range\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to officer personnel only. Enlisted personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1004",
@@ -1664,7 +1691,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1687,7 +1714,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 8-10B.2 Rifle Marksmanship\nSUPPORT REQUIREMENTS:\nORDNANCE:\nDODIC QUANTITY\nA060 Cartridge, 5.56mm Dummy M199 5 rounds per Sailor\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to enlisted personnel only. Officer personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1005",
@@ -1706,7 +1734,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1730,7 +1758,8 @@
         "MCRP 8-10B.2 Rifle Marksmanship",
         "TM 05538/10012-OR Operator's Manual With Components List For Rifle M16A2,\nRifle M16A4, Carbine M4, Carbine M4A1 CQBW (Sep 2012)\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to enlisted personnel only. Officer personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1006",
@@ -1749,7 +1778,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1771,7 +1800,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 8-10B.2 Rifle Marksmanship\nSUPPORT REQUIREMENTS:\nORDNANCE:\nDODIC QUANTITY\nA060 Cartridge, 5.56mm Dummy M199 5 rounds per Sailor\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to enlisted personnel only. Officer personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1007",
@@ -1790,7 +1820,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1813,7 +1843,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 8-10B.2 Rifle Marksmanship\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to enlisted personnel only. Officer personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1008",
@@ -1832,7 +1863,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1859,7 +1890,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 8-10B.2 Rifle Marksmanship\nSUPPORT REQUIREMENTS:\nORDNANCE:\nDODIC QUANTITY\nA059 Cartridge, 5.56mm Ball M855 10/Clip 15 rounds per Sailor\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Initial training setting in this event as\n\"FORMAL\" applies to enlisted personnel only. Officer personnel will\nreceive this training MOJT at the units based on mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1009",
@@ -1878,7 +1910,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1906,7 +1938,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 8-10B.2 Rifle Marksmanship\nSUPPORT REQUIREMENTS:\nSIMULATION EVALUATION:\nSIMULATED SUITABILITY SIMULATOR UNIT OF MEASURE HOURS PM\nYes S/L ISMT Marine Hours 1 N\nORDNANCE:\nDODIC QUANTITY\nA059 Cartridge, 5.56mm Ball M855 10/Clip 50 rounds per Sailor\nRANGE/TRAINING AREA:\nFacility Code 17550 Rifle Known Distance (KD) Range\nADDITIONAL RANGE/TRAINING AREA: Facility Code 17120, Marksmanship Skills\nTraining Simulator\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nInitial training setting in this event as \"FORMAL\" applies to enlisted\npersonnel only. Officer personnel will receive this training MOJT at the\nunits based on mission requirements. Medical personnel are NOT required to\nqualify on Table 1A criteria. This event is utilized for familiarization of\nthe service rifle only.\nSkill development of this task should incorporate dry practice, live fire\ntraining and simulation using a Marksmanship Skills Training Simulator. To\nachieve the standard this task is required to be evaluated during live fire\naboard a Known Distance Range with 100, 200, 300, and 500 meter range\ncapability. Training executed aboard ranges built in yard distances will\nconvert scores to a metric range equivalent as per MCO 3574.2_."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1010",
@@ -1925,7 +1958,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -1950,7 +1983,8 @@
         "MCO 3574.2_ Marine Corps Combat Marksmanship Program",
         "MCRP 8-10B.2 Rifle Marksmanship\nSUPPORT REQUIREMENTS:\nSIMULATION EVALUATION:\nSIMULATED SUITABILITY SIMULATOR UNIT OF MEASURE HOURS PM\nYes S ISMT Marine Hours 0.50 N\nORDNANCE:\nDODIC QUANTITY\nA059 Cartridge, 5.56mm Ball M855 10/Clip 125 rounds per Sailor\nRANGE/TRAINING AREA:\nFacility Code 17550 Rifle Known Distance (KD) Range\nADDITIONAL RANGE/TRAINING AREA: Facility Code 17120, Marksmanship Skills\nTraining Simulator\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nInitial training setting in this event as \"FORMAL\" applies to enlisted\npersonnel only. Officer personnel will receive this training MOJT at the\nunits based on mission requirements. Medical personnel are NOT required to\nqualify on Table 1A criteria. This event is utilized for familiarization of\nthe service rifle only.\nSkill development of this task will incorporate dry practice, live fire\ntraining and simulation using a Marksmanship Skills Training Simulator. To\nachieve the standard this task is required to be evaluated during live fire\naboard a Known Distance Range with 25, 50, 100, 200, 300, and 500 meter range\ncapability. Training executed aboard ranges built in yard distances will\nconvert scores to a metric range equivalent as per MCO 3574.2_."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1011",
@@ -1969,7 +2003,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2017,7 +2051,8 @@
         "MCRP 3-10A.4 Marine Rifle Squad",
         "TC 3-21.60 Visual Signals\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1012",
@@ -2036,7 +2071,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2061,7 +2096,8 @@
         "MCRP 3-10A.4 Marine Rifle Squad",
         "MCTP 3-01A Scouting and Patrolling\nSUPPORT REQUIREMENTS:\nORDNANCE:\nDODIC QUANTITY\nA060 Cartridge, 5.56mm Dummy M199 30 rounds per\nSailor\nL312 Signal, Illumination Ground White Star\nParachute M127A1\n1 signals per\nSailor\nL495 Flare, Surface Trip M49/A1 Series 1 flares per Sailor\nL598 Simulator, Explosive Booby Trap Flash M117 1 Simulator per\nSailor\nRANGE/TRAINING AREA:\nFacility Code 17410 Maneuver/Training Area, Light Forces\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1013",
@@ -2080,7 +2116,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2119,7 +2155,8 @@
         "initial training will be MOJT.",
         "ITESS can be used to track the movement and location of personnel."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1014",
@@ -2138,7 +2175,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2170,7 +2207,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1015",
@@ -2189,7 +2227,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2212,7 +2250,8 @@
         "CALL 05-23 Joint Improvised Explosive Device Defeat Organization Tactics,\nTechniques and Procedures Handbook",
         "MCRP 3- 7.2D SUPERCEDED Explosive Hazards Operations\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nEvent should be taught at formal school. If Sailors do not attend the formal\nschool, initial training will be MOJT.\nCommander/Units should contact local Training Support Centers (TSC) to\nrequest Service-level endorsed CIED training via Marine Corps Tactics\nOperations Group (MCTOG) and Marine Corps Engineer School (MCES) at their\nrespective home stations in order to meet METL based CIED requirements\n(sustainment and/or pre-deployment training)."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1016",
@@ -2231,7 +2270,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2254,7 +2293,8 @@
         "CALL 05-23 Joint Improvised Explosive Device Defeat Organization Tactics,\nTechniques and Procedures Handbook",
         "MCRP 10-10.1 Countering Explosive Hazards\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Commander/Units should contact local\nTraining Support Centers (TSC) to request Service-level endorsed CIED\ntraining via Marine Corps Tactics Operations Group (MCTOG) and Marine\nCorps Engineer School (MCES) at their respective home stations in order to\nmeet METL based CIED requirements (sustainment and/or pre-deployment\ntraining)."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1017",
@@ -2273,7 +2313,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-LTJG",
         "NV-LT",
         "NV-LCDR",
@@ -2298,7 +2338,8 @@
         "CALL 05-23 Joint Improvised Explosive Device Defeat Organization Tactics,\nTechniques and Procedures Handbook",
         "MCRP 10-10.1 Countering Explosive Hazards\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nEvent should be taught at formal school. If Sailors do not attend the formal\nschool, initial training will be MOJT.\nCommander/Units should contact local Training Support Centers (TSC) to\nrequest Service-level endorsed CIED training via Marine Corps Tactics\nOperations Group (MCTOG) and Marine Corps Engineer School (MCES) at their\nrespective home stations in order to meet METL based CIED requirements\n(sustainment and/or pre-deployment training)."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1018",
@@ -2317,7 +2358,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2339,7 +2380,8 @@
         "MCO P6100.3, w/ch1 Marine Corps Body Composition Program and Military\nAppearance Program",
         "OPNAV 6110.1J PHYSICAL READINESS PROGRAM\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This event was copied from the ELT T&R\nManual and modified to meet NAVY PFA standards. It is utilized for\nfamiliarization and orientation to the USMC culture of fitness. Medical\npersonnel are NOT required to meet USMC PFT/CFT standards."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1019",
@@ -2358,7 +2400,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2390,7 +2432,8 @@
         "Guidance on weight and gear is located in the Load Terms and Definitions",
         "appendix in the Infantry T&R Manual."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1020",
@@ -2409,7 +2452,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2434,7 +2477,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1021",
@@ -2453,7 +2497,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2481,7 +2525,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-1022",
@@ -2500,7 +2545,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2526,7 +2571,8 @@
         "MCRP 3-40A.4 Field Hygiene and Sanitation",
         "NAVMED P5010 Navy Sanitation\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1023",
@@ -2545,7 +2591,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2570,7 +2616,8 @@
         "MCTP 6-10B Marine Corps Values: A User's Guide for Discussion Leaders",
         "MILLET, R. ALLAN SEMPER FIDELIS, The History of the United States Marine\nCorps\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1024",
@@ -2589,7 +2636,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2610,7 +2657,8 @@
         "MCTP 6-10B Marine Corps Values: A User's Guide for Discussion Leaders",
         "MILLET, R. ALLAN SEMPER FIDELIS, The History of the United States Marine\nCorps\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1025",
@@ -2629,7 +2677,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2651,7 +2699,8 @@
         "MCDP 1 Warfighting",
         "MCTP 6-10B Marine Corps Values: A User's Guide for Discussion Leaders\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1026",
@@ -2670,7 +2719,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2693,7 +2742,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1027",
@@ -2712,7 +2762,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2735,7 +2785,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1028",
@@ -2754,7 +2805,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2778,7 +2829,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1029",
@@ -2797,7 +2849,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2816,7 +2868,8 @@
         "Marine Corps Manual",
         "National Security Act of 1947 (revised in 1952)\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1030",
@@ -2835,7 +2888,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2859,7 +2912,8 @@
         "Sailors do not attend the formal school",
         "initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1031",
@@ -2878,7 +2932,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2901,7 +2955,8 @@
         "MCDP 1-0 Marine Corps Operations",
         "MCO 3120.8 Policy for the Organization of Marine Forces for Combat\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1032",
@@ -2920,7 +2975,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2941,7 +2996,8 @@
         "MCRP 1-10.1 Organization of the United States Marine Corps",
         "MCTP 3-40A Health Service Support Operations\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-1033",
@@ -2960,7 +3016,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -2983,7 +3039,8 @@
         "NAVPERSINST 15665 Navy Uniform Regulations Manual",
         "TM 10120-15/1B Uniform fitting and Alterations\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-1034",
@@ -3003,7 +3060,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3027,7 +3084,8 @@
         "Battle Drill Guide",
         "MCRP 3-10A.4 Marine Rifle Squad\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MATN-2101",
@@ -3047,7 +3105,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3068,7 +3126,8 @@
         "MCO 1500.54_ Marine Corps Martial Arts Program",
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. The Mental and Character Tie-In associated\nwith this task is the \"Mental and Character Disciplines of MCMAP.\""
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2102",
@@ -3088,7 +3147,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3111,7 +3170,8 @@
         "Black Leather Gloves",
         "Striking Pad\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. The Mental and Character Tie-In associated\nwith this task is the USMC Core Values Program."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2103",
@@ -3131,7 +3191,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3153,7 +3213,8 @@
         "MCO 1500.54_ Marine Corps Martial Arts Program",
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Mouthpiece\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Surfaces\nmay include, but are not limited to, woodchips, sawdust, or mats. Ensure\nall safety precautions are adhered to while performing this event. The\nMental and Character Tie-In associated with this task is Suicide Awareness\nand Prevention."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2104",
@@ -3173,7 +3234,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3198,7 +3259,8 @@
         "Bayonet (Sheathed)",
         "Rifle\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. This task requires a soft surface. Surfaces\nmay include, but are not limited to, woodchips, sawdust, or mats. The use\nof unsheathed bayonets during Marine on Marine drills is not authorized.\nInitial mastery of this event requires execution of bayonet techniques\nduring pugil stick bouts. Sustainment of this event can be trained to\nstandard using pugil sticks, sheathed bayonets or wooden transfer bayonets\ntrainers during all training evolutions. Use of unsheathed bayonets is\nonly authorized during command approved bayonet assault courses. The\nMental and Character Tie-In associated with this task is the Fundamentals\nof Marine Corps Leadership."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2105",
@@ -3218,7 +3280,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3242,7 +3304,8 @@
         "Mouthpiece",
         "Striking pad\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. The Mental and Character Tie-In associated\nwith this task is Sexual Harassment."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2106",
@@ -3262,7 +3325,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3286,7 +3349,8 @@
         "Mouthpiece",
         "Striking pad\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. The Mental and Character Tie-In associated\nwith this task is the preselected Warrior Study."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2107",
@@ -3306,7 +3370,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3325,7 +3389,8 @@
         "MCO 1500.54_ Marine Corps Martial Arts Program",
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Mouthpiece\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. The Mental and Character Tie-In associated\nwith this task is Substance Abuse and Prevention."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2108",
@@ -3345,7 +3410,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3364,7 +3429,8 @@
         "MCO 1500.54_ Marine Corps Martial Arts Program",
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Mouthpiece\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Surfaces\nmay include, but are not limited to, woodchips, sawdust, or mats. Ensure\nall safety precautions are adhered to while performing this event. The\nMental and Character Tie-In associated with this task is Equal\nOpportunity."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2109",
@@ -3384,7 +3450,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3403,7 +3469,8 @@
         "MCO 1500.54B Marine Corps Martial Arts Program",
         "MCRP 3-02B Marine Corps Martial Arts\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Mouthpiece\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Soft\nsurfaces may include but are not limited to, wood chips, sawdust, and\nmats. Ensure all safety precautions are adhered to while performing this\ntask. The Mental and Character Tie-In associated with this task is\nPersonal Readiness."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2110",
@@ -3423,7 +3490,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3444,7 +3511,8 @@
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)",
         "MWS MACE Approved Warrior Study\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Mouthpiece\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Surfaces\nmay include, but are not limited to, wood chips, sawdust, or mats. Ensure\nall safety precautions are adhered to while performing this event. The\nMental and Character Tie-In associated with this task is Pre-Selected\nWarrior Study."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2111",
@@ -3464,7 +3532,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3485,7 +3553,8 @@
         "MCO 5500.6_ Arming of Law Enforcement and Security Personnel and the Use\nof Force",
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Mouthpiece\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Surfaces\nmay include, but are not limited to, woodchips, sawdust, or mats. Ensure\nall safety precautions are adhered to while performing this event. The\nMental and Character Tie-In associated with this task is Fraternization."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2112",
@@ -3505,7 +3574,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3532,9 +3601,10 @@
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)",
         "MWS MACE Approved Warrior Study\nSUPPORT REQUIREMENTS:\nEQUIPMENT:",
         "Mouthpiece",
-        "Service Rifle/Carbine\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Soft\nsurfaces may include, but are not limited to, woodchips, sawdust, and\nmats. Ensure all safety precautions are adhered to while performing this\ntask. The Mental and Character Tie-In associated with this task is Pre\ufffeSelected Warrior Study."
+        "Service Rifle/Carbine\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: This task requires a soft surface. Soft\nsurfaces may include, but are not limited to, woodchips, sawdust, and\nmats. Ensure all safety precautions are adhered to while performing this\ntask. The Mental and Character Tie-In associated with this task is Pre￾Selected Warrior Study."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MATN-2113",
@@ -3554,7 +3624,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3573,7 +3643,8 @@
         "MCO 1500.54_ Marine Corps Martial Arts Program",
         "MCRP 7-20B.4 Marine Corps Martial Arts Program (MCMAP)\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Training knife\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Ensure all safety precautions are adhered to\nwhile performing this task. The Mental and Character-Tie associated with\nthis task is sexual responsibility."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "none"
     },
     {
       "event_code": "HSS-MCCS-2001",
@@ -3592,7 +3663,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3624,7 +3695,8 @@
         "ADMINISTRATIVE INSTRUCTIONS: MOU required for units without organic T/E",
         "weapons"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-2002",
@@ -3643,7 +3715,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3680,7 +3752,8 @@
         "ADMINISTRATIVE INSTRUCTIONS: MOJT training for officer and enlisted is",
         "based on unit mission requirements."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MCCS-2003",
@@ -3699,7 +3772,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3722,7 +3795,8 @@
         "TM 09880C-0R Operator's Guide, DAGR Operator's Pocket Guide",
         "TM 11-5825-291-13 Operator and Maintenance Manual For Satellite Signal\nNavigation Set AN/PSN-11\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nMOJT training for officer and enlisted is based on unit mission requirements.\nUse of COTS products is acceptable for performance of this task."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-2004",
@@ -3779,7 +3853,8 @@
         "TM 8H667-13&P/1 Drivers Vision Enhancer",
         "TM 9-4910-593-12&P Tow Bar Motor Vehicle"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MCCS-2005",
@@ -3798,7 +3873,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3822,7 +3897,8 @@
         "INDEX OF INDIVIDUAL EVENTS\nEvent Code Event Page\n1000 Level Events\nHSS-MED-1001 Conduct an inventory 5-3\n2000 Level Events\nHSS-MED-2001 Provide first responder medical support 5-4\nHSS-MED-2002 Perform Tactical Combat Casualty Care 5-5\nHSS-MED-2003 Conduct triage 5-5\nHSS-MED-2004 Treat environmental injuries 5-6\nHSS-MED-2005 Manage mass casualty incident 5-7\nHSS-MED-2006 Identify diseases of operational importance 5-8\nHSS-MED-2007 Evacuate casualties 5-8\nHSS-MED-2008 Perform En-Route Care (ERC) 5-9\nHSS-MED-2009 Identify the components of a Health Services\nSupport Plan\n5-10\nHSS-MED-2010 Manage Health Service Support for military\noperations\n5-10\nHSS-MED-2011 Manage field medical services training program 5-11\nHSS-MED-2012 Manage Combat and Operational Stress 5-12\nHSS-MED-2013 Provide advanced COSC OSCAR Extender services 5-13\nHSS-MED-2014 Conduct field food service sanitation 5-14\nHSS-MED-2015 Perform field preventive medicine 5-14\nHSS-MED-2101 Perform general and health services\nadministrative tasks\n5-15\nHSS-MED-2102 Deploy Class VIII health services supplies 5-16\nHSS-MED-2103 Conduct training 5-17\nHSS-MED-2104 Conduct sustainment training 5-17",
         "INDEX OF INDIVIDUAL EVENTS"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MED-1001",
@@ -3842,7 +3918,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3865,7 +3941,8 @@
         "IFAK SON IFAK Statement of Need",
         "MCRP 3-40A.9 First Aid\nSUPPORT REQUIREMENTS:\nEQUIPMENT:\nIFAK (NSN 6545-01-539-2732) or Training IFAK\nCLS bag (NSN 6545-01-571-4470)\nCorpsman Assault Pack (NSN 6545-01-549-1053)\nUNITS/PERSONNEL: Preferred method of instruction is by an instructor\ntrained 8404 Corpsman.\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2001",
@@ -3885,7 +3962,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-LTJG",
         "NV-LT",
         "NV-LCDR",
@@ -3908,7 +3985,8 @@
         "MCRP 12-10B.1 Military Operations on Urbanized Terrain (MOUT)",
         "MCTP 3-40A Health Service Support Operations\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2002",
@@ -3927,7 +4005,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3951,7 +4029,8 @@
         "Rubber weapons",
         "Class VIII supplies\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT.\nSPECIAL PERSONNEL CERTS: Requalification every 36 months\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2003",
@@ -3970,7 +4049,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -3991,7 +4070,8 @@
         "NAVEDTRA 14295B2 HM Manual",
         "PHTLS Pre-hospital Trauma Life Support, Military Edition, Current Edition\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nEvent should be taught at formal school. If Sailors do not attend the formal\nschool, initial training will be MOJT.\nThis event satisfies the Dental Bn MET requirement for augment conduct triage\nat role 2"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2004",
@@ -4011,7 +4091,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4036,7 +4116,8 @@
         "TB MED 505 Altitude Acclimatization and Illness Management",
         "TB MED 508 Prevention and Management of Cold-Weather Injuries\nSUPPORT REQUIREMENTS:\nEQUIPMENT: IFAK or Training IFAK, rectal thermometer, rewarming supplies,\ncooling supplies\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2005",
@@ -4055,7 +4136,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4078,7 +4159,8 @@
         "NAVEDTRA 14295B2 HM Manual",
         "PHTLS Pre-hospital Trauma Life Support, Military Edition, Current Edition\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nEvent should be taught at formal school. If Sailors do not attend the formal\nschool, initial training will be MOJT.\nDental personnel will support mass casualty events as requested by higher\nauthority."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2006",
@@ -4097,7 +4179,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4120,7 +4202,8 @@
         "MCRP 3-40A.4 Field Hygiene and Sanitation",
         "NAVMED P5010 Navy Sanitation\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2007",
@@ -4139,7 +4222,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4164,7 +4247,8 @@
         "MCRP 3-40A.7 Patient Movement",
         "PHTLS Pre-hospital Trauma Life Support, Military Edition, Current Edition\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT.\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2008",
@@ -4184,7 +4268,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4209,7 +4293,8 @@
         "MCRP 3-40A.7 Patient Movement",
         "MCTP 3-40A Health Service Support Operations\nMISCELLANEOUS:\nSPECIAL PERSONNEL CERTS: Certification is valid for 36 months\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2009",
@@ -4249,7 +4334,8 @@
         "MCTP 3-40A Health Service Support Operations",
         "MCWP 5-10 Marine Corps Planning Process\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Officers will receive this training at FMSO\nor upon arrival to unit as MOJT. Senior enlisted will receive this\ntraining MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2010",
@@ -4301,7 +4387,8 @@
         "NAVMED P-117 Manual of the Medical Department",
         "NAVMED P-5010 Navy Sanitation\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Officers will receive this training at FMSO\nor upon arrival to unit as MOJT. Senior enlisted will receive this\ntraining MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2011",
@@ -4341,7 +4428,8 @@
         "MCTP 8-10A Unit Training Management Guide",
         "MCTP 8-10B How to Conduct Training\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS:\nOfficers will receive this training at FMSO or upon arrival to unit as MOJT.\nSenior enlisted will receive this training MOJT.\nADVANCED training: Unit Readiness Planning Course (URPC) offered at train the\ntrainer (T3) school."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2012",
@@ -4360,7 +4448,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4388,7 +4476,8 @@
         "MCO 5351.1 Combat and Operational Stress Control (COSC) Program",
         "MCTP 3-30E Combat and Operational Stress Control\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Event should be taught at formal school. If\nSailors do not attend the formal school, initial training will be MOJT."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2013",
@@ -4407,7 +4496,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4434,7 +4523,8 @@
         "MCO 5351.1 Combat and Operational Stress Control (COSC) Program",
         "MCTP 3-30E Combat and Operational Stress Control"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2014",
@@ -4454,7 +4544,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO"
+        "NV￾MCPO"
       ],
       "initial_learning_setting": "MOJT",
       "condition": "Given a field messing facility in an operational environment,\nnecessary equipment and supplies.",
@@ -4472,7 +4562,8 @@
         "MCRP 3-40A.4 Field Hygiene and Sanitation",
         "NAVMED P-5010-1 Manual of Naval Preventive Medicine Food Safety"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MED-2015",
@@ -4492,7 +4583,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-WO-1"
       ],
       "initial_learning_setting": "MOJT",
@@ -4517,7 +4608,8 @@
         "P-5010 Navy Manual for Preventive Medicine",
         "TB MED 530 Tri-service Food Code\nSUPPORT REQUIREMENTS:\nRANGE/TRAINING AREA:\nFacility Code 17413 Field Training Area\nEQUIPMENT:\nAMAL 637 (Projected mission: <60 days and/or COP)\nAMAL 638 (Projected mission: >60 days or FOB)\nAMAL 638, 650, and 651 (Projected mission: >180 days and FOB)"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2101",
@@ -4536,7 +4628,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4558,7 +4650,8 @@
         "NAVMED P-5004 Handbook of the Hospital Corps",
         "SECNAVINST 5216.5_ Correspondence Manual"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2102",
@@ -4578,7 +4671,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4602,7 +4695,8 @@
         "MCTP 3-40A Health Service Support Operations",
         "MCWP 3-40 Logistics Operations\nSUPPORT REQUIREMENTS:\nRANGE/TRAINING AREA:\nFacility Code 17410 Maneuver/Training Area, Light Forces\nEQUIPMENT: Lift, AMAL/ADAL, motor transport, engineers/utilities,\ncommunications"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "core"
     },
     {
       "event_code": "HSS-MED-2103",
@@ -4621,7 +4715,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4652,7 +4746,8 @@
         "SECNAV M-5210.1_ Department of the Navy Records Management Manual",
         "SECNAVINST 5210.8 Records Management Program for Department of the Navy\nMISCELLANEOUS:\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MED-2104",
@@ -4672,7 +4767,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -4696,7 +4791,8 @@
         "INDEX OF INDIVIDUAL EVENTS\nEvent Code Event Page\n2000 Level Events\nL03A-EFWB-2001 Perform Donor Risk Stratification 6-7\nL03A-EFWB-2002 Perform Blood Donor Collection 6-8\nL03A-EFWB-2003 Perform Emergency Fresh Whole Blood Transfusion\n(EFWBT)\n6-10\nL03A-HSS-2001 Perform disease non-battle injury patient care 6-11\nL03A-HSS-2002 Evaluate traumatic brain injuries 6-12\nL03A-HSS-2003 Manage dehydration casualties 6-12\nL03A-HSS-2004 Maintain health services records 6-13\nL03A-HSS-2101 Perform dental care 6-13\nL03A-PCC-2001 Perform Prolonged Casualty Care 6-14\nL03A-PCC-2002 Evaluate and Manage Control of Massive Hemorrhage 6-15\nL03A-PCC-2003 Evaluate and Manage Control of Airway 6-16\nL03A-PCC-2004 Evaluate and Manage Control of Respirations 6-17\nL03A-PCC-2005 Evaluate Circulation and Perform Damage Control\nResuscitation (DCR)\n6-19\nL03A-PCC-2006 Implement Crisis Standard of Care 6-20\nL03A-PCC-2007 Conduct Timely Communication/Documentation 6-21\nL03A-PCC-2008 Evaluate and Manage Hypothermia 6-22\nL03A-PCC-2009 Evaluate and Manage Hyperthermia 6-24\nL03A-PCC-2010 Evaluate and Manage Head Injuries 6-25\nL03A-PCC-2011 Evaluate and Manage Pain Control Interventions 6-26\nL03A-PCC-2012 Administer Antibiotics 6-27\nL03A-PCC-2013 Evaluate and Manage Wounds and Nursing Care 6-29\nL03A-PCC-2014 Evaluate and Manage Orthopedic Injuries/Splints 6-30\nL03A-PCC-2015 Evaluate and Manage Burns 6-31\nL03A-PCC-2016 Prepare for casualty movement / EVAC 6-32\nL03A-TCCC-2001 Perform Care Under Fire 6-33\nL03A-TCCC-2002 Perform Tactical Field Care 6-34\nL03A-TCCC-2003 Perform Tactical Trauma Assessment 6-35\nL03A-TCCC-2004 Perform Communication Procedures and\nDocumentation\n6-35\nL03A-TCCC-2005 Prepare Casualty for Evacuation 6-36",
         "INDIVIDUAL EVENTS"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "L03A-EFWB-2001",
@@ -4732,7 +4828,8 @@
       "chained_events": {
         "internal_supporting": []
       },
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-EFWB-2002",
@@ -4773,7 +4870,8 @@
       "chained_events": {
         "internal_supporting": []
       },
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-EFWB-2003",
@@ -4820,7 +4918,8 @@
       "chained_events": {
         "internal_supporting": []
       },
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-HSS-2001",
@@ -4839,7 +4938,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO"
+        "NV￾MCPO"
       ],
       "initial_learning_setting": "FORMAL",
       "condition": "Given a patient in an operational environment.",
@@ -4854,7 +4953,8 @@
         "NAVEDTRA 14295B2 HM Manual",
         "NAVMED P-117 Manual of the Medical Department\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Basic familiarization will occur at FMTB.\nFull scope of sick call screener will be conducted as MOJT."
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-HSS-2002",
@@ -4873,7 +4973,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO"
+        "NV￾MCPO"
       ],
       "initial_learning_setting": "FORMAL",
       "condition": "Given a casualty in an operational environment.",
@@ -4889,7 +4989,8 @@
         "DTM 09-033 Policy Guidance for Management of Traumatic Brain",
         "Injury (TBI) in the Deployed Setting"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-HSS-2003",
@@ -4908,7 +5009,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO"
+        "NV￾MCPO"
       ],
       "initial_learning_setting": "FORMAL",
       "condition": "Given a casualty, equipment and supplies.",
@@ -4926,7 +5027,8 @@
         "Military Edition",
         "Current Edition"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "L03A-HSS-2004",
@@ -4963,7 +5065,8 @@
         "SECNAVINST 5210.1 Department of the Navy Records Management Manual",
         "SECNAVINST 5212.5_ Navy and Marine Corps Records Disposition Manual\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Health services personnel will ensure a\nskeleton record, at minimum, accompanies service members who are away from\nparent command for more than 30 days."
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "L03A-HSS-2101",
@@ -4983,7 +5086,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO"
+        "NV￾MCPO"
       ],
       "initial_learning_setting": "MOJT",
       "condition": "Given a casualty with dental needs in an operational environment.",
@@ -4998,7 +5101,8 @@
         "BUMEDINST 6600 Dental Health Care",
         "MCO 6600.3 Dental Health Care Program"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "L03A-PCC-2001",
@@ -5043,7 +5147,8 @@
           "L03A-PCC-2014 L03A-PCC-2015"
         ]
       },
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2002",
@@ -5081,7 +5186,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2003",
@@ -5113,7 +5219,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2004",
@@ -5146,7 +5253,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2005",
@@ -5189,7 +5297,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2006",
@@ -5219,7 +5328,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2007",
@@ -5250,7 +5360,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2008",
@@ -5285,7 +5396,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2009",
@@ -5325,7 +5437,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2010",
@@ -5361,14 +5474,15 @@
         "Identify signs of elevated or rising intracranial pressure (ICP) and\ninitiate immediate treatment",
         "Administer TXA as single 2gm IV or IO bolus (no second dose required)",
         "Maintain SBP >90 mmHg with initial fluid/blood product resuscitation",
-        "Repeat primary and secondary survey for any for any abrupt decline in the\nGlasgow Coma Scale (GCS) or change in pupil exam to rule out non\ufffeneurologic causes",
+        "Repeat primary and secondary survey for any for any abrupt decline in the\nGlasgow Coma Scale (GCS) or change in pupil exam to rule out non￾neurologic causes",
         "Immediate seizure treatment with benzodiazepines per medical direction\nand CPG, consider ketamine for refractory (seizures not controlled with\nbenzodiazepines) seizures",
         "Temperature management and aggressive fever control"
       ],
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2011",
@@ -5398,7 +5512,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2012",
@@ -5425,7 +5540,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2013",
@@ -5467,7 +5583,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2014",
@@ -5495,7 +5612,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2015",
@@ -5530,7 +5648,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-PCC-2016",
@@ -5562,7 +5681,8 @@
       "references": [
         "CPG ID:91 JTS Prolonged Casualty Care Guidelines"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-TCCC-2001",
@@ -5592,7 +5712,8 @@
         "Perform two-handed tourniquet application in less than one minute to a\ncasualty\nREFERENCE:",
         "JTS Tactical Combat Casualty Care Guidelines - Deployed Medicine\nADMINSTRATIVE REMARKS:\nWhile certification for TCCC-CM/C is every three years or 12 months prior to\ndeployment, the sustainment for this T&R standard is 12 months."
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-TCCC-2002",
@@ -5615,7 +5736,7 @@
         "Maintain awareness of the tactical environment",
         "Demonstrate the consolidation and triage casualties in a casualty\ncollection point as required",
         "Use body substance isolation precautions",
-        "Assess the casualty\u2019s responsiveness",
+        "Assess the casualty’s responsiveness",
         "Communicate with the casualty, if possible",
         "Perform tactical trauma assessment (covered in detail in L03A-TCCC-2003)",
         "Communicate with unit leadership throughout casualty treatment to include\nmedical updates and evacuation requirements",
@@ -5623,7 +5744,8 @@
         "Record all findings and treatment on a DD Form 1380 TCCC Casualty Card\nREFERENCE:",
         "JTS Tactical Combat Casualty Care Guidelines - Deployed Medicine\nADMINSTRATIVE REMARKS:\nWhile certification for TCCC-CM/C is every three years or 12 months prior to\ndeployment, the sustainment for this T&R standard is 12 months."
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-TCCC-2003",
@@ -5652,7 +5774,8 @@
         "Maintain awareness of all casualties and re-evaluated triage priorities\nbased on casualty assessment\nREFERENCE:",
         "JTS Tactical Combat Casualty Care Guidelines - Deployed Medicine\nADMINSTRATIVE REMARKS:\nWhile certification for TCCC-CM/C is every three years or 12 months prior to\ndeployment, the sustainment for this T&R standard is 12 months."
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-TCCC-2004",
@@ -5680,7 +5803,8 @@
         "Complete the DD Form 1380, both front and back\nREFERENCE:",
         "JTS Tactical Combat Casualty Care Guidelines - Deployed Medicine\nADMINSTRATIVE REMARKS:\nWhile certification for TCCC-CM/C is every three years or 12 months prior to\ndeployment, the sustainment for this T&R standard is 12 months."
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "L03A-TCCC-2005",
@@ -5710,11 +5834,12 @@
         "JTS Tactical Combat Casualty Care Guidelines - Deployed Medicine\nADMINSTRATIVE REMARKS:\nWhile certification for TCCC-CM/C is every three years or 12 months prior to\ndeployment, the sustainment for this T&R standard is 12 months.\nHSS T&R MANUAL\nCHAPTER 7\nCLINICAL INDIVIDUAL EVENTS\n PARAGRAPH PAGE\nPURPOSE . . . . . . . . . . . . . . . . . . . . . . . . . . . 7000 7-2\nEVENT CODING. . . . . . . . . . . . . . . . . . . . . . . . . 7001 7-2\nBILLET DESCRIPTIONS/CORE CAPABILITIES . . . . . . . . . . . . 7002 7-2\nINDEX OF INDIVIDUAL EVENTS. . . . . . . . . . . . . . . . . . 7003 7-6\nINDIVIDUAL EVENTS . . . . . . . . . . . . . . . . . . . . . . 7004 7-7\nHSS T&R MANUAL\nCHAPTER 7\nCLINICAL INDIVIDUAL EVENTS",
         "PURPOSE. This chapter details the individual events that pertain to\nclinical management. Each individual event provides an event title, along\nwith the conditions events will be performed under, and the standard to which\nthe event must be performed to be successful.",
         "EVENT CODING\nEvents in this T&R Manual are depicted with an up to 12-character, 3-field\nalphanumeric system, i.e. XXXX-XXXX-XXXX. This chapter utilizes the\nfollowing methodology:\n a. Field one. This field represents the community. This chapter\ncontains the following community codes:\n Code Description\n CLIN Clinical\n b. Field two. This field represents the functional/duty area. This\nchapter contains the following functional/duty areas:\n Code Description\n HSS Health Services Support\n c. Field three. This field provides the level at which the event is\naccomplished and numerical sequencing of events. This chapter contains the\nfollowing event levels:\n Code Description\n 1000 Core Skills\n 2000 Core Plus Skills\n 2100 Advanced Core Plus Skills",
-        "BILLET DESCRIPTIONS/CORE CAPABILITIES\n8425 - SURFACE FORCE INDEPENDENT DUTY CORPSMAN\nServes as the Medical Department Representative (MDR) aboard surface ships,\nwith the units of the Fleet Marine Force, and at various isolated duty\nstations ashore independent of a medical officer. Performs patient care and\nassociated shipboard administrative and logistical duties. Performs\ndiagnostic procedures, advanced first aid, basic life support, nursing\nprocedures, minor surgery, basic clinical laboratory procedures, and other\nroutine and emergency health care. Conducts and direct preventive medicine\nand industrial health surveillance programs. Provides for health education\nto junior medical and all nonmedical personnel. Perform all patient care and\nmedical management functions set forth in Chapter 9, Manual of the Medical\nDepartment. Administers the Radiation Health Program as necessary. Senior\npersonnel assigned to shore and operational staffs provide medical\nassistance, training, and inspection services to operational forces and\ncomponent units. Additionally, when assigned ashore, they serve primarily as\nnon-physician health care providers at fixed medical treatment facilities\n(MTFs).\n0102 GENERAL PRACTICE MEDICAL OFFICER [GP MED] [Job Code: 001058]\nPerforms routine medical duties of general practitioner. Maintains medical\nwelfare of personnel within command. Diagnoses and treats patients suffering\nfrom diseases and disorders. Conducts routine medical examinations.\nExamines personnel for organic and functional diseases and abnormalities\nusing standard tests and procedures. Supervises technical personnel in\nconducting routine laboratory procedures and tests. Conducts routine medical\ninspections of unit. Trains enlisted personnel in first aid and sanitation,\nand establishes first aid stations for emergency treatment.\n0108 FAMILY PHYSICIAN [FAM PHYS] [Job Code: 001196]\nExamines members of family units, diagnosing and treating diseases, injuries,\nand other physical disorders. Examines patients, requests laboratory tests\nand X-rays, evaluates results, and performs appropriate treatment.\nPrescribes drugs, dietary measures, and physical therapy for adults and\nchildren. Performs surgical, gynecological, and obstetrical procedures.\n0109 EMERGENCY MEDICAL SPECIALIST [EMERG MED SPEC] [Job Code: 001223]\nAdministers programs, directs and supervises personnel, and maintains\ncontinual surveillance of specialized equipment in the medical/surgical\nemergency room. Organizes and directs programs for on-the-job training of\npersonnel and supervises their performance. Maintains liaison with other\ndepartments within the medical facility to assure available consultation and\nto arrange for appropriate transfer of patients with minimum time delay and\nmaximum continued quality of medical care.\n0110 FLIGHT SURGEON [FLIGHT SGN] [Job Code: 001251]\nConducts physical/mental examinations for selection/retention of flight\npersonnel. Prescribes medical treatment and implements/monitors preventive\nmedicine programs. Provides aeromedical instruction to flight personnel.\nProvides aeromedical advice/recommendations to commands. Participates in\nflights to observe crew practices, medically related flight missions, and\naeromedical RDT&E programs. Serves as member of aircraft mishap\ninvestigation boards. Prevents aircraft accidents through the practice of\npreventive aerospace medicine and aeromedical safety.\n0113 PHYSICIAN'S ASSISTANT [PHYSICIAN ASST] [Job Code: 001308]\nProvides patient service as delegated by, and under the responsibility of,\nthe physician supervisor. Takes patient's history and records other\npertinent data. Conducts screening types of routine and special\nexaminations. Orders laboratory studies and X-ray examinations as directed\nby the physician. Diagnoses and treats diseases, disorders, and injuries.\nInstructs patients in home care procedures.\n0115 PSYCHIATRIST [PSYCHIATRIST] [Job Code: 001335]\nDiagnoses and treats functional mental diseases and disorders. Prescribes\nnecessary treatment and procedures for patients suffering from such\ndisorders. Supervises and directs activities of clinical psychologists and\nother psychiatric aides.\n0118 ANESTHESIOLOGIST [ANESTHESOLOGST] [Job Code: 001363]\nAdministers anesthetic. Determines anesthetic agents of choice. Keeps\noperating surgeon informed of patient's physical condition and status of\nanesthesia prior, during, and immediately after operation and records\nobservations. Directs and trains personnel in administering anesthetic.\nEnsures proper maintenance of anesthetic equipment.\n0160 PREVENTIVE MEDICINE OFFICER [PREV MED] [Job Code: 001528]\nAdministers programs designed to reduce risk of diseases and injuries.\nOrganizes and directs programs for identifying, characterizing, and\ncontrolling factors affecting health. Applies epidemiological principles\nthrough conceptual models and through programs for prevention, eradication or\ncontrol of communicable and noncommunicable diseases affecting military\npersonnel in all environments and geographic areas and under all working\nconditions.\n0214 GENERAL SURGEON [GEN SGN] [Job Code: 001641]\nTreats diseases of and injuries to certain organs or systems using surgical\nprocedures not requiring specialty skills. Provides necessary emergency\ncare. Directs and supervises preoperative and postoperative care of\npatients. Refers patients to specialists when the nature of the disease or\ninjury dictates.\n0335 DENTAL OFFICER GENERAL PRACTITIONER [DENT GP] [Job Code: 001911]\nPerforms routine duties of general practitioner of dentistry. Maintains\ndental health of personnel within naval command. Diagnoses and treats dental\ndiseases and disorders. Conducts routine dental examinations. Supervises\ntechnical personnel in routine dental laboratory procedures. Conducts\nroutine dental inspections.\n0340 OPERATIVE DENTIST [OPERAT DENT] [Job Code: 001933]\nSpecializes in restoration of teeth to both anatomical and functional form.\nPerforms advanced operative dentistry procedures in restoration of lost or\ndamaged portions of enamel, dentin, and cementum. Conducts research to\ndevelop improved techniques and materials. Directs continuing education\nprograms in operative dentistry.\n0510 ENDODONTIST [ENDODONTIST] [Job Code: 001956]\nTreats infections in periapical areas. Removes pulpal tissue, treats\ninfected periapical areas, and replaces with filling materials in order to\nprevent or remove infection. Determines presence or absence of septic\nmaterial.\n0525 COMPREHENSIVE DENTIST [COMPRE DENT] [Job Code: 001978]\nTreats the more difficult cases in all major clinical disciplines of\ndentistry, including endodontics, periodontics, operative dentistry, oral\ndiagnosis/medicine, oral surgery, and prosthodontics which do not require the\nexpertise of a specialist in a single discipline, but require an advanced\nlevel of training in the multidisciplinary approach.\n0550 ORAL MAXILLOFACIAL SURGEON [ORAL MAX SGN] [Job Code: 002071]\nPerforms surgery to correct or improve diseased or injured conditions of\nmouth or related structures including jaws, teeth, and adjacent tissue.\nApplies fixation appliances to fractures of mandible and maxilla. Treats\ncellulitis and other abnormalities and injuries to oral tissue and supporting\nstructures. Removes, by surgical methods, cysts and benign tumors of dental\norigin, abscessed areas, and impacted teeth. Directs preoperative and\npostoperative care of patients.\n0560 PERIODONTIST [PERIODONTIST] [Job Code: 002094]\nDiagnoses and treats diseases which affect supporting tissues of teeth.\nExamines teeth. Identifies diseased conditions which affect supporting\ntissues and treats supporting tissues to control and prevent spread of\ninfections.\n0569 PROSTHODONTIST [PROSTHODONTIST] [Job Code: 002116]\nReplaces or restores lost, missing, or diseased teeth by means of artificial\ndentures. Applies multiple inlays in order to provide normal occlusion with\nresultant physiologic and anatomic function. Considers physiologic and\nbiologic principles in restoring functional relationship of jaws and\nocclusion of teeth.\n0800 HEALTH CARE ADMINISTRATOR [HCA] [Job Code: 002229]\nDevelops, monitors and coordinates execution of health service administration\nprograms, systems and health service resources. Assesses effectiveness of\nhealth service activities and systems.\n0808 PATIENT ADMINISTRATOR [PT ADMIN] [Job Code: 002298]\nProvides for and coordinates all administrative matters related to the\ntreatment and disposition of patients. Ensures the proper processing of\npatient records and medical boards. Ensures proper management of the\nDecedent Affairs Program. Establishes a mechanism to collect and report\nstatistical data. Performs the functions of personnel officer for active\nduty military patients.\n0849 AEROSPACE PHYSIOLOGIST [AERO PHYSIO] [Job Code: 002494]\nPromotes safety in Naval aviation through investigations and analyses of the\naerospace environment's effects on the performance of flight personnel.\nInstructs flight personnel. Supervises operation and maintenance of\nphysiological/water survival training devices. Serves as a hypobaric-chamber\ufffeinside-instructor/observer. Serves as an aeromedical safety officer (AMSO).\nAssists aircraft mishap investigation boards. Manages the RDT&E,\nintroduction, and maintenance of new/modified aviation life support systems.\nPerforms flying duties in operational and training flights.\n0851 CLINICAL PSYCHOLOGIST [CLIN PSYCH] [Job Code: 002509]\nConducts psychological evaluation and treatment. Administers and interprets\npsychological tests and conducts individual and group psychotherapy.\n0860 ENTOMOLOGIST [ENTOMOLOGIST] [Job Code: 002540]\nApplies principles of integrated arthropod control to establish effective and\nenvironmentally sound disease vector control programs. Performs research\nrelated to disease vectors and transmission of vector-borne diseases.\nEvaluates pesticides and pesticide dispersal equipment, and the development\nof improved pest management techniques. Provides training for vector and\npest management personnel.\n0861 ENVIRONMENTAL HEALTH OFFICER [ENVR HLT OFF] [Job Code: 002542]\nDevelops and maintains programs of environmental health. Recommends\nprocedures which contribute to disease prevention and improvement of health,\nsafety, and well-being of personnel. Participates in studies of\nenvironmental health significance. Coordinates with civilian environmental\nhealth programs.\n0904 CRITICAL CARE NURSE [CC NRS] [Job Code: 002572]\nPlans, implements and evaluates nursing care of the patient in the critical\ncare area. Provides highly skilled, specialized nursing care. Ensures a\nsafe environment and adequate resources. Supervises, trains and evaluates\npersonnel in critical care nursing procedures.\n0906 EMERGENCY/TRAUMA NURSE [EMERG-TRAUMA NRS] [Job Code: 002574]\nProvides emergency/trauma nursing in peacetime, wartime, and humanitarian\nsettings; initiates triage protocol, manages emergent, restorative and/or\npreventive actions and treatment in response to acute, life threatening\ninjuries and illnesses; and provides education and training for Hospital\nCorpsmen in emergency treatment practice.\n0932 PERIOPERATIVE NURSE [PERIOP NRS] [Job Code: 002579]\nPlans, implements, and evaluates nursing care of the patient in surgery.\nAssists in preparation of the patient and the environment for surgery.\nSupervises and evaluates personnel and participates in their instruction and\ntraining. Maintains records and reports for accreditation and medico-legal\nprotection of the surgical team and the patient. Assists in investigation\nand evaluation of techniques, supplies, and instruments. Ensures the\navailability, functional integrity, and economic use of all surgical supplies\nand equipment.\n0944 PROFESSIONAL REGISTERED NURSE [PROF REG NRS] [Job Code: 002582]\nAssesses, plans, and implements direct nursing care of patients on assigned\nunit. Supervises and trains nursing personnel. Assumes charge nurse\nresponsibilities on a relief basis.\n0952 NURSE ANESTHETIST [NRS ANESTH] [Job Code: 002587]\nAdministers general and regional anesthesia. Evaluates patient's pre- and\npost-anesthetic status and explains anesthesia procedures to patients.\nMaintains records of patient's progress during anesthesia. Instructs\nnursing personnel in resuscitation, airway management, and respiratory care.\nManages resources for department. Assists in instruction of trainees and\nmedical officers.\n0963 PRIMARY CARE NURSE PRACTITIONER [PC NRS PRAC] [Job Code: 002590]\nProvides comprehensive health care and health maintenance within the scope of\nprofessional preparation. Provides primary health care which includes care\nof patients with acute episodic or chronic illnesses, emergency care,\nrehabilitation, preventive health measures, health maintenance, and health\neducation. Refers to other members of the health team as necessary. Serves\nas a collaborative member of the health team.",
+        "BILLET DESCRIPTIONS/CORE CAPABILITIES\n8425 - SURFACE FORCE INDEPENDENT DUTY CORPSMAN\nServes as the Medical Department Representative (MDR) aboard surface ships,\nwith the units of the Fleet Marine Force, and at various isolated duty\nstations ashore independent of a medical officer. Performs patient care and\nassociated shipboard administrative and logistical duties. Performs\ndiagnostic procedures, advanced first aid, basic life support, nursing\nprocedures, minor surgery, basic clinical laboratory procedures, and other\nroutine and emergency health care. Conducts and direct preventive medicine\nand industrial health surveillance programs. Provides for health education\nto junior medical and all nonmedical personnel. Perform all patient care and\nmedical management functions set forth in Chapter 9, Manual of the Medical\nDepartment. Administers the Radiation Health Program as necessary. Senior\npersonnel assigned to shore and operational staffs provide medical\nassistance, training, and inspection services to operational forces and\ncomponent units. Additionally, when assigned ashore, they serve primarily as\nnon-physician health care providers at fixed medical treatment facilities\n(MTFs).\n0102 GENERAL PRACTICE MEDICAL OFFICER [GP MED] [Job Code: 001058]\nPerforms routine medical duties of general practitioner. Maintains medical\nwelfare of personnel within command. Diagnoses and treats patients suffering\nfrom diseases and disorders. Conducts routine medical examinations.\nExamines personnel for organic and functional diseases and abnormalities\nusing standard tests and procedures. Supervises technical personnel in\nconducting routine laboratory procedures and tests. Conducts routine medical\ninspections of unit. Trains enlisted personnel in first aid and sanitation,\nand establishes first aid stations for emergency treatment.\n0108 FAMILY PHYSICIAN [FAM PHYS] [Job Code: 001196]\nExamines members of family units, diagnosing and treating diseases, injuries,\nand other physical disorders. Examines patients, requests laboratory tests\nand X-rays, evaluates results, and performs appropriate treatment.\nPrescribes drugs, dietary measures, and physical therapy for adults and\nchildren. Performs surgical, gynecological, and obstetrical procedures.\n0109 EMERGENCY MEDICAL SPECIALIST [EMERG MED SPEC] [Job Code: 001223]\nAdministers programs, directs and supervises personnel, and maintains\ncontinual surveillance of specialized equipment in the medical/surgical\nemergency room. Organizes and directs programs for on-the-job training of\npersonnel and supervises their performance. Maintains liaison with other\ndepartments within the medical facility to assure available consultation and\nto arrange for appropriate transfer of patients with minimum time delay and\nmaximum continued quality of medical care.\n0110 FLIGHT SURGEON [FLIGHT SGN] [Job Code: 001251]\nConducts physical/mental examinations for selection/retention of flight\npersonnel. Prescribes medical treatment and implements/monitors preventive\nmedicine programs. Provides aeromedical instruction to flight personnel.\nProvides aeromedical advice/recommendations to commands. Participates in\nflights to observe crew practices, medically related flight missions, and\naeromedical RDT&E programs. Serves as member of aircraft mishap\ninvestigation boards. Prevents aircraft accidents through the practice of\npreventive aerospace medicine and aeromedical safety.\n0113 PHYSICIAN'S ASSISTANT [PHYSICIAN ASST] [Job Code: 001308]\nProvides patient service as delegated by, and under the responsibility of,\nthe physician supervisor. Takes patient's history and records other\npertinent data. Conducts screening types of routine and special\nexaminations. Orders laboratory studies and X-ray examinations as directed\nby the physician. Diagnoses and treats diseases, disorders, and injuries.\nInstructs patients in home care procedures.\n0115 PSYCHIATRIST [PSYCHIATRIST] [Job Code: 001335]\nDiagnoses and treats functional mental diseases and disorders. Prescribes\nnecessary treatment and procedures for patients suffering from such\ndisorders. Supervises and directs activities of clinical psychologists and\nother psychiatric aides.\n0118 ANESTHESIOLOGIST [ANESTHESOLOGST] [Job Code: 001363]\nAdministers anesthetic. Determines anesthetic agents of choice. Keeps\noperating surgeon informed of patient's physical condition and status of\nanesthesia prior, during, and immediately after operation and records\nobservations. Directs and trains personnel in administering anesthetic.\nEnsures proper maintenance of anesthetic equipment.\n0160 PREVENTIVE MEDICINE OFFICER [PREV MED] [Job Code: 001528]\nAdministers programs designed to reduce risk of diseases and injuries.\nOrganizes and directs programs for identifying, characterizing, and\ncontrolling factors affecting health. Applies epidemiological principles\nthrough conceptual models and through programs for prevention, eradication or\ncontrol of communicable and noncommunicable diseases affecting military\npersonnel in all environments and geographic areas and under all working\nconditions.\n0214 GENERAL SURGEON [GEN SGN] [Job Code: 001641]\nTreats diseases of and injuries to certain organs or systems using surgical\nprocedures not requiring specialty skills. Provides necessary emergency\ncare. Directs and supervises preoperative and postoperative care of\npatients. Refers patients to specialists when the nature of the disease or\ninjury dictates.\n0335 DENTAL OFFICER GENERAL PRACTITIONER [DENT GP] [Job Code: 001911]\nPerforms routine duties of general practitioner of dentistry. Maintains\ndental health of personnel within naval command. Diagnoses and treats dental\ndiseases and disorders. Conducts routine dental examinations. Supervises\ntechnical personnel in routine dental laboratory procedures. Conducts\nroutine dental inspections.\n0340 OPERATIVE DENTIST [OPERAT DENT] [Job Code: 001933]\nSpecializes in restoration of teeth to both anatomical and functional form.\nPerforms advanced operative dentistry procedures in restoration of lost or\ndamaged portions of enamel, dentin, and cementum. Conducts research to\ndevelop improved techniques and materials. Directs continuing education\nprograms in operative dentistry.\n0510 ENDODONTIST [ENDODONTIST] [Job Code: 001956]\nTreats infections in periapical areas. Removes pulpal tissue, treats\ninfected periapical areas, and replaces with filling materials in order to\nprevent or remove infection. Determines presence or absence of septic\nmaterial.\n0525 COMPREHENSIVE DENTIST [COMPRE DENT] [Job Code: 001978]\nTreats the more difficult cases in all major clinical disciplines of\ndentistry, including endodontics, periodontics, operative dentistry, oral\ndiagnosis/medicine, oral surgery, and prosthodontics which do not require the\nexpertise of a specialist in a single discipline, but require an advanced\nlevel of training in the multidisciplinary approach.\n0550 ORAL MAXILLOFACIAL SURGEON [ORAL MAX SGN] [Job Code: 002071]\nPerforms surgery to correct or improve diseased or injured conditions of\nmouth or related structures including jaws, teeth, and adjacent tissue.\nApplies fixation appliances to fractures of mandible and maxilla. Treats\ncellulitis and other abnormalities and injuries to oral tissue and supporting\nstructures. Removes, by surgical methods, cysts and benign tumors of dental\norigin, abscessed areas, and impacted teeth. Directs preoperative and\npostoperative care of patients.\n0560 PERIODONTIST [PERIODONTIST] [Job Code: 002094]\nDiagnoses and treats diseases which affect supporting tissues of teeth.\nExamines teeth. Identifies diseased conditions which affect supporting\ntissues and treats supporting tissues to control and prevent spread of\ninfections.\n0569 PROSTHODONTIST [PROSTHODONTIST] [Job Code: 002116]\nReplaces or restores lost, missing, or diseased teeth by means of artificial\ndentures. Applies multiple inlays in order to provide normal occlusion with\nresultant physiologic and anatomic function. Considers physiologic and\nbiologic principles in restoring functional relationship of jaws and\nocclusion of teeth.\n0800 HEALTH CARE ADMINISTRATOR [HCA] [Job Code: 002229]\nDevelops, monitors and coordinates execution of health service administration\nprograms, systems and health service resources. Assesses effectiveness of\nhealth service activities and systems.\n0808 PATIENT ADMINISTRATOR [PT ADMIN] [Job Code: 002298]\nProvides for and coordinates all administrative matters related to the\ntreatment and disposition of patients. Ensures the proper processing of\npatient records and medical boards. Ensures proper management of the\nDecedent Affairs Program. Establishes a mechanism to collect and report\nstatistical data. Performs the functions of personnel officer for active\nduty military patients.\n0849 AEROSPACE PHYSIOLOGIST [AERO PHYSIO] [Job Code: 002494]\nPromotes safety in Naval aviation through investigations and analyses of the\naerospace environment's effects on the performance of flight personnel.\nInstructs flight personnel. Supervises operation and maintenance of\nphysiological/water survival training devices. Serves as a hypobaric-chamber￾inside-instructor/observer. Serves as an aeromedical safety officer (AMSO).\nAssists aircraft mishap investigation boards. Manages the RDT&E,\nintroduction, and maintenance of new/modified aviation life support systems.\nPerforms flying duties in operational and training flights.\n0851 CLINICAL PSYCHOLOGIST [CLIN PSYCH] [Job Code: 002509]\nConducts psychological evaluation and treatment. Administers and interprets\npsychological tests and conducts individual and group psychotherapy.\n0860 ENTOMOLOGIST [ENTOMOLOGIST] [Job Code: 002540]\nApplies principles of integrated arthropod control to establish effective and\nenvironmentally sound disease vector control programs. Performs research\nrelated to disease vectors and transmission of vector-borne diseases.\nEvaluates pesticides and pesticide dispersal equipment, and the development\nof improved pest management techniques. Provides training for vector and\npest management personnel.\n0861 ENVIRONMENTAL HEALTH OFFICER [ENVR HLT OFF] [Job Code: 002542]\nDevelops and maintains programs of environmental health. Recommends\nprocedures which contribute to disease prevention and improvement of health,\nsafety, and well-being of personnel. Participates in studies of\nenvironmental health significance. Coordinates with civilian environmental\nhealth programs.\n0904 CRITICAL CARE NURSE [CC NRS] [Job Code: 002572]\nPlans, implements and evaluates nursing care of the patient in the critical\ncare area. Provides highly skilled, specialized nursing care. Ensures a\nsafe environment and adequate resources. Supervises, trains and evaluates\npersonnel in critical care nursing procedures.\n0906 EMERGENCY/TRAUMA NURSE [EMERG-TRAUMA NRS] [Job Code: 002574]\nProvides emergency/trauma nursing in peacetime, wartime, and humanitarian\nsettings; initiates triage protocol, manages emergent, restorative and/or\npreventive actions and treatment in response to acute, life threatening\ninjuries and illnesses; and provides education and training for Hospital\nCorpsmen in emergency treatment practice.\n0932 PERIOPERATIVE NURSE [PERIOP NRS] [Job Code: 002579]\nPlans, implements, and evaluates nursing care of the patient in surgery.\nAssists in preparation of the patient and the environment for surgery.\nSupervises and evaluates personnel and participates in their instruction and\ntraining. Maintains records and reports for accreditation and medico-legal\nprotection of the surgical team and the patient. Assists in investigation\nand evaluation of techniques, supplies, and instruments. Ensures the\navailability, functional integrity, and economic use of all surgical supplies\nand equipment.\n0944 PROFESSIONAL REGISTERED NURSE [PROF REG NRS] [Job Code: 002582]\nAssesses, plans, and implements direct nursing care of patients on assigned\nunit. Supervises and trains nursing personnel. Assumes charge nurse\nresponsibilities on a relief basis.\n0952 NURSE ANESTHETIST [NRS ANESTH] [Job Code: 002587]\nAdministers general and regional anesthesia. Evaluates patient's pre- and\npost-anesthetic status and explains anesthesia procedures to patients.\nMaintains records of patient's progress during anesthesia. Instructs\nnursing personnel in resuscitation, airway management, and respiratory care.\nManages resources for department. Assists in instruction of trainees and\nmedical officers.\n0963 PRIMARY CARE NURSE PRACTITIONER [PC NRS PRAC] [Job Code: 002590]\nProvides comprehensive health care and health maintenance within the scope of\nprofessional preparation. Provides primary health care which includes care\nof patients with acute episodic or chronic illnesses, emergency care,\nrehabilitation, preventive health measures, health maintenance, and health\neducation. Refers to other members of the health team as necessary. Serves\nas a collaborative member of the health team.",
         "INDEX OF INDIVIDUAL EVENTS\nEvent Code Event Page\n2000 Level Events\nCLIN-HSS-2101 Manage traumatic brain injuries (TBI) 7-7\nCLIN-HSS-2102 Conduct concussion/Traumatic Brain Injury (TBI)\ntraining\n7-7\nCLIN-HSS-2103 Manage field preventive medicine 7-8\nCLIN-HSS-2104 Perform medical care 7-9\nCLIN-HSS-2105 Perform dental care 7-10",
         "INDIVIDUAL EVENTS"
       ],
-      "community": "L03A"
+      "community": "L03A",
+      "role2_relevance": "core"
     },
     {
       "event_code": "CLIN-HSS-2101",
@@ -5753,7 +5878,8 @@
         "DTM 09-033 Policy Guidance for Management of Traumatic Brain",
         "Injury (TBI) in the Deployed Setting"
       ],
-      "community": "CLIN"
+      "community": "CLIN",
+      "role2_relevance": "core"
     },
     {
       "event_code": "CLIN-HSS-2102",
@@ -5796,7 +5922,8 @@
         "MCTP 8-10A Unit Training Management Guide",
         "MCTP 8-10B How to Conduct Training"
       ],
-      "community": "CLIN"
+      "community": "CLIN",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "CLIN-HSS-2103",
@@ -5842,7 +5969,8 @@
         "650",
         "and 651 (Projected mission: >180 days and FOB)"
       ],
-      "community": "CLIN"
+      "community": "CLIN",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "CLIN-HSS-2104",
@@ -5885,7 +6013,8 @@
         "Emergency Medicine: Concepts and Clinical Practice. Tintinalli, Judith\nE., ed.",
         "NAVMED P-5134 General Medical Officer (GMO) Manual\nMISCELLANEOUS:\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "CLIN"
+      "community": "CLIN",
+      "role2_relevance": "core"
     },
     {
       "event_code": "CLIN-HSS-2105",
@@ -5941,7 +6070,8 @@
         "INDEX OF INDIVIDUAL EVENTS\nEvent Code Event Page\n2000 Level Events\n8427-MED-2001 Assess a clinical patient 8-3\n8427-MED-2002 Manage a trauma emergency 8-4\n8427-MED-2003 Manage diving casualty 8-5\n8427-MED-2004 Manage an emergency veterinary patient 8-6\n8427-MED-2005 Perform trauma surgical skills 8-6\n8427-MED-2006 Perform a field blood transfusion 8-7\n8427-MED-2007 Perform ACLS 8-8",
         "INDIVIDUAL EVENTS"
       ],
-      "community": "CLIN"
+      "community": "CLIN",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "8427-MED-2001",
@@ -5977,7 +6107,8 @@
         "Tactical Trauma Protocol Tactical Trauma Protocol (TTP) Tactical Medical\nEmergency Protocols, January 2013",
         "USSOCOM D 350-29 Special Operations Forces Medical Training 7 September\n2012"
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8427-MED-2002",
@@ -6015,7 +6146,8 @@
         "SOF Medical Special Operations Forces Medical Handbook",
         "Tactical Trauma Protocol Tactical Trauma Protocol (TTP) Tactical Medical\nEmergency Protocols, January 2013\nMISCELLANEOUS:\nSPECIAL PERSONNEL CERTS: Advanced Tactical Paramedic refresher training\nwith initial formal training and every two years thereafter."
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8427-MED-2003",
@@ -6054,7 +6186,8 @@
       "references": [
         "Diving Manual US Navy Diving Manual"
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "8427-MED-2004",
@@ -6093,7 +6226,8 @@
         "SOF Medical Special Operations Forces Medical Handbook",
         "Tactical Trauma Protocol Tactical Trauma Protocol (TTP) Tactical Medical\nEmergency Protocols, January 2013"
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "none"
     },
     {
       "event_code": "8427-MED-2005",
@@ -6126,7 +6260,8 @@
         "PHTLS Pre-hospital Trauma Life Support, Military Edition, Current Edition",
         "Tactical Trauma Protocol Tactical Trauma Protocol (TTP) Tactical Medical\nEmergency Protocols, January 2013\nMISCELLANEOUS:\nSPECIAL PERSONNEL CERTS: Advanced Tactical Paramedic refresher training\nwith initial formal training and every two years thereafter.\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8427-MED-2006",
@@ -6162,7 +6297,8 @@
         "Emergency Medicine: Concepts and Clinical Practice. Tintinalli, Judith\nE., ed.",
         "Tactical Trauma Protocol Tactical Trauma Protocol (TTP) Tactical Medical\nEmergency Protocols, January 2013"
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8427-MED-2007",
@@ -6200,7 +6336,8 @@
         "INDEX OF INDIVIDUAL EVENTS\nEvent Code Event Page\n2000 Level Events\n8403-MED-2101 Manage a surgical patient 9-4\n8403-MED-2102 Manage an anesthesia patient 9-4\n8403-MED-2103 Conduct laboratory procedures 9-5\n8403-MED-2104 Conduct radiological procedures 9-6\n8403-MED-2105 Conduct equipment sterilization procedures 9-6\n8403-MED-2106 Manage an emergency dental patient 9-7\n8403-MED-2107 Manage Occupational Health/Preventive Medicine\nprogram\n9-7",
         "INDIVIDUAL EVENTS"
       ],
-      "community": "8427"
+      "community": "8427",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8403-MED-2101",
@@ -6238,7 +6375,8 @@
         "Emergency Medicine: Concepts and Clinical Practice. Tintinalli, Judith\nE., ed.",
         "NAVMED P-117 Manual of the Medical Department"
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8403-MED-2102",
@@ -6278,7 +6416,8 @@
         "Judith E.",
         "ed."
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8403-MED-2103",
@@ -6317,7 +6456,8 @@
         "SUPPORT REQUIREMENTS:",
         "EQUIPMENT: Training aids and consumables."
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8403-MED-2104",
@@ -6351,7 +6491,8 @@
         "Emergency Medicine: Concepts and Clinical Practice. Tintinalli, Judith\nE., ed.",
         "TM 8-280 TM 8-280, Radiologic Technology, chapters 5-7"
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "8403-MED-2105",
@@ -6387,7 +6528,8 @@
         "Judith E.",
         "ed."
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "core"
     },
     {
       "event_code": "8403-MED-2106",
@@ -6426,7 +6568,8 @@
       "references": [
         "BUMEDINST 6600 Dental Health Care"
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "8403-MED-2107",
@@ -6462,7 +6605,8 @@
         "INDEX OF INDIVIDUAL EVENTS\nEvent Code Event Page\n2000 Level Events\nHSS-MW-2701 Apply the principles of nutrition 10-3\nHSS-MW-2702 Perform patient assessment 10-3\nHSS-MW-2703 Manage common cold weather injuries 10-4\nHSS-MW-2704 Manage altitude sickness 10-4\nHSS-MW-2705 Manage a submersion incident casualty 10-5\nHSS-MW-2706 Manage high altitude illness 10-5\nHSS-MW-2707 Manage musculoskeletal injuries 10-6\nHSS-MW-2708 Manage injuries/illnesses 10-6\nHSS-MW-2709 Perform temperate and cold weather preventive\nmedicine\n10-7\nHSS-MW-2710 Apply survival techniques 10-8\nHSS-MW-2711 Respond to a mass casualty 10-8\nHSS-MW-2712 Conduct a swift water rescue 10-9\nHSS-MW-2713 Conduct an avalanche rescue 10-9\nHSS-MW-2714 Perform casualty evacuation 10-10\nHSS-MW-2715 Advise on medical issues 10-11",
         "INDIVIDUAL EVENTS"
       ],
-      "community": "8403"
+      "community": "8403",
+      "role2_relevance": "supporting"
     },
     {
       "event_code": "HSS-MW-2701",
@@ -6481,7 +6625,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6503,7 +6647,8 @@
         "by Wayne Merry and St",
         "John Ambulance"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2702",
@@ -6522,7 +6667,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6544,7 +6689,8 @@
       "references": [
         "(SUR) Ranger Medic Handbook"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2703",
@@ -6563,7 +6709,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6583,7 +6729,8 @@
       "references": [
         "TB MED 508 Prevention and Management of Cold-Weather Injuries"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2704",
@@ -6602,7 +6749,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6623,7 +6770,8 @@
         "TB MED 505 Altitude Acclimatization and Illness Management",
         "TB MED 508 Prevention and Management of Cold-Weather Injuries\nMISCELLANEOUS:\nSIMULATION: Training should leverage live/virtual/constructive simulation\nthrough the use of manikins and role players."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2705",
@@ -6642,7 +6790,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6662,7 +6810,8 @@
       "references": [
         "TB MED 508 Prevention and Management of Cold-Weather Injuries"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2706",
@@ -6681,7 +6830,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6705,7 +6854,8 @@
         "(SUR) AAOS Wilderness First Aid Guide, by Wayne Merry and St John\nAmbulance",
         "TB MED 508 Prevention and Management of Cold-Weather Injuries"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2707",
@@ -6724,7 +6874,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6746,7 +6896,8 @@
         "(SUR) Ranger Medic Handbook",
         "(SUR) AAOS Wilderness First Aid Guide, by Wayne Merry and St John\nAmbulance"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2708",
@@ -6765,7 +6916,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6795,7 +6946,8 @@
         "(SUR)Tropics Tropical Medicine Manual",
         "PHTLS Pre-hospital Trauma Life Support, Military Edition, Current Edition"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2709",
@@ -6814,7 +6966,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6837,7 +6989,8 @@
         "MCRP 3-40A.4 Field Hygiene and Sanitation",
         "NAVMED P-5010 Navy Sanitation"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2710",
@@ -6856,7 +7009,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6880,7 +7033,8 @@
         "ATP 3-50.21 Survival",
         "MCRP 12-10A.3 Mountain Leaders Guide to Mountain Warfare Operations"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2711",
@@ -6899,7 +7053,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6922,7 +7076,8 @@
         "(SUR) AAOS Wilderness First Aid Guide, by Wayne Merry and St John\nAmbulance",
         "WILDERNESS MED 4TH Wilderness Med 4TH Ed. Auerbach, Paul S."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2712",
@@ -6941,7 +7096,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -6965,7 +7120,8 @@
         "JP 3-50 Personnel Recovery",
         "TB MED 508 Prevention and Management of Cold-Weather Injuries\nSUPPORT REQUIREMENTS:\nEQUIPMENT: Swift water rescue equipment\nMATERIAL: Throw bags, personal flotation device, helmet, whistle, 165\nfoot static rope"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2713",
@@ -6984,7 +7140,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -7009,7 +7165,8 @@
         "MCRP 12-10A.3 Mountain Leaders Guide to Mountain Warfare Operations",
         "The American Institute for Avalanche Research and Education"
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2714",
@@ -7028,7 +7185,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -7058,7 +7215,8 @@
         "MCRP 12-10A.1 Small Unit Leader's Guide to Mountain Warfare Operations",
         "MCRP 12-10A.3 Mountain Leaders Guide to Mountain Warfare Operations\nMISCELLANEOUS:\nADMINISTRATIVE INSTRUCTIONS: Due to the physically demanding nature of\nthis task, upon arrival at Mountain Warfare Training Command, a screening\ntest will be conducted to ensure students are physically capable of\ncompleting training."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     },
     {
       "event_code": "HSS-MW-2715",
@@ -7077,7 +7235,7 @@
         "NV-PO-1",
         "NV-CPO",
         "NV-SCPO",
-        "NV\ufffeMCPO",
+        "NV￾MCPO",
         "NV-ENS",
         "NV-LTJG",
         "NV-LT",
@@ -7099,7 +7257,8 @@
         "MCRP 12-10A.1 Small Unit Leader's Guide to Mountain Warfare Operations",
         "MCRP 12-10A.3 Mountain Leaders Guide to Mountain Warfare Operations\nA-1 Enclosure (1)\nHSS T&R MANUAL\nAPPENDIX A\nACRONYMS\nAAV - amphibious assault vehicle\nACP - automated commissioning package\nACT - accuracy completeness time sequence\nACTS - Assignment, Classification, and Travel Systems\nAIRS - Automated Inspection Reporting System\nAO - area of operations\nAPTS - advanced presentation and training skills\nAR - Active Reserve\nASTB-E - Aviation Selection Test Battery Series-E\nAT4C - advanced tool for coaching\nBIC - billet information code\nCAPT - Captain\nCAR - commander's attainment report\nCBRN - chemical, biological, radiological, and nuclear\nCBT - computer-based training\nCG - commanding general\nCMC - Commandant of the Marine Corps\nCMR - consolidated memorandum receipt\nCO - commanding officer\nCOA - course of action\nCONPLAN - contingency plan\nCONUS - continental United States\nCOT - consecutive overseas tours\nCPL - Corporal\nCRP - combat readiness percentage; command recruiting program\nCSR - consolidated strength report\nCWO - chief warrant officer\nDEP - delayed entry program\nDL - distance learning\nDOD - Department of Defense\nDoDFMR - Department of Defense Financial Management Regulation\nDON - Department of the Navy\nDRRS - Defense Readiness Reporting System\nEAD - extended active duty\nECFC - enlisted career force controls\nECS - effective communication skills\nEFMP - Exceptional Family Member Program\nENLPROM - enlisted promotions\nEPM - enlistment processing manual\n1STLT - First Lieutenant\nFAI - functional area inspection\nFLC - formal learning center\nFMF - fleet Marine force\nFY - fiscal year\nGOV - government owned vehicle\nGSA - Government Services Administration\nGYSGT - Gunnery Sergeant\nHOTAS - hands-on throttle and stick\nHQMC - Headquarters, Marine Corps\nIAW - in accordance with\nA-2 Enclosure (1)\nIGMC - Inspector General of the Marine Corps\nIIADT - incremental initial active duty training\nIMI - individual multimedia instruction\nIPOCT - in place consecutive overseas tours\nIRAM - Individual Records Administration Manual\nIRR - Individual Ready Reserve\nIRT - Itinerant Recruiting Trip\nJPIC - Joint Package Inspection Checklist\nLATMOV - lateral move\nLCPL - Lance Corporal\nLDO - limited duty officer; line of duty\nLOI - letter of instruction\nLSL - lump sum leave\nMAJ - Major\nMARADMIN - Marine Administrative Message\nMARCORPROMMAN - Marine Corps Promotion Manual\nMARCORSEPMAN - Marine Corps Separation and Retirement Manual\nMARFORRES - Marine Corps Forces Reserve\nMASP - military academic skills program\nMC2 - Marine Corps Communication and Consulting\nMC3 - Marine Corps Communication, Coaching, and Counseling\nMC4 - Marine Corps Communication, Consulting, Coaching, and Counseling\nMCC - monitored command code\nMCEOB - Marine Corps Enlisted Opportunities Book\nMCI - Marine Corps Institute\nMCMEDS - Marine Corps Medical Entitlements Data System\nMCMP - Marine Corps mentoring program\nMCO - Marine Corps order\nMCOOB - Marine Corps Officer Opportunity Book\nMCP3 - Marine Corps Performance, Programming and Philosophy\nMCPS - Marine Corps Presentation Skills\nMCRAMM - Marine Corps Reserve Administrative Management Manual\nMCRC - Marine Corps Recruiting Command\nMCRD - Marine Corps Recruit Depot\nMCRISS - Marine Corps Recruiting Information Support System\nMCRISS-OSS - Marine Corps Recruiting Information Support System-Officer\n Selection Station\nMCRISS-PSRS - Marine Corps Recruiting Information Support System-Prior\n Service Recruiting Station\nMCRISS-PSRSS - Marine Corps Recruiting Information Support System-Prior\n Service Recruiting Substation\nMCRISS-RS - Marine Corps Recruiting Information Support System-Recruiting\n Station\nMCROB - Marine Corps Reserve Opportunity Book\nMCT - Marine Corps Task\nMCTFSPRIM - Marine Corps Total Force Reporting Instructions Manual\nMCTIMS - Marine Corps Training Information Management System\nMCTL - Marine Corps Task List\nMECEP - Marine Corps Enlisted Commissioning Education Program\nMEPCOM - Military Entrance Processing Command\nMEPS - Military Entrance Processing Station\nMET - mission essential task\nMETL - mission essential task list\nMGIB-R - Montgomery GI Bill-Reserve\nMGYSGT - Master Gunnery Sergeant\nMIRS - USMEPCOM Integrated Resource System\nMISSO - Manpower Information Systems Support Officer\nA-3 Enclosure (1)\nMOJT - Marine on-the-job training\nMOL - Marine online\nMOS - military occupational specialty\nMSC - major subordinate command\nMSGT - Master Sergeant\nMUD - Merkel Unit Designator\nNAMI - Naval Aerial Medical Institute\nNAVMC - Navy Marine Corps\nNIDT - Non-Instrumented Drug Test\nNMCI - Navy Marine Corps Communication Information\nNWA - new working applicant\nOCHF - Operations Chief\nOCM - Officer Commissioning Manual\nOCONUS - outside the continental United States\nOIC - officer in charge\nOPFOR - opposing force; opposition force\nOPLAN - operational plan\nOPNAV - Office of the Chief of Naval Operations\nOPNAVINST Chief of Naval Operations instruction\nOPS - operations\nOPSO - operations officer\nORM - operational risk management\nOSO - officer selection officer\nOSS - officer selection station\nOST - officer selection team\nPAC - prospect applicant card\nPADD - projected active duty date\nPAR - Performance and Review\nPFC - Private First Class\nPSEP - prior service enlistment program\nPSF - public speaking forum\nPSR - prior service recruiter\nPSRS - prior service recruiting station\nPSRSS - prior service recruiting substation\nPTAD - permissive temporary additional duty\nPVT - Private\nQC - quality control\nQCIS - quality control SITREP\nQSN - quota serial number\nRAV - Retention Assist Visit\nRECLP - Reserve Enlisted Commissioning Program\nRELM - Reenlistment Extension Lateral Move\nRI - Recruiter Instructor\nROEP - Reserve Option Enlistment Program\nRS - Recruiting Station\nRSCE - Recruiting Station Command Element\nRSS - Recruiting Substation\nRTF - recruiter training file\nRUC - reporting unit code\nS&R - Schedule and Results\nSAT - Systems Approach to Training\nSAV - staff assist visit\nSDA - special duty assignment\nSECNAVINST - Secretary of the Navy instruction\nSGT - Sergeant\nSGTMAJ - Sergeant Major\nSITREP situation report\nA-4 Enclosure (1)\nSMB - SNCOIC Management Book\nSMCR - select Marine Corps reserve\nSME - subject matter expert\nSMOS - supplementary MOS\nSNCO - staff noncommissioned officer\nSNCOIC - staff noncommissioned officer in charge\nSOP - standing operating procedure\nSOS - statement of service\nSOU - statement of understanding\nSRB - selective reenlistment bonus\nSRI - Systematic Recruiting Inspection\nSRIP - Selected Reserve Incentive Program\nSSGT - Staff Sergeant\nT&R - training and readiness\nT/O - table of organization\nTECOM - Training and Education Command\nTIP - training input plan\nTMS - Training Management System\nUMIS - Unit Manpower Information Sheet\nUTM - unit training management\nWO - Warrant Officer\nXO - executive officer\nB-1 Enclosure (1)\nHSS T&R MANUAL\nAPPENDIX B\nTERMS AND DEFINITIONS\nTerms in this glossary are subject to change as applicable orders and\ndirectives are revised. Terms established by Marine Corps orders or\ndirectives take precedence after definitions found in Joint Publication 1-02,\nDOD Dictionary of Military and Associated Terms.\nA\nAfter Action Review. A professional discussion of training events conducted\nafter all training to promote learning among training participants. The\nformality and scope increase with the command level and size of the training\nevolution. For longer exercises, they should be planned for at predetermined\ntimes during an exercise. The results of the AAR shall be recorded on an\nafter action report and forwarded to higher headquarters. The commander and\nhigher headquarters use the results of an AAR to reallocate resources,\nreprioritize their training plan, and plan for future training.\nAssessment. An informal judgment of the unit's proficiency and resources\nmade by a commander or trainer to gain insight into the unit's overall\ncondition. It serves as the basis for the midrange plan. Commanders make\nfrequent use of these determinations during the course of the combat\nreadiness cycle in order to adjust, prioritize or modify training events and\nplans.\nC\nChaining. A process that enables unit leaders to effectively identify\nsubordinate collective events and individual events that support a specific\ncollective event. For example, collective training events at the 4000-Level\nare directly supported by collective events at the 3000-Level. When a higher\nlevel event by its nature requires the completion of lower level events, they\nare \"chained\"; Sustainment credit is given for all lower level events chained\nto a higher event.\nCollective Event. A clearly defined, discrete, and measurable activity,\naction, or event (i.e., task) that requires organized team or unit\nperformance and leads to accomplishment of a mission or function. A\ncollective task is derived from unit missions or higher-level collective\ntasks. Task accomplishment requires performance of procedures composed of\nsupporting collective or individual tasks. A collective task describes the\nexact performance a group must perform in the field under actual operational\nconditions. The term \"collective\" does not necessarily infer that a unit\naccomplishes the event. A unit, such as a squad or platoon conducting an\nattack; may accomplish a collective event or, it may be accomplished by an\nindividual to accomplish a unit mission, such as a battalion supply officer\ncompleting a reconciliation of the battalion's CMR. Thus, many collective\nevents will have titles that are the same as individual events; however, the\nstandard and condition will be different because the scope of the collective\nevent is broader.\nB-2 Enclosure (1)\nCollective Training Standards (CTS). Criteria that specify mission and\nfunctional area unit proficiency standards for combat, combat support, and\ncombat service support units. They include tasks, conditions, standards,\nevaluator instruction, and key indicators. CTS are found within collective\ntraining events in T&R Manuals.\nCombat Readiness Cycle. The combat readiness cycle depicts the relationships\nwithin the building block approach to training. The combat readiness cycle\nprogresses from T&R Manual individual core skills training, to the\naccomplishment of collective training events, and finally, to a unit's\nparticipation in a contingency or actual combat. The combat readiness cycle\ndemonstrates the relationship of core capabilities to unit combat readiness.\nIndividual core skills training and the training of collective events lead\nto unit proficiency and the ability to accomplish the unit's stated mission.\nCombat Readiness Percentage (CRP). The CRP is a quantitative numerical value\nused in calculating collective training readiness based on the E-Coded events\nthat support the unit METL. CRP is a concise measure of unit training\naccomplishments. This numerical value is only a snapshot of training\nreadiness at a specific time. As training is conducted, unit CRP will\ncontinuously change.\nCondition. The condition describes the training situation or environment\nunder which the training event or task will take place. Expands on the\ninformation in the title by identifying when, where and why the event or task\nwill occur and what materials, personnel, equipment, environmental\nprovisions, and safety constraints must be present to perform the event or\ntask in a real-world environment. Commanders can modify the conditions of\nthe event to best prepare their Marines to accomplish the assigned mission\n(e.g. in a desert environment; in a mountain environment; etc.).\nCore Competency. Core competency is the comprehensive measure of a unit's\nability to accomplish its assigned MET. It serves as the foundation of the\nT&R Program. Core competencies are those unit core capabilities and\nindividual core skills that support the commander's METL and T/O mission\nstatement. Individual competency is exhibited through demonstration of\nproficiency in specified core tasks and core plus tasks. Unit proficiency is\nmeasured through collective tasks.\nCore Capabilities. Core capabilities are the essential functions a unit must\nbe capable of performing during extended contingency/combat operations. Core\nunit capabilities are based upon mission essential tasks derived from\noperational plans; doctrine and established tactics; techniques and\nprocedures.\nCore Plus Capabilities. Core plus capabilities are advanced capabilities\nthat are environment, mission, or theater specific. Core plus capabilities\nmay entail high-risk, high-cost training for missions that are less likely to\nbe assigned in combat.\nCore Plus Skills. Core plus skills are those advanced skills that are\nenvironment, mission, rank, or billet specific. 2000-Level training is\ndesigned to make Marines proficient in core skills in a specific billet or at\na specified rank at the Combat Ready level. 3000-8000-Level training\nproduces combat leaders and fully qualified section members at the Combat\nQualified level. Marines trained at the Combat Qualified level are those the\ncommanding officer feels are capable of accomplishing unit-level missions and\nB-3 Enclosure (1)\nof directing the actions of subordinates. Many core plus tasks are learned\nvia MOJT, while others form the base for curriculum in career level MOS\ncourses taught by the formal school.\nD\nDefense Readiness Reporting System (DRRS). A comprehensive readiness\nreporting system that evaluates readiness on the basis of the actual missions\nand capabilities assigned to the forces. It is a capabilities-based,\nadaptive, near real-time reporting system for the entire Department of\nDefense.\nDeferred Event. A T&R event that a commanding officer may postpone when in\nhis or her judgment, a lack of logistic support, ammo, ranges, or other\ntraining assets requires a temporary exemption. CRP cannot be accrued for\ndeferred \"E-Coded\" events.\nDelinquent Event. An event becomes delinquent when a unit exceeds the\nsustainment interval for that particular event. The individual or unit must\nupdate the delinquent event by first performing all prerequisite events.\nWhen the unit commander deems that performing all prerequisite is\nunattainable, then the delinquent event will be re-demonstrated under the\nsupervision of the appropriate evaluation authority.\nE\nE-Coded Event. An \"E-Coded\" event is a collective T&R event that is a noted\nindicator of capability or, a noted collective skill that contributes to the\nunit's ability to perform the supported MET. As such, only \"E-Coded\" events\nare assigned a CRP value and used to calculate a unit's CRP.\nEvaluation. Evaluation is a continuous process that occurs at all echelons,\nduring every phase of training and can be both formal and informal.\nEvaluations ensure that Marines and units are capable of conducting their\ncombat mission. Evaluation results are used to reallocate resources,\nreprioritize the training plan, and plan for future training.\nEvent (Training). 1) An event is a significant training occurrence that is\nidentified, expanded and used as a building block and potential milestone for\na unit's training. An event may include formal evaluations. 2) An event\nwithin the T&R Program can be an individual training evolution, a collective\ntraining evolution or both. Through T&R events, the unit commander ensures\nthat individual Marines and the unit progress from a combat capable status to\na Fully Combat Qualified (FCQ) status.\nEvent Component. The major procedures (i.e., actions) that must occur to\nperform a Collective Event to standard.\nExercise Commander (EC). The Commanding General, Marine Expeditionary Force\nor his appointee will fill this role, unless authority is delegated to the\nrespective commander of the Division, Wing, or MLG. Responsibilities and\nfunctions of the EC include: 1) designate unit(s) to be evaluated, 2) may\ndesignate an exercise director, 3) prescribe exercise objectives and T&R\nevents to be evaluated, 4) coordinate with commands or agencies external to\nthe Marine Corps and adjacent Marine Corps commands, when required.\nB-4 Enclosure (1)\nExercise Director (ED). Designated by the EC to prepare, conduct, and report\nall evaluation results. Responsibilities and functions of the ED include:\n1) Publish a letter of instruction (LOI) that: delineates the T&R events to\nbe evaluated, establishes timeframe of the exercise, lists responsibilities\nof various elements participating in the exercise, establishes safety\nrequirements/guidelines, and lists coordinating instructions. 2) Designate\nthe TEC and TECG to operate as the central control agency for the exercise.\n3) Assign evaluators, to include the senior evaluator, and ensure that those\nevaluators are properly trained. 4) Develop the general exercise scenario\ntaking into account any objectives/events prescribed by the EC. 5) Arrange\nfor all resources to include: training areas, airspace, aggressor forces,\nand other required support.\nM\nMarine Corps Ground Training and Readiness (T&R) Program. The T&R Program is\nthe Marine Corps' primary tool for planning and conducting training, for\nplanning and conducting training evaluation, and for assessing training\nreadiness. The program will provide the commander with standardized programs\nof instruction for units within the ground combat, combat support, and combat\nservice support communities. It consolidates the ITS, CTS, METL and other\nindividual and unit training management tools. T&R is a program of standards\nthat systematizes commonly accepted skills, is open to innovative change, and\nabove all, tailors the training effort to the unit's mission. Further, T&R\nserves as a training guide and provides commanders an immediate assessment of\nunit combat readiness by assigning a CRP to key training events. In short,\nthe T&R Program is a building block approach to training that maximizes\nflexibility and produces the best-trained Marines possible.\nMission Essential Task(s) MET(s). A MET is a collective task in which an\norganization must be proficient in order to accomplish an appropriate portion\nof its wartime mission(s). MET listings are the foundation for the T&R\nManual; all events in the T&R Manual support a MET.\nMission Essential Task List (METL). Descriptive training document that\nprovides units a clear, war fighting focused description of collective\nactions necessary to achieve wartime mission proficiency. The service-level\nMETL, that which is used as the foundation of the T&R Manual, is developed\nusing Marine Corps doctrine, operational plans, T/Os, UJTL, UNTL, and MCTL.\nFor community based T&R Manuals, an occupational field METL is developed to\nfocus the community's collective training standards. Commanders develop\ntheir unit METL from the service-level METL, operational plans, contingency\nplans, and SOPs.\nO\nOperational Readiness (DOD, NATO). OR is the capability of a unit/formation,\nship, weapon system, or equipment to perform the missions or functions for\nwhich it is organized or designed. May be used in a general sense or to\nexpress a level or degree of readiness.\nP\nPrerequisite Event. Prerequisites are the academic training and/or T&R\nevents that must be completed prior to attempting the event.\nB-5 Enclosure (1)\nR\nReadiness (DOD). Readiness is the ability of U.S. military forces to fight\nand meet the demands of the national military strategy. Readiness is the\nsynthesis of two distinct but interrelated levels: a) Unit readiness--The\nability to provide capabilities required by combatant commanders to execute\nassigned missions. This is derived from the ability of each unit to deliver\nthe outputs for which it was designed. b) Joint readiness--The combatant\ncommander's ability to integrate and synchronize ready combat and support\nforces to execute assigned missions.\nS\nSection Skill Tasks. Section skills are those competencies directly related\nto unit functioning. They are group rather than individual in nature, and\nrequire participation by a section (S-1, S-2, S-3, etc).\nSimulation Training. Simulators provide the additional capability to develop\nand hone core and core plus skills. Accordingly, the development of\nsimulator training events for appropriate T&R syllabi can help maintain\nvaluable combat resources while reducing training time and cost. Therefore,\nin cases where simulator fidelity and capabilities are such that simulator\ntraining closely matches that of actual training events, T&R Manual\ndevelopers may include the option of using simulators to accomplish the\ntraining. CRP credit will be earned for E-Coded simulator events based on\nassessment of relative training event performance.\nStandard. A standard is a statement that establishes criteria for how well a\ntask or learning objective must be performed. The standard specifies how\nwell, completely, or accurately a process must be performed or product\nproduced. For higher-level collective events, it describes why the event is\nbeing done and the desired end-state of the event. Standards become more\nspecific for lower-level events and outline the accuracy, time limits,\nsequencing, quality, product, process, restrictions, etc., that indicate the\nminimum acceptable level of performance required of the event. At a minimum,\nboth collective and individual training standards consist of a task, the\ncondition under which the task is to be performed, and the evaluation\ncriteria that will be used to verify that the task has been performed to a\nsatisfactory level.\nSustainment Training. Periodic retraining or demonstration of an event\nrequired maintaining the minimum acceptable level of proficiency or\ncapability required to accomplish a training objective. Sustainment training\ngoes beyond the entry-level and is designed to maintain or further develop\nproficiency in a given set of skills.\nSystems Approach to Training (SAT). An orderly process for analyzing,\ndesigning, developing, implementing, and evaluating a unit's training program\nto ensure the unit, and the Marines of that unit acquire the knowledge and\nskills essential for the successful conduct of the unit's wartime missions.\nT\nTraining Task. This describes a direct training activity that pertains to an\nindividual Marine. A task is composed of 3 major components: a description\nof what is to be done, a condition, and a standard.\nB-6 Enclosure (1)\nTechnical Exercise Controller (TEC). The TEC is appointed by the ED, and\nusually comes from his staff or a subordinate command. The TEC is the senior\nevaluator within the TECG and should be of equal or higher grade than the\ncommander(s) of the unit(s) being evaluated. The TEC is responsible for\nensuring that the evaluation is conducted following the instructions\ncontained in this order and MCO 1553.3A. Specific T&R Manuals are used as\nthe source for evaluation criteria.\nTactical Exercise Control Group (TECG). A TECG is formed to provide subject\nmatter experts in the functional areas being evaluated. The benefit of\nestablishing a permanent TECG is to have resident, dedicated evaluation\nauthority experience, and knowledgeable in evaluation technique. The\nresponsibilities and functions of the TECG include: 1) developing a detailed\nexercise scenario to include the objectives and events prescribed by the\nEC/ED in the exercise LOI; 2) conducting detailed evaluator training prior to\nthe exercise; 3) coordinating and controlling role players and aggressors; 4)\ncompiling the evaluation data submitted by the evaluators and submitting\nrequired results to the ED; 5) preparing and conducting a detailed exercise\ndebrief for the evaluated unit(s).\nTraining Plan. Training document that outlines the general plan for the\nconduct of individual and collective training in an organization for\nspecified periods of time.\nU\nUnit CRP. Unit CRP is a percentage of the E-Coded collective events that\nsupport the unit METL accomplished by the unit. Unit CRP is the average of\nall MET CRP.\nUnit Evaluation. All units in the Marine Corps must be evaluated, either\nformally or informally, to ensure they are capable of conducting their combat\nmission. Informal evaluations should take place during all training events.\nThe timing of formal evaluations is critical and should, when appropriate,\nbe directly related to the units' operational deployment cycle. Formal\nevaluations should take place after the unit has been staffed with the\nmajority of its personnel, has had sufficient time to train to individual and\ncollective standards, and early enough in the training cycle so there is\nsufficient time to correctly identified weaknesses prior to deployment. All\ncombat units and units' task organized for combat require formal evaluations\nprior to operational deployments.\nUnit Training Management (UTM). Unit training management is the use of the\nSAT and Marine Corps training principles in a manner that maximizes training\nresults and focuses the training priorities of the unit on its wartime\nmission. UTM governs the major peacetime training activity of the Marine\nCorps and applies to all echelons of the Total Force.\nW\nWaived Event. An event that is waived by a commanding officer when in his or\nher judgment, previous experience or related performance satisfies the\nrequirement of a particular event."
       ],
-      "community": "HSS"
+      "community": "HSS",
+      "role2_relevance": "adjacent"
     }
   ],
   "_meta": {
