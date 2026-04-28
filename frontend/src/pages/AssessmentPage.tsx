@@ -154,12 +154,14 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
 
   // Capture field state — hooks must be unconditional; only used for binary items with capture fields
   const captureTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const existingCapture = (item.type === 'binary' && item.capture)
+  const existingCapture = ((item.type === 'binary' && item.capture) || item.type === 'table_yn')
     ? (responses.get(item.id)?.capture_data ?? {}) as Record<string, string>
     : {}
   const [captureValues, setCaptureValues] = useState<Record<string, string>>(
     item.type === 'binary' && item.capture
       ? Object.fromEntries(item.capture.map(f => [f.id, String(existingCapture[f.id] ?? '')]))
+      : item.type === 'table_yn'
+      ? Object.fromEntries(item.rows.map(r => [r.id, String(existingCapture[r.id] ?? '')]))
       : {}
   )
 
@@ -247,16 +249,53 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
     )
   }
 
-  // table_counts and table_yn — show label + top-level YES/NO/NA
+  if (item.type === 'table_yn') {
+    return (
+      <div className={`py-3 border-b border-neutral-100 last:border-0 ${indent}`}>
+        <p className="text-sm font-medium text-neutral-800 leading-snug mb-2">
+          <AcronymText text={item.label} />
+        </p>
+        <div className="divide-y divide-neutral-100 mb-3 rounded border border-neutral-200 overflow-hidden">
+          {item.rows.map(row => {
+            const val = captureValues[row.id] ?? ''
+            return (
+              <div key={row.id} className="flex items-center gap-2 px-3 py-1.5 bg-white">
+                <span className="flex-1 text-xs text-neutral-700">
+                  <AcronymText text={row.label} />
+                </span>
+                {(['Y', 'N'] as const).map(opt => (
+                  <button
+                    key={opt}
+                    disabled={locked}
+                    onClick={() => handleCaptureChange(row.id, val === opt ? '' : opt)}
+                    className={`w-8 h-6 rounded text-xs font-semibold border transition-colors ${
+                      val === opt
+                        ? opt === 'Y'
+                          ? 'bg-green-600 text-white border-green-600'
+                          : 'bg-red-500 text-white border-red-500'
+                        : 'bg-white text-neutral-400 border-neutral-200 hover:border-neutral-400'
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+            )
+          })}
+        </div>
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
+      </div>
+    )
+  }
+
+  // table_counts — show label + top-level YES/NO/NA
   const label = (item as { label?: string; id: string }).label ?? item.id
   return (
     <div className={`py-3 border-b border-neutral-100 last:border-0 ${indent}`}>
       <p className="text-sm text-neutral-800 leading-snug mb-1">
         <AcronymText text={label} />
       </p>
-      <p className="text-xs text-neutral-400 italic mb-2">
-        {item.type === 'table_counts' ? 'Count table — record overall assessment below' : 'Y/N table — record overall assessment below'}
-      </p>
+      <p className="text-xs text-neutral-400 italic mb-2">Count table — record overall assessment below</p>
       <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
     </div>
   )
