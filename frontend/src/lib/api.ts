@@ -195,11 +195,6 @@ export const api = {
   changePassword: (currentPassword: string, newPassword: string) =>
     post<void>('/auth/change-password', { current_password: currentPassword, new_password: newPassword }),
 
-  totpEnroll: () => get<{ secret: string; uri: string }>('/auth/totp/enroll'),
-  totpConfirm: (secret: string, code: string) =>
-    post<void>('/auth/totp/confirm', { secret, code }),
-  totpUnenroll: () => del<void>('/auth/totp'),
-
   // ---- crosswalk editor (admin only) ----
   crosswalkEditorFull: () =>
     get<CrosswalkEditorFull>('/crosswalk-editor/full'),

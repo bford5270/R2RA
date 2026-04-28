@@ -222,7 +222,7 @@ function PrintItem({
   }
 
   // text_long and select_one
-  const label = 'label' in item ? item.label : 'prompt' in item ? item.prompt : item.id
+  const label = (item as { label?: string; prompt?: string; id: string }).label ?? (item as { prompt?: string }).prompt ?? item.id
   return (
     <div className={`py-1.5 border-b border-neutral-100 ${nested ? 'pl-4' : ''}`}>
       <div className="flex gap-2 items-start">
@@ -392,7 +392,7 @@ export function PrintPage() {
         ])
         setAssessment(a)
         setResponses(new Map(rs.map(r => [r.item_id, r])))
-        const m = mRaw as Manifest
+        const m = mRaw as unknown as Manifest
         setManifest(m)
 
         const visibleEntries = m.sections_manifest.filter(s =>
@@ -400,7 +400,7 @@ export function PrintPage() {
         )
         setLoadingMsg(`Loading ${visibleEntries.length} sections…`)
         const loaded = await Promise.all(
-          visibleEntries.map(s => api.section(s.id) as Promise<Section>)
+          visibleEntries.map(s => api.section(s.id) as unknown as Promise<Section>)
         )
         setSections(loaded)
         setLoadingMsg('')

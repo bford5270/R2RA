@@ -33,7 +33,7 @@ export function AcronymText({ text, className }: Props) {
       parts.push(text.slice(last, match.index))
     }
 
-    if (seenRef && !seenRef.current.has(acronym)) {
+    if (seenRef && seenRef.current && !seenRef.current.has(acronym)) {
       seenRef.current.add(acronym)
       // First use — spell it out, then put acronym in parens
       parts.push(

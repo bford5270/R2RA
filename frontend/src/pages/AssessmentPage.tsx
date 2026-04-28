@@ -242,13 +242,13 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
             </span>
           ))}
         </div>
-        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={current} onSave={onSave} />
+        <ResponseControls assessmentId={assessmentId} itemId={item.id} current={current} locked={locked} onSave={onSave} />
       </div>
     )
   }
 
   // table_counts and table_yn — show label + top-level YES/NO/NA
-  const label = 'label' in item ? item.label : item.id
+  const label = (item as { label?: string; id: string }).label ?? item.id
   return (
     <div className={`py-3 border-b border-neutral-100 last:border-0 ${indent}`}>
       <p className="text-sm text-neutral-800 leading-snug mb-1">
@@ -257,7 +257,7 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
       <p className="text-xs text-neutral-400 italic mb-2">
         {item.type === 'table_counts' ? 'Count table — record overall assessment below' : 'Y/N table — record overall assessment below'}
       </p>
-      <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} onSave={onSave} />
+      <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
     </div>
   )
 }
@@ -542,7 +542,7 @@ function BundlePanel({ assessmentId }: { assessmentId: string }) {
         assignments,
       }
       const encrypted = await encryptBundle(payload, passphrase)
-      const blob = new Blob([encrypted], { type: 'application/octet-stream' })
+      const blob = new Blob([encrypted as unknown as ArrayBuffer], { type: 'application/octet-stream' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
