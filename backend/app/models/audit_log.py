@@ -16,7 +16,7 @@ class AuditLog(Base):
     actor_id: Mapped[str | None] = mapped_column(String(36), nullable=True)  # null = system
     action: Mapped[str] = mapped_column(String(50))   # e.g. response.update, assessment.certify
     entity_type: Mapped[str] = mapped_column(String(50))
-    entity_id: Mapped[str] = mapped_column(String(36))
+    entity_id: Mapped[str] = mapped_column(String(120))
     before: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     after: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     ts: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
