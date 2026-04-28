@@ -42,7 +42,8 @@ def upgrade() -> None:
     sa.Column('echelon', sa.String(length=50), nullable=True),
     sa.Column('parent_uic', sa.String(length=20), nullable=True),
     sa.ForeignKeyConstraint(['parent_uic'], ['units.uic'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('uic')
     )
     op.create_index(op.f('ix_units_uic'), 'units', ['uic'], unique=True)
     op.create_table('users',
