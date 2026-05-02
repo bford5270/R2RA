@@ -11,6 +11,22 @@ Two deployment paths are documented here:
 
 ## Path A — CodePipeline + Elastic Beanstalk
 
+### Live resource inventory (us-east-1, account 885232248320)
+
+| Resource | ID / ARN / Endpoint |
+|---|---|
+| S3 frontend bucket | `r2ra-frontend-885232248320` |
+| S3 artifacts bucket | `r2ra-artifacts-885232248320` |
+| RDS endpoint | `r2ra-postgres.cgxc4cmqqlek.us-east-1.rds.amazonaws.com` |
+| EB application | `r2ra` |
+| EB environment | `r2ra-prod` → `r2ra-prod.eba-yg3nk3rp.us-east-1.elasticbeanstalk.com` |
+| CloudFront distribution | `E3RGJN1CAO1G43` → `d2si4nfgz87czj.cloudfront.net` |
+| CodeBuild project | `r2ra-build` |
+| CodePipeline | `r2ra` |
+| GitHub connection ARN | `arn:aws:codestar-connections:us-east-1:885232248320:connection/9f03e92d-4ce0-452a-9815-260d5f240d14` (**pending authorization**) |
+
+**One manual step required:** In the AWS Console → Developer Tools → Settings → Connections → `r2ra-github` → click **"Update pending connection"** and authorize with GitHub. Until this is done, the pipeline will not trigger on push.
+
 **Architecture:**
 ```
 GitHub (source)
