@@ -16,8 +16,9 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-# Strip async driver so alembic can use a sync engine
+# Normalize to sync driver; fix postgres:// shorthand (AWS RDS uses it)
 _sync_url = re.sub(r"\+aiosqlite", "", settings.database_url)
+_sync_url = _sync_url.replace("postgres://", "postgresql://")
 config.set_main_option("sqlalchemy.url", _sync_url)
 
 

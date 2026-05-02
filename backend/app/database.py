@@ -4,11 +4,12 @@ from typing import Generator
 
 from app.config import settings
 
-# Strip async driver prefixes — we use sync SQLAlchemy throughout
+# Strip async driver prefixes; normalize postgres:// shorthand (AWS RDS uses it)
 _sync_url = (
     settings.database_url
     .replace("sqlite+aiosqlite", "sqlite")
     .replace("postgresql+asyncpg", "postgresql")
+    .replace("postgres://", "postgresql://")
 )
 
 # SQLite requires check_same_thread=False; Postgres does not accept it

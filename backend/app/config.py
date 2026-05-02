@@ -15,13 +15,13 @@ class Settings(BaseSettings):
 
     content_dir: str = "../content"
 
-    # Local file storage fallback (used when AWS_S3_BUCKET is not set)
+    # Local file storage fallback (used when S3_EVIDENCE_BUCKET is not set)
     uploads_dir: str = "./uploads"
     max_upload_bytes: int = 10 * 1024 * 1024  # 10 MB
 
     # S3 — leave blank to use local disk (dev default)
-    aws_s3_bucket: str = ""
-    aws_region: str = "us-gov-west-1"
+    s3_evidence_bucket: str = ""
+    aws_region: str = "us-east-1"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
 

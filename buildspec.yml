@@ -1,0 +1,40 @@
+version: 0.2
+
+# Environment variables set in CodeBuild project:
+#   FRONTEND_BUCKET     — S3 bucket name for the React build (e.g. r2ra-frontend-prod)
+#   CF_DISTRIBUTION_ID  — CloudFront distribution ID
+#   AWS_DEFAULT_REGION  — injected automatically by CodeBuild
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: "20"
+    commands:
+      - cd frontend && npm ci && cd ..
+
+  build:
+    commands:
+      # --- Frontend ---
+      - cd frontend && npm run build && cd ..
+
+      # Upload immutable assets with long cache; index.html must not be cached
+      - aws s3 sync frontend/dist s3://$FRONTEND_BUCKET --delete
+          --cache-control "max-age=31536000,immutable"
+          --exclude "index.html"
+      - aws s3 cp frontend/dist/index.html s3://$FRONTEND_BUCKET/index.html
+          --cache-control "no-cache, no-store, must-revalidate"
+
+      # Bust the CDN so users get the new index.html immediately
+      - aws cloudfront create-invalidation
+          --distribution-id $CF_DISTRIBUTION_ID
+          --paths "/index.html" "/*.js" "/*.css"
+
+      # --- Backend ---
+      # Bundle everything the Dockerfile needs into a ZIP for Elastic Beanstalk
+      - zip -r deploy.zip Dockerfile start.sh backend/ content/ .ebextensions/
+          -x "**/__pycache__/*" -x "**/*.pyc" -x "backend/*.db" -x "backend/.env"
+
+artifacts:
+  files:
+    - deploy.zip
+  discard-paths: yes
