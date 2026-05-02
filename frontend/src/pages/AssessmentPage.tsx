@@ -8,7 +8,7 @@ import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
 import { AcronymText } from '@/components/preview/AcronymText'
 import { EvidencePanel } from '@/components/EvidencePanel'
-import type { Assessment, AssessmentStatus, ItemResponse, ResponseStatus, SignatureOut } from '../types/assessment'
+import type { Assessment, AssessmentStatus, ItemResponse, ReadinessSummary, ResponseStatus, SignatureOut } from '../types/assessment'
 import type { AssessmentItem, Section, SectionManifestEntry } from '@/types/content'
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { UserOut, AssignmentOut } from '../types/user'
@@ -404,19 +404,56 @@ const STATUS_COLOR: Record<string, string> = {
 
 function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null; assessmentId: string }) {
   const [entries, setEntries] = useState<CrosswalkEntry[]>([])
+  const [summary, setSummary] = useState<ReadinessSummary | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!sectionId) return
     setLoading(true)
-    api.getCrosswalk(sectionId)
-      .then(setEntries)
+    Promise.all([
+      api.getCrosswalk(sectionId),
+      api.getReadinessSummary(assessmentId),
+    ])
+      .then(([e, s]) => { setEntries(e); setSummary(s) })
       .catch(() => setEntries([]))
       .finally(() => setLoading(false))
-  }, [sectionId])
+  }, [sectionId, assessmentId])
 
   const confidenceColor = (c: string) =>
     c === 'high' ? 'text-green-600' : c === 'medium' ? 'text-yellow-600' : 'text-neutral-400'
+
+  function wicketScoreChip(eventCode: string) {
+    const w = summary?.wickets[eventCode]
+    if (!w || w.score === null) return null
+    const color =
+      w.score >= 4 ? 'text-green-700 bg-green-50 border-green-300' :
+      w.score === 3 ? 'text-amber-700 bg-amber-50 border-amber-300' :
+                     'text-red-700 bg-red-50 border-red-300'
+    return (
+      <span className={`text-[9px] font-bold px-1 py-0.5 rounded border ml-1 ${color}`}>
+        {w.score}/5
+      </span>
+    )
+  }
+
+  function itemSuggestion(jtsItem: string) {
+    const fwd = summary?.jts_forward[jtsItem]
+    if (!fwd || fwd.suggested_status === null || fwd.scored_count === 0) return null
+    const color =
+      fwd.suggested_status === 'yes'      ? 'text-green-700 bg-green-50 border-green-200' :
+      fwd.suggested_status === 'marginal' ? 'text-amber-700 bg-amber-50 border-amber-200' :
+                                            'text-red-700 bg-red-50 border-red-200'
+    const label =
+      fwd.suggested_status === 'yes'      ? 'T&R → YES' :
+      fwd.suggested_status === 'marginal' ? 'T&R → MARGINAL' : 'T&R → NO'
+    return (
+      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${color}`}
+        title={`Based on ${fwd.scored_count}/${fwd.total_wickets} wickets scored · min ${fwd.min_score}/5 · mean ${fwd.mean_score}/5`}
+      >
+        {label}
+      </span>
+    )
+  }
 
   return (
     <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto hidden lg:flex flex-col">
@@ -431,19 +468,26 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
         )}
         {entries.map(entry => (
           <div key={entry.jts_item} className="text-xs">
-            <p className="font-mono text-neutral-500 text-[10px] mb-1">{entry.jts_item}</p>
+            {/* Item header with T&R suggestion */}
+            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+              <p className="font-mono text-neutral-500 text-[10px]">{entry.jts_item}</p>
+              {itemSuggestion(entry.jts_item)}
+            </div>
             {entry.wickets.map(w => (
               <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-200">
-                <Link
-                  to={`/assessments/${assessmentId}/tr?wicket=${encodeURIComponent(w.event_code)}`}
-                  className="font-mono text-scarlet hover:underline text-[10px]"
-                  title="Open in T&R Assessment"
-                >
-                  {w.event_code} ↗
-                </Link>
-                <span className={`ml-1.5 text-[10px] font-semibold ${confidenceColor(w.confidence)}`}>
-                  {w.confidence}
-                </span>
+                <div className="flex items-center gap-1 flex-wrap">
+                  <Link
+                    to={`/assessments/${assessmentId}/tr?wicket=${encodeURIComponent(w.event_code)}`}
+                    className="font-mono text-scarlet hover:underline text-[10px]"
+                    title="Open in T&R Assessment"
+                  >
+                    {w.event_code} ↗
+                  </Link>
+                  <span className={`text-[10px] font-semibold ${confidenceColor(w.confidence)}`}>
+                    {w.confidence}
+                  </span>
+                  {wicketScoreChip(w.event_code)}
+                </div>
                 <p className="text-neutral-500 text-[10px] mt-0.5 leading-snug">{w.rationale}</p>
               </div>
             ))}

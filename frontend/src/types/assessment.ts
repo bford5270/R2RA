@@ -66,6 +66,10 @@ export type TrResponseStatus = 'go' | 'no_go' | 'na' | 'unanswered'
 export interface TrResponse {
   event_code: string
   status: TrResponseStatus
+  // 1–5 Likert for the overall wicket (null = not yet scored)
+  score: number | null
+  // {"components": [4, 5, null, 3]} — per-component scores, index-matched to event_components
+  capture_data: { components?: (number | null)[] } | null
   note: string | null
   authored_by: string
   last_modified_by: string
@@ -74,8 +78,41 @@ export interface TrResponse {
 }
 
 export interface TrResponseUpsert {
-  status: TrResponseStatus
+  status?: TrResponseStatus
+  score?: number | null
   note?: string | null
+  capture_data?: { components: (number | null)[] } | null
+}
+
+// Readiness summary returned by GET /assessments/{id}/readiness-summary
+export interface WicketSummary {
+  score: number | null
+  component_scores: (number | null)[]
+  derived_status: 'go' | 'no_go' | 'na' | 'unanswered'
+  explicit_score: number | null
+}
+
+export interface ChapterSummary {
+  mean_score: number | null
+  go_count: number
+  no_go_count: number
+  scored_count: number
+  total_count: number
+}
+
+export interface JtsFeedForward {
+  supporting_wickets: string[]
+  mean_score: number | null
+  min_score: number | null
+  scored_count: number
+  total_wickets: number
+  suggested_status: 'yes' | 'marginal' | 'no' | null
+}
+
+export interface ReadinessSummary {
+  wickets: Record<string, WicketSummary>
+  chapters: Record<string, ChapterSummary>
+  jts_forward: Record<string, JtsFeedForward>
 }
 
 export interface AuditLogEntry {

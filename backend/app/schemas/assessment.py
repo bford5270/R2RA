@@ -83,20 +83,29 @@ class ResponseOut(BaseModel):
 
 
 class TrResponseUpsert(BaseModel):
-    status: str
+    status: str | None = None     # optional when score is supplied; derived automatically
+    score: int | None = None      # 1–5 Likert; drives status when provided
     note: str | None = None
+    capture_data: dict | None = None  # {"components": [4, 5, null, 3, ...]}
 
-    @field_validator("status")
-    @classmethod
-    def validate_status(cls, v: str) -> str:
-        if v not in VALID_TR_STATUSES:
+    def model_post_init(self, _context: object) -> None:
+        if self.score is not None:
+            if self.score not in {1, 2, 3, 4, 5}:
+                raise ValueError("score must be 1–5")
+            # Derive status from score when not explicitly supplied
+            if not self.status or self.status == "unanswered":
+                self.status = "go" if self.score >= 4 else "no_go"
+        if self.status is None:
+            self.status = "unanswered"
+        elif self.status not in VALID_TR_STATUSES:
             raise ValueError(f"status must be one of {VALID_TR_STATUSES}")
-        return v
 
 
 class TrResponseOut(BaseModel):
     event_code: str
     status: str
+    score: int | None
+    capture_data: dict | None
     note: str | None
     authored_by: str
     last_modified_by: str

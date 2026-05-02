@@ -329,16 +329,135 @@ def upsert_tr_response(
         tr.version = tr.version + 1
 
     tr.status = body.status
+    tr.score = body.score
+    tr.capture_data = body.capture_data
     tr.note = body.note
     tr.updated_at = datetime.now(timezone.utc)
 
     append_entry(
         db, current_user.id, "tr_response.upsert", "tr_response",
-        f"{assessment_id}/{event_code}", tr_before, {"status": body.status, "note": body.note},
+        f"{assessment_id}/{event_code}", tr_before,
+        {"status": body.status, "score": body.score, "note": body.note},
     )
     db.commit()
     db.refresh(tr)
     return tr
+
+
+# ---------------------------------------------------------------------------
+# Readiness summary — score roll-up + JTS feed-forward
+# ---------------------------------------------------------------------------
+
+@router.get("/{assessment_id}/readiness-summary")
+def get_readiness_summary(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """
+    Compute and return:
+      wickets   — per-wicket effective score + derived_status
+      chapters  — chapter-level score aggregation (weakest-link principle)
+      jts_forward — suggested JTS item status derived from mapped wicket scores
+    """
+    from app.routers.content import _load_tr
+    from app.routers.crosswalk import _load_crosswalk
+
+    _require_assessment(db, assessment_id)
+
+    tr_responses = db.query(TrResponse).filter(TrResponse.assessment_id == assessment_id).all()
+    by_code: dict[str, TrResponse] = {r.event_code: r for r in tr_responses}
+
+    framework = _load_tr()
+    wickets: list[dict] = framework["wickets"]
+    crosswalk: dict[str, dict] = _load_crosswalk()
+
+    # --- Wicket-level scores ---
+    wicket_summaries: dict[str, dict] = {}
+    for w in wickets:
+        code: str = w["event_code"]
+        resp = by_code.get(code)
+        if resp is None:
+            continue
+
+        comp_raw = (resp.capture_data or {}).get("components", [])
+        comp_scores: list[int | None] = [c if isinstance(c, int) else None for c in comp_raw]
+        scored = [c for c in comp_scores if c is not None]
+
+        explicit_score = resp.score
+        auto_score = min(scored) if scored else None   # weakest-link across components
+        effective_score = explicit_score if explicit_score is not None else auto_score
+
+        if effective_score is not None:
+            derived_status = "go" if effective_score >= 4 else "no_go"
+        elif resp.status in ("go", "no_go", "na"):
+            derived_status = resp.status
+        else:
+            derived_status = "unanswered"
+
+        wicket_summaries[code] = {
+            "score": effective_score,
+            "component_scores": comp_scores,
+            "derived_status": derived_status,
+            "explicit_score": explicit_score,
+        }
+
+    # --- Chapter-level aggregation ---
+    chapter_data: dict[int, dict] = {}
+    for w in wickets:
+        ch: int = w.get("chapter", 0)
+        if ch not in chapter_data:
+            chapter_data[ch] = {"scores": [], "go": 0, "no_go": 0, "total": 0}
+        chapter_data[ch]["total"] += 1
+        s = wicket_summaries.get(w["event_code"])
+        if s and s["score"] is not None:
+            chapter_data[ch]["scores"].append(s["score"])
+            if s["derived_status"] == "go":
+                chapter_data[ch]["go"] += 1
+            elif s["derived_status"] == "no_go":
+                chapter_data[ch]["no_go"] += 1
+
+    chapter_summaries = {
+        str(ch): {
+            "mean_score": round(sum(d["scores"]) / len(d["scores"]), 1) if d["scores"] else None,
+            "go_count": d["go"],
+            "no_go_count": d["no_go"],
+            "scored_count": len(d["scores"]),
+            "total_count": d["total"],
+        }
+        for ch, d in chapter_data.items()
+    }
+
+    # --- JTS feed-forward ---
+    # Weakest-link: if any mapped wicket is NO-GO (<4) the JTS item is flagged
+    jts_forward: dict[str, dict] = {}
+    for jts_item, entry in crosswalk.items():
+        wicket_codes = [w["event_code"] for w in entry.get("wickets", [])]
+        if not wicket_codes:
+            continue
+        scores = [
+            wicket_summaries[c]["score"]
+            for c in wicket_codes
+            if c in wicket_summaries and wicket_summaries[c]["score"] is not None
+        ]
+        if scores:
+            mean_s = round(sum(scores) / len(scores), 1)
+            min_s = min(scores)
+            suggested = "yes" if min_s >= 4 else ("marginal" if min_s >= 3 else "no")
+        else:
+            mean_s = min_s = None
+            suggested = None
+
+        jts_forward[jts_item] = {
+            "supporting_wickets": wicket_codes,
+            "mean_score": mean_s,
+            "min_score": min_s,
+            "scored_count": len(scores),
+            "total_wickets": len(wicket_codes),
+            "suggested_status": suggested,
+        }
+
+    return {"wickets": wicket_summaries, "chapters": chapter_summaries, "jts_forward": jts_forward}
 
 
 # ---------------------------------------------------------------------------

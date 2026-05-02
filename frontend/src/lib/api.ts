@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ReadinessSummary, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
 import type { CrosswalkEntry, CrosswalkEditorFull } from '../types/crosswalk'
@@ -139,6 +139,9 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }),
+
+  getReadinessSummary: (assessmentId: string) =>
+    get<ReadinessSummary>(`/assessments/${assessmentId}/readiness-summary`),
 
   // ---- evidence ----
   listEvidence: (assessmentId: string, itemId: string) =>
