@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-04-27 (Session 15)
-- **Current phase**: Production-ready — storage abstraction, Postgres, Docker, GovCloud runbook
-- **Branch**: `claude/usmc-role2-checklist-wiSpY`
-- **Last commit**: `1122b32` (feat: production deployment — S3 storage, Postgres, Docker, GovCloud runbook)
-- **Open PR**: none yet
-- **Blocked on**: Phase 3 pending stakeholder input (enclave, sponsor, SME review); GovCloud account setup
+- **Last session**: 2026-05-02 (Session 16)
+- **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
+- **Branch**: `claude/usmc-role2-checklist-wiSpY` (merged to `main`)
+- **Last commit**: `58d2758` (fix: buildspec artifact layout for EB deploy)
+- **Open PR**: none
+- **Blocked on**: Custom domain (optional, user considering); Phase 3 stakeholder input (enclave, sponsor, SME review)
 
 ---
 
@@ -97,6 +97,12 @@ Guardrails that repeatedly bit us in earlier sessions:
 18. ~~**Postgres support**~~ — **done** (`1122b32`).
 19. ~~**Containerization + GovCloud runbook**~~ — **done** (`1122b32`).
 
+### Phase 2.6 — AWS cloud deployment (complete)
+
+20. ~~**AWS infrastructure provisioned**~~ — **done** (session 16). RDS Postgres, Elastic Beanstalk (Docker/AL2023), CloudFront, S3 frontend bucket, CodeBuild, CodePipeline. See session 16 log and `docs/DEPLOY.md` resource inventory.
+21. ~~**CI/CD pipeline live**~~ — **done** (session 16). Push to `main` → build → deploy. First successful end-to-end run confirmed.
+22. ~~**UX polish**~~ — **done** (session 16). Crosswalk panel collapsed by default; N/A button always visible; duplicate CTA removed from empty state.
+
 ### Phase 3 — pending stakeholder input
 
 - **Hosting enclave** decision (drives CAC/smartcard auth integration).
@@ -127,6 +133,45 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-05-02 — Session 16: AWS cloud deployment, CI/CD, UX polish
+
+**In**: App fully functional locally. Session 15 left Docker + Postgres support in place but deployment was still manual/GovCloud-runbook only. User wanted wider deployment on AWS using CodePipeline.
+
+**Out**:
+
+- **AWS infrastructure** (all in `us-east-1`, account `885232248320`):
+  - S3 frontend bucket `r2ra-frontend-885232248320` (versioning on, public access blocked, CloudFront OAC policy)
+  - S3 artifacts bucket `r2ra-artifacts-885232248320` (CodePipeline use)
+  - RDS PostgreSQL 16 `r2ra-postgres.cgxc4cmqqlek.us-east-1.rds.amazonaws.com` (db.t3.micro, 20 GB, encrypted, not publicly accessible)
+  - Elastic Beanstalk app `r2ra` / env `r2ra-prod` → `r2ra-prod.eba-yg3nk3rp.us-east-1.elasticbeanstalk.com` (Docker/AL2023, t3.micro, load balanced, Green)
+  - CloudFront distribution `E3RGJN1CAO1G43` → `d2si4nfgz87czj.cloudfront.net` (`/api/*` → EB, `/*` → S3, SPA 403→200 fallback)
+  - CodeBuild project `r2ra-build` (standard:7.0, injects `FRONTEND_BUCKET` + `CF_DISTRIBUTION_ID`)
+  - CodePipeline `r2ra` (GitHub `main` → CodeBuild → EB deploy); GitHub connection ARN `9f03e92d-…`
+  - IAM roles: `aws-elasticbeanstalk-service-role`, `r2ra-eb-ec2-profile`, `r2ra-codebuild-role`, `r2ra-codepipeline-role`
+
+- **`buildspec.yml`** fixed: removed nested `deploy.zip` — was causing double-zip failure where EB couldn't find Dockerfile. Artifacts now list files directly; CodePipeline wraps them once for EB.
+
+- **`docs/DEPLOY.md`** updated with live resource inventory table.
+
+- **Feature branch merged to `main`**: all 16 sessions of work now on `main`; pipeline triggers on push.
+
+- **UX fixes** (`1cdb9c2`):
+  - Crosswalk panel starts collapsed; "T&R Map ▶/◀" toggle button in sidebar
+  - N/A button always visible in `TrScoreControls` (was only shown when unscored)
+  - Removed duplicate "Create the first one →" CTA from empty-state card
+
+- **First successful pipeline run**: Source ✓ → Build ✓ → Deploy ✓. App live at `https://d2si4nfgz87czj.cloudfront.net`.
+
+**Key decisions**:
+- CodePipeline artifacts must not contain a nested zip — EB expects Dockerfile at artifact root after CodePipeline's own wrapping.
+- EB instance profile (`r2ra-eb-ec2-profile`) required before environment creation; first EB launch terminated because it was missing.
+- CloudFront OAC (not legacy OAI) used for S3 access; bucket policy scoped to specific distribution ARN.
+- `main` branch used as pipeline trigger; feature branch merged directly (no PR — user preference).
+
+**Commits**: `1cdb9c2` (UX), `5fcde16` (DEPLOY.md), `58d2758` (buildspec fix) — all on `main`.
+
+---
 
 ### 2026-04-27 — Session 15: production deployment — S3, Postgres, Docker, GovCloud
 
