@@ -456,7 +456,7 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
   }
 
   return (
-    <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto hidden lg:flex flex-col">
+    <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto flex flex-col">
       <div className="px-4 pt-4 pb-2 border-b border-neutral-100">
         <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">T&amp;R Crosswalk</p>
         <p className="text-[10px] text-neutral-400 mt-0.5">NAVMC 3500.84B · draft, needs SME review</p>
@@ -964,6 +964,7 @@ export function AssessmentPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [advancing, setAdvancing] = useState(false)
   const [showCertifyModal, setShowCertifyModal] = useState(false)
+  const [showCrosswalk, setShowCrosswalk] = useState(false)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -1129,6 +1130,18 @@ export function AssessmentPage() {
             >
               T&amp;R Assessment →
             </Link>
+            <button
+              onClick={() => setShowCrosswalk(v => !v)}
+              className={[
+                'flex-1 text-center text-[10px] border rounded px-2 py-1 transition-colors',
+                showCrosswalk
+                  ? 'text-scarlet border-scarlet/40 bg-scarlet/5'
+                  : 'text-neutral-400 hover:text-neutral-600 border-neutral-200',
+              ].join(' ')}
+              title="Toggle T&R crosswalk panel"
+            >
+              T&amp;R Map {showCrosswalk ? '◀' : '▶'}
+            </button>
             <Link
               to={`/assessments/${assessmentId}/print`}
               className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
@@ -1186,8 +1199,8 @@ export function AssessmentPage() {
         </div>
       </main>
 
-      {/* Right pane — T&R crosswalk */}
-      <CrosswalkPanel sectionId={effectiveSectionId} assessmentId={assessmentId!} />
+      {/* Right pane — T&R crosswalk (collapsed by default) */}
+      {showCrosswalk && <CrosswalkPanel sectionId={effectiveSectionId} assessmentId={assessmentId!} />}
 
       {showCertifyModal && (
         <CertifyModal

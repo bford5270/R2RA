@@ -185,25 +185,23 @@ function TrScoreControls({
         </span>
       </div>
 
-      {/* N/A option for non-applicable wickets */}
-      {current?.status === 'na' || effectiveScore === null ? (
-        <button
-          type="button"
-          onClick={() =>
-            current?.status === 'na'
-              ? persist(null, compScores, note || null)
-              : onSave(eventCode, 'na', note || null, null, null)
-          }
-          className={[
-            'self-start text-[10px] px-1.5 py-0.5 rounded border transition-colors',
-            current?.status === 'na'
-              ? 'border-neutral-400 bg-neutral-100 text-neutral-600'
-              : 'border-neutral-200 text-neutral-300 hover:border-neutral-300 hover:text-neutral-500',
-          ].join(' ')}
-        >
-          N/A
-        </button>
-      ) : null}
+      {/* N/A toggle — always visible, active only when status is na */}
+      <button
+        type="button"
+        onClick={() =>
+          current?.status === 'na'
+            ? onSave(eventCode, 'unanswered', note || null, null, null)
+            : onSave(eventCode, 'na', note || null, null, null)
+        }
+        className={[
+          'self-start text-[10px] px-1.5 py-0.5 rounded border transition-colors',
+          current?.status === 'na'
+            ? 'border-neutral-400 bg-neutral-100 text-neutral-600'
+            : 'border-neutral-200 text-neutral-300 hover:border-neutral-300 hover:text-neutral-500',
+        ].join(' ')}
+      >
+        N/A
+      </button>
 
       {/* Component scoring (expandable) */}
       {components.length > 0 && (

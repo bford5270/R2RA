@@ -100,13 +100,7 @@ export function HomePage() {
 
       {!loading && !error && assessments.length === 0 && (
         <div className="border border-dashed border-neutral-200 rounded p-8 text-center">
-          <p className="text-sm text-neutral-500">No assessments yet.</p>
-          <button
-            onClick={() => navigate('/assessments/new')}
-            className="mt-3 text-sm text-scarlet hover:text-scarlet-dark font-medium"
-          >
-            Create the first one →
-          </button>
+          <p className="text-sm text-neutral-500">No assessments yet. Use "+ New assessment" above to get started.</p>
         </div>
       )}
 
