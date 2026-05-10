@@ -180,7 +180,7 @@ export function FeedbackPage() {
       api.listSignatures(assessmentId),
     ]).then(([a, m, jrs, tf, trs, sigs]) => {
       setAssessment(a as Assessment)
-      setManifest(m as Manifest)
+      setManifest(m as unknown as Manifest)
       setJtsResponses(new Map((jrs as ItemResponse[]).map(r => [r.item_id, r])))
       setTrFramework(tf as TrFramework)
       setTrResponses(new Map((trs as TrResponse[]).map(r => [r.event_code, r])))
