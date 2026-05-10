@@ -17,6 +17,7 @@ class AssessmentCreate(BaseModel):
     component: str | None = None
     unique_identifier: str | None = None
     scenario_ref: str | None = None
+    exercise_id: str | None = None
 
     @field_validator("mission_type")
     @classmethod
@@ -38,6 +39,7 @@ class AssessmentOut(BaseModel):
     component: str | None
     unique_identifier: str | None
     scenario_ref: str | None = None
+    exercise_id: str | None = None
     started_at: datetime
     certified_at: datetime | None = None
 

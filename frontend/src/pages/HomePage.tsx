@@ -4,6 +4,7 @@ import { api } from '../lib/api'
 import type { Assessment } from '../types/assessment'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 import { useAuth } from '../lib/auth'
+import { useExercise } from '../lib/exercise'
 
 function statusBadge(status: string) {
   const map: Record<string, string> = {
@@ -18,9 +19,12 @@ function statusBadge(status: string) {
 export function HomePage() {
   const navigate = useNavigate()
   const { logout, user } = useAuth()
+  const { exercise, clearExercise } = useExercise()
   const [assessments, setAssessments] = useState<Assessment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const isAdmin = user?.global_role === 'admin'
 
   useEffect(() => {
     api.listAssessments()
@@ -29,12 +33,36 @@ export function HomePage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const visibleAssessments = isAdmin
+    ? assessments
+    : assessments.filter(a => a.exercise_id === exercise?.id)
+
   return (
     <main className="min-h-screen p-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mt-8 mb-6">
         <div>
           <h1 className="text-xl font-bold text-neutral-900">Role 2 Readiness Assessment</h1>
           <p className="text-xs text-neutral-400 mt-0.5">Unofficial — not endorsed by USMC, Navy, DHA, or JTS</p>
+          {exercise && (
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs text-blue-700">
+              <span className="font-semibold">{exercise.name}</span>
+              <Link
+                to="/exercise-select"
+                onClick={() => { if (!isAdmin) clearExercise() }}
+                className="text-blue-500 hover:text-blue-700 underline"
+              >
+                change
+              </Link>
+            </div>
+          )}
+          {isAdmin && !exercise && (
+            <Link
+              to="/exercise-select"
+              className="mt-2 inline-block text-xs text-neutral-400 hover:text-neutral-600 underline"
+            >
+              Select exercise context
+            </Link>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Link
@@ -98,15 +126,19 @@ export function HomePage() {
         <p className="text-sm text-red-600 py-4">{error}</p>
       )}
 
-      {!loading && !error && assessments.length === 0 && (
+      {!loading && !error && visibleAssessments.length === 0 && (
         <div className="border border-dashed border-neutral-200 rounded p-8 text-center">
-          <p className="text-sm text-neutral-500">No assessments yet. Use "+ New assessment" above to get started.</p>
+          <p className="text-sm text-neutral-500">
+            {exercise && !isAdmin
+              ? `No assessments for ${exercise.name} yet. Use "+ New assessment" to get started.`
+              : 'No assessments yet. Use "+ New assessment" above to get started.'}
+          </p>
         </div>
       )}
 
-      {assessments.length > 0 && (
+      {visibleAssessments.length > 0 && (
         <div className="divide-y divide-neutral-100 border border-neutral-200 rounded">
-          {assessments.map(a => (
+          {visibleAssessments.map(a => (
             <Link
               key={a.id}
               to={`/assessments/${a.id}`}

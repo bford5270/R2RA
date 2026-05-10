@@ -1,11 +1,15 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import type { MissionType } from '../types/assessment'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
+import { useExercise } from '../lib/exercise'
+import { useAuth } from '../lib/auth'
 
 export function CreateAssessmentPage() {
   const navigate = useNavigate()
+  const { exercise } = useExercise()
+  const { user } = useAuth()
   const [unitUic, setUnitUic] = useState('')
   const [unitName, setUnitName] = useState('')
   const [missionType, setMissionType] = useState<MissionType>('r2lm_non_split')
@@ -25,6 +29,7 @@ export function CreateAssessmentPage() {
         mission_type: missionType,
         service: service.trim() || undefined,
         component: component.trim() || undefined,
+        exercise_id: exercise?.id ?? undefined,
       })
       navigate(`/assessments/${assessment.id}`)
     } catch (err) {
@@ -48,6 +53,14 @@ export function CreateAssessmentPage() {
           <p className="text-sm text-neutral-500 mt-1">
             JTS Role 2 Readiness Assessment
           </p>
+          {exercise && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs text-blue-700">
+              <span className="font-semibold">{exercise.name}</span>
+              {user?.global_role === 'admin' && (
+                <Link to="/exercise-select" className="text-blue-500 hover:text-blue-700 underline">change</Link>
+              )}
+            </div>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} noValidate>

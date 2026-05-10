@@ -1,5 +1,6 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
 import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ReadinessSummary, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { Exercise, ExerciseCreate } from '../types/exercise'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
 import type { CrosswalkEntry, CrosswalkEditorFull } from '../types/crosswalk'
@@ -192,6 +193,23 @@ export const api = {
 
   deleteAssignment: (assessmentId: string, assignmentId: string) =>
     del<void>(`/assessments/${assessmentId}/assignments/${assignmentId}`),
+
+  // ---- exercises ----
+  listExercises: () =>
+    get<Exercise[]>('/exercises'),
+
+  getExercise: (id: string) =>
+    get<Exercise>(`/exercises/${id}`),
+
+  createExercise: (body: ExerciseCreate) =>
+    post<Exercise>('/exercises', body),
+
+  closeExercise: (id: string) =>
+    request<Exercise>(`/exercises/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'closed' }),
+    }),
 
   // ---- audit log ----
   listAuditLog: (assessmentId: string) =>

@@ -1,7 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './lib/auth'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { ExerciseGate } from './components/ExerciseGate'
 import { LoginPage } from './pages/LoginPage'
+import { ExerciseSelectPage } from './pages/ExerciseSelectPage'
 import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
 import { CreateAssessmentPage } from './pages/CreateAssessmentPage'
@@ -57,10 +59,20 @@ export default function App() {
           element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
         />
         <Route
+          path="/exercise-select"
+          element={
+            <ProtectedRoute>
+              <ExerciseSelectPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/"
           element={
             <ProtectedRoute>
-              <HomePage />
+              <ExerciseGate>
+                <HomePage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -68,7 +80,9 @@ export default function App() {
           path="/preview"
           element={
             <ProtectedRoute>
-              <PreviewPage />
+              <ExerciseGate>
+                <PreviewPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -76,7 +90,9 @@ export default function App() {
           path="/assessments/new"
           element={
             <ProtectedRoute>
-              <CreateAssessmentPage />
+              <ExerciseGate>
+                <CreateAssessmentPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -84,7 +100,9 @@ export default function App() {
           path="/assessments/:assessmentId"
           element={
             <ProtectedRoute>
-              <AssessmentPage />
+              <ExerciseGate>
+                <AssessmentPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -92,7 +110,9 @@ export default function App() {
           path="/assessments/:assessmentId/print"
           element={
             <ProtectedRoute>
-              <PrintPage />
+              <ExerciseGate>
+                <PrintPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -100,7 +120,9 @@ export default function App() {
           path="/assessments/:assessmentId/tr"
           element={
             <ProtectedRoute>
-              <TrPage />
+              <ExerciseGate>
+                <TrPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -108,7 +130,9 @@ export default function App() {
           path="/assessments/:assessmentId/tr/print"
           element={
             <ProtectedRoute>
-              <TrPrintPage />
+              <ExerciseGate>
+                <TrPrintPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -116,7 +140,9 @@ export default function App() {
           path="/admin/users"
           element={
             <ProtectedRoute>
-              <AdminUsersPage />
+              <ExerciseGate>
+                <AdminUsersPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -124,7 +150,9 @@ export default function App() {
           path="/assessments/:assessmentId/mctims"
           element={
             <ProtectedRoute>
-              <MctimsPage />
+              <ExerciseGate>
+                <MctimsPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -132,7 +160,9 @@ export default function App() {
           path="/assessments/:assessmentId/feedback"
           element={
             <ProtectedRoute>
-              <FeedbackPage />
+              <ExerciseGate>
+                <FeedbackPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -140,7 +170,9 @@ export default function App() {
           path="/assessments/:assessmentId/audit"
           element={
             <ProtectedRoute>
-              <AuditPage />
+              <ExerciseGate>
+                <AuditPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -148,7 +180,9 @@ export default function App() {
           path="/reports/readiness"
           element={
             <ProtectedRoute>
-              <ReadinessPage />
+              <ExerciseGate>
+                <ReadinessPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -156,7 +190,9 @@ export default function App() {
           path="/profile"
           element={
             <ProtectedRoute>
-              <ProfilePage />
+              <ExerciseGate>
+                <ProfilePage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -164,7 +200,9 @@ export default function App() {
           path="/admin/crosswalk"
           element={
             <ProtectedRoute>
-              <CrosswalkEditorPage />
+              <ExerciseGate>
+                <CrosswalkEditorPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />
@@ -172,7 +210,9 @@ export default function App() {
           path="/units/:uic/library"
           element={
             <ProtectedRoute>
-              <UnitLibraryPage />
+              <ExerciseGate>
+                <UnitLibraryPage />
+              </ExerciseGate>
             </ProtectedRoute>
           }
         />

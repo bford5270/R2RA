@@ -20,6 +20,7 @@ class Assessment(Base):
     # status: draft | in_progress | ready_for_review | certified
     status: Mapped[str] = mapped_column(String(30), default="draft")
     unique_identifier: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    exercise_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("exercises.id"), nullable=True, index=True)
     scenario_ref: Mapped[str | None] = mapped_column(String(300), nullable=True)
     service: Mapped[str | None] = mapped_column(String(20), nullable=True)
     component: Mapped[str | None] = mapped_column(String(20), nullable=True)

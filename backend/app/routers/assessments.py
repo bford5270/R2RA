@@ -72,6 +72,7 @@ def _assessment_out(assessment: Assessment, unit: Unit) -> AssessmentOut:
         component=assessment.component,
         unique_identifier=assessment.unique_identifier,
         scenario_ref=assessment.scenario_ref,
+        exercise_id=assessment.exercise_id,
         started_at=assessment.started_at,
     )
 
@@ -97,6 +98,7 @@ def create_assessment(
         component=body.component,
         unique_identifier=body.unique_identifier,
         scenario_ref=body.scenario_ref,
+        exercise_id=body.exercise_id,
     )
     db.add(assessment)
     # Lead is automatically assigned to all sections

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import assessments, auth, content, crosswalk, crosswalk_editor, evidence, health, reports, unit_library, users
+from app.routers import assessments, auth, content, crosswalk, crosswalk_editor, evidence, exercises, health, reports, unit_library, users
 
 app = FastAPI(
     title=settings.app_name,
@@ -28,5 +28,6 @@ app.include_router(evidence.router)
 app.include_router(crosswalk.router)
 app.include_router(crosswalk_editor.router)
 app.include_router(users.router)
+app.include_router(exercises.router)
 app.include_router(reports.router)
 app.include_router(unit_library.router)
