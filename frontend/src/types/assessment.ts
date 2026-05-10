@@ -20,6 +20,7 @@ export interface Assessment {
   service: string | null
   component: string | null
   unique_identifier: string | null
+  scenario_ref: string | null
   started_at: string
   certified_at: string | null
 }
@@ -42,6 +43,7 @@ export interface AssessmentCreate {
   service?: string
   component?: string
   unique_identifier?: string
+  scenario_ref?: string | null
 }
 
 export interface ItemResponse {

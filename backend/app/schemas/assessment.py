@@ -16,6 +16,7 @@ class AssessmentCreate(BaseModel):
     service: str | None = None
     component: str | None = None
     unique_identifier: str | None = None
+    scenario_ref: str | None = None
 
     @field_validator("mission_type")
     @classmethod
@@ -36,10 +37,15 @@ class AssessmentOut(BaseModel):
     service: str | None
     component: str | None
     unique_identifier: str | None
+    scenario_ref: str | None = None
     started_at: datetime
     certified_at: datetime | None = None
 
     model_config = {"from_attributes": True}
+
+
+class ScenarioUpdate(BaseModel):
+    scenario_ref: str | None = None
 
 
 class StatusAdvance(BaseModel):

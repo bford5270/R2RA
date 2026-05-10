@@ -95,6 +95,13 @@ export const api = {
   getAssessment: (id: string) =>
     get<Assessment>(`/assessments/${id}`),
 
+  updateScenario: (assessmentId: string, scenarioRef: string | null) =>
+    request<Assessment>(`/assessments/${assessmentId}/scenario`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scenario_ref: scenarioRef }),
+    }),
+
   listResponses: (assessmentId: string) =>
     get<ItemResponse[]>(`/assessments/${assessmentId}/responses`),
 

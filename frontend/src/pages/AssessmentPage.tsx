@@ -965,6 +965,9 @@ export function AssessmentPage() {
   const [advancing, setAdvancing] = useState(false)
   const [showCertifyModal, setShowCertifyModal] = useState(false)
   const [showCrosswalk, setShowCrosswalk] = useState(false)
+  const [editingScenario, setEditingScenario] = useState(false)
+  const [scenarioDraft, setScenarioDraft] = useState('')
+  const [scenarioSaving, setScenarioSaving] = useState(false)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -1078,6 +1081,51 @@ export function AssessmentPage() {
           <p className="text-xs font-bold text-neutral-800 leading-tight">{assessment.unit_name}</p>
           <p className="text-[11px] text-neutral-500 font-mono">{assessment.unit_uic}</p>
           <p className="text-[11px] text-neutral-500">{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
+
+          {editingScenario ? (
+            <div className="space-y-1">
+              <input
+                autoFocus
+                value={scenarioDraft}
+                onChange={e => setScenarioDraft(e.target.value)}
+                placeholder="role2-builder case ID or name"
+                className="w-full text-[11px] border border-neutral-300 rounded px-2 py-1 focus:outline-none focus:border-scarlet"
+              />
+              <div className="flex gap-1">
+                <button
+                  disabled={scenarioSaving}
+                  onClick={async () => {
+                    setScenarioSaving(true)
+                    try {
+                      const updated = await api.updateScenario(assessmentId!, scenarioDraft.trim() || null)
+                      setAssessment(updated)
+                    } finally {
+                      setScenarioSaving(false)
+                      setEditingScenario(false)
+                    }
+                  }}
+                  className="flex-1 text-[10px] bg-scarlet text-white rounded px-2 py-0.5 disabled:opacity-50"
+                >
+                  {scenarioSaving ? 'Saving…' : 'Save'}
+                </button>
+                <button
+                  onClick={() => setEditingScenario(false)}
+                  className="flex-1 text-[10px] border border-neutral-200 rounded px-2 py-0.5 text-neutral-500"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => { setScenarioDraft(assessment.scenario_ref ?? ''); setEditingScenario(true) }}
+              className="w-full text-left text-[10px] text-neutral-400 hover:text-neutral-700 border border-dashed border-neutral-200 rounded px-2 py-1 transition-colors"
+            >
+              {assessment.scenario_ref
+                ? <><span className="text-neutral-500 font-medium">Scenario: </span>{assessment.scenario_ref}</>
+                : '+ Link scenario (role2-builder)'}
+            </button>
+          )}
 
           <div className="flex items-center justify-between pt-1">
             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${STATUS_COLOR[assessment.status]}`}>

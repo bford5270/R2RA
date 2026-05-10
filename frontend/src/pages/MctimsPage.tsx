@@ -147,6 +147,7 @@ export function MctimsPage() {
   const headerText = [
     `UNIT: ${assessment.unit_name} (${assessment.unit_uic})`,
     `MISSION TYPE: ${MISSION_TYPE_LABELS[assessment.mission_type]}`,
+    assessment.scenario_ref ? `SCENARIO: ${assessment.scenario_ref}` : '',
     `ASSESSMENT STARTED: ${assessmentDate}`,
     certDate ? `CERTIFIED: ${certDate}` : `STATUS: ${assessment.status.replace('_', ' ').toUpperCase()}`,
     `T&R FRAMEWORK: NAVMC 3500.84B (HSS T&R Manual)`,

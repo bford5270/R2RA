@@ -269,6 +269,9 @@ export function FeedbackPage() {
               <p className="font-mono font-bold text-base text-neutral-800">{assessment.unit_uic}</p>
               <p className="font-semibold text-neutral-700">{assessment.unit_name}</p>
               <p>{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
+              {assessment.scenario_ref && (
+                <p className="text-neutral-500">Scenario: {assessment.scenario_ref}</p>
+              )}
               <p className="text-neutral-400">{date}</p>
             </div>
           </div>

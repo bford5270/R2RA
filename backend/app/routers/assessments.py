@@ -24,6 +24,7 @@ from app.schemas.assessment import (
     AuditLogOut,
     ResponseOut,
     ResponseUpsert,
+    ScenarioUpdate,
     SignatureOut,
     StatusAdvance,
     TrResponseOut,
@@ -70,6 +71,7 @@ def _assessment_out(assessment: Assessment, unit: Unit) -> AssessmentOut:
         service=assessment.service,
         component=assessment.component,
         unique_identifier=assessment.unique_identifier,
+        scenario_ref=assessment.scenario_ref,
         started_at=assessment.started_at,
     )
 
@@ -94,6 +96,7 @@ def create_assessment(
         service=body.service,
         component=body.component,
         unique_identifier=body.unique_identifier,
+        scenario_ref=body.scenario_ref,
     )
     db.add(assessment)
     # Lead is automatically assigned to all sections
@@ -150,6 +153,33 @@ def get_assessment(
     if not row:
         raise HTTPException(status_code=404, detail="Assessment not found")
     return _assessment_out(row[0], row[1])
+
+
+# ---------------------------------------------------------------------------
+# Scenario ref
+# ---------------------------------------------------------------------------
+
+
+@router.patch("/{assessment_id}/scenario", response_model=AssessmentOut)
+def update_scenario(
+    assessment_id: str,
+    body: ScenarioUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    row = (
+        db.query(Assessment, Unit)
+        .join(Unit, Assessment.unit_id == Unit.id)
+        .filter(Assessment.id == assessment_id)
+        .first()
+    )
+    if not row:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    assessment, unit = row
+    assessment.scenario_ref = body.scenario_ref
+    db.commit()
+    db.refresh(assessment)
+    return _assessment_out(assessment, unit)
 
 
 # ---------------------------------------------------------------------------
