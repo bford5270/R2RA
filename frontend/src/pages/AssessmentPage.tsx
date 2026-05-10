@@ -1155,6 +1155,20 @@ export function AssessmentPage() {
               Audit log →
             </Link>
           </div>
+          <div className="flex gap-2">
+            <Link
+              to={`/assessments/${assessmentId}/mctims`}
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+            >
+              MCTIMS Export →
+            </Link>
+            <Link
+              to={`/assessments/${assessmentId}/feedback`}
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+            >
+              Unit Feedback →
+            </Link>
+          </div>
           <Link
             to={`/units/${assessment.unit_uic}/library`}
             className="w-full text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1 block"

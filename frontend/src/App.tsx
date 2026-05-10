@@ -15,6 +15,8 @@ import { ReadinessPage } from './pages/ReadinessPage'
 import { UnitLibraryPage } from './pages/UnitLibraryPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { CrosswalkEditorPage } from './pages/CrosswalkEditorPage'
+import { MctimsPage } from './pages/MctimsPage'
+import { FeedbackPage } from './pages/FeedbackPage'
 
 function BannerTop() {
   return (
@@ -115,6 +117,22 @@ export default function App() {
           element={
             <ProtectedRoute>
               <AdminUsersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId/mctims"
+          element={
+            <ProtectedRoute>
+              <MctimsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId/feedback"
+          element={
+            <ProtectedRoute>
+              <FeedbackPage />
             </ProtectedRoute>
           }
         />
