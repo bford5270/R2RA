@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useManifest, useSection } from '@/hooks/useContent'
 import { SectionNav } from '@/components/preview/SectionNav'
 import { SectionView } from '@/components/preview/SectionView'
 import { api } from '../lib/api'
 import type { CrosswalkEntry } from '../types/crosswalk'
 
-function CrosswalkSidebar({ sectionId }: { sectionId: string | null }) {
+const NAV_WIDTH = 224  // px — left section-nav column
+const MIN_SPLIT = 20  // % minimum for either pane
+const DEFAULT_SPLIT = 50  // % for crosswalk pane
+
+function CrosswalkContent({ sectionId }: { sectionId: string | null }) {
   const [entries, setEntries] = useState<CrosswalkEntry[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -22,8 +26,8 @@ function CrosswalkSidebar({ sectionId }: { sectionId: string | null }) {
     c === 'high' ? 'text-green-600' : c === 'medium' ? 'text-yellow-600' : 'text-neutral-400'
 
   return (
-    <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto flex flex-col hidden lg:flex">
-      <div className="px-4 pt-4 pb-2 border-b border-neutral-100">
+    <>
+      <div className="px-4 pt-4 pb-2 border-b border-neutral-100 shrink-0">
         <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">T&amp;R Crosswalk</p>
         <p className="text-[10px] text-neutral-400 mt-0.5">NAVMC 3500.84B</p>
       </div>
@@ -57,7 +61,7 @@ function CrosswalkSidebar({ sectionId }: { sectionId: string | null }) {
           </div>
         ))}
       </div>
-    </aside>
+    </>
   )
 }
 
@@ -67,8 +71,38 @@ export function PreviewPage() {
   const { data: section, isLoading: sectionLoading } = useSection(
     activeSectionId ?? manifest?.sections_manifest[0]?.id ?? null,
   )
-
   const effectiveSectionId = activeSectionId ?? manifest?.sections_manifest[0]?.id ?? null
+
+  // crosswalkPct = % of the right-of-nav area given to the crosswalk pane
+  const [crosswalkPct, setCrosswalkPct] = useState(DEFAULT_SPLIT)
+  const dragging = useRef(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const onDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    dragging.current = true
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
+
+    function onMouseMove(ev: MouseEvent) {
+      if (!dragging.current || !containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      // crosswalk is on the right; measure from right edge
+      const pct = ((rect.right - ev.clientX) / rect.width) * 100
+      setCrosswalkPct(Math.min(100 - MIN_SPLIT, Math.max(MIN_SPLIT, pct)))
+    }
+
+    function onMouseUp() {
+      dragging.current = false
+      document.body.style.cursor = ''
+      document.body.style.userSelect = ''
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }, [])
 
   if (manifestLoading) {
     return (
@@ -88,9 +122,12 @@ export function PreviewPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Left pane — section tree */}
-      <aside className="w-64 shrink-0 border-r border-neutral-200 bg-white overflow-y-auto">
-        <div className="px-3 pt-4 pb-2 border-b border-neutral-100">
+      {/* Left nav — fixed width */}
+      <aside
+        className="shrink-0 border-r border-neutral-200 bg-white overflow-y-auto flex flex-col"
+        style={{ width: NAV_WIDTH }}
+      >
+        <div className="px-3 pt-4 pb-2 border-b border-neutral-100 shrink-0">
           <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
             {manifest.title}
           </p>
@@ -103,18 +140,36 @@ export function PreviewPage() {
         />
       </aside>
 
-      {/* Center pane — section items */}
-      <main className="flex-1 overflow-y-auto bg-white">
-        <div className="max-w-2xl mx-auto px-6 py-6">
-          {sectionLoading && (
-            <p className="text-sm text-neutral-400">Loading section…</p>
-          )}
-          {section && <SectionView section={section} />}
-        </div>
-      </main>
+      {/* Resizable split area */}
+      <div ref={containerRef} className="flex flex-1 overflow-hidden">
+        {/* JTS form pane */}
+        <main
+          className="overflow-y-auto bg-white"
+          style={{ width: `${100 - crosswalkPct}%` }}
+        >
+          <div className="max-w-2xl mx-auto px-6 py-6">
+            {sectionLoading && (
+              <p className="text-sm text-neutral-400">Loading section…</p>
+            )}
+            {section && <SectionView section={section} />}
+          </div>
+        </main>
 
-      {/* Right pane — T&R crosswalk */}
-      <CrosswalkSidebar sectionId={effectiveSectionId} />
+        {/* Drag handle */}
+        <div
+          onMouseDown={onDragStart}
+          className="w-1.5 shrink-0 bg-neutral-200 hover:bg-scarlet cursor-col-resize transition-colors"
+          title="Drag to resize"
+        />
+
+        {/* T&R crosswalk pane */}
+        <aside
+          className="overflow-y-auto bg-neutral-50 border-l border-neutral-200 flex flex-col"
+          style={{ width: `${crosswalkPct}%` }}
+        >
+          <CrosswalkContent sectionId={effectiveSectionId} />
+        </aside>
+      </div>
     </div>
   )
 }
