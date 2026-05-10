@@ -459,7 +459,7 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
     <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto flex flex-col">
       <div className="px-4 pt-4 pb-2 border-b border-neutral-100">
         <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">T&amp;R Crosswalk</p>
-        <p className="text-[10px] text-neutral-400 mt-0.5">NAVMC 3500.84B · draft, needs SME review</p>
+        <p className="text-[10px] text-neutral-400 mt-0.5">NAVMC 3500.84B</p>
       </div>
       <div className="flex-1 overflow-y-auto px-3 py-3 space-y-4">
         {loading && <p className="text-xs text-neutral-400">Loading…</p>}

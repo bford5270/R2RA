@@ -201,17 +201,3 @@ def register(body: RegisterRequest, db: Session = Depends(get_db)):
         last_login_at=None,
     )
 
-
-import os as _os
-
-@router.post("/admin-reset", status_code=status.HTTP_204_NO_CONTENT)
-def admin_reset_password(email: str, new_password: str, token: str, db: Session = Depends(get_db)):
-    """One-time admin reset protected by RESET_TOKEN env var. Disabled when env var is unset/empty."""
-    expected = _os.getenv("RESET_TOKEN", "")
-    if not expected or token != expected:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
-    user = db.query(User).filter(User.email == email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    user.hashed_password = hash_password(new_password)
-    db.commit()

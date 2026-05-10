@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-05-02 (Session 16)
+- **Last session**: 2026-05-10 (Session 17)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
-- **Branch**: `claude/usmc-role2-checklist-wiSpY` (merged to `main`)
-- **Last commit**: `58d2758` (fix: buildspec artifact layout for EB deploy)
+- **Branch**: `claude/usmc-role2-checklist-wiSpY` (just merged to `main` — pipeline deploying)
+- **Last commit**: cleanup — remove admin-reset endpoint, fix stale crosswalk label
 - **Open PR**: none
-- **Blocked on**: Custom domain (optional, user considering); Phase 3 stakeholder input (enclave, sponsor, SME review)
+- **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
 ---
 
@@ -133,6 +133,41 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-05-10 — Session 17: exercise gate, T&R scoring, MCTIMS/feedback, role2-builder deploy, PreviewPage split
+
+**In**: App live on AWS. Session 16 ended with CI/CD pipeline running on `main`. Multiple features accumulated on the feature branch since then.
+
+**Out**:
+
+- **T&R Likert scoring** (`55c21ab`): Replaced binary GO/NO-GO with 1–5 Likert scale per wicket (Non-performant → Exceeds standard). Per-component sub-scores. `score` + `capture_data` columns added to `tr_responses` via Alembic migration. `readiness-summary` endpoint aggregates scores and feeds forward to the JTS crosswalk panel (`T&R → YES/MARGINAL/NO` chips on JTS items). Score chips show on crosswalk panel per wicket.
+
+- **table_counts + table_yn UX** (`f9c74bb`, `1ca1355`): `table_counts` rows render as number inputs (no synthetic status). `table_yn` rows render inline with Y/N toggle buttons.
+
+- **scenario_ref** (`a339029`): New nullable field on assessments linking a role2-builder case ID/name. Click-to-edit in assessment sidebar. Propagates to MCTIMS and feedback exports.
+
+- **MCTIMS export + unit feedback report** (`ee2f2a0`): Two new pages accessible from assessment sidebar. MCTIMS: structured text block for copy/paste into MCTIMS system. Feedback: formatted unit-facing readiness report with per-section status summary.
+
+- **role2-builder AWS deployment** (`78e2d65`): role2-builder FastAPI backend moved from Railway to AWS Elastic Beanstalk (Docker, t3.micro). Separate CodePipeline watching role2-builder repo. CORS_ORIGINS env var replaces hardcoded `*`. Next.js frontend stays on Vercel.
+
+- **Custom domains**: `role2assessment.com` → R2RA app. `role2builder.org` → role2-builder app. Both registered and wired via Route 53 + ACM + CloudFront.
+
+- **Crosswalk approved**: Status changed from `draft-needs-sme-review` to `approved` via API. T&R Map panel now live for all users.
+
+- **Exercise gate** (`da6b63f`): Non-admins must commit to a named training exercise (name, start/end date, optional location) before accessing any assessment page. Admins browse freely with optional exercise context. Implementation: `exercises` table + Alembic migration, `/api/exercises` router, `ExerciseContext` (memory-only, per CUI posture), `ExerciseSelectPage`, `ExerciseGate` component wrapping all protected routes in `App.tsx`. `HomePage` filters visible assessments to the current exercise for non-admins. New assessments tagged with `exercise_id`.
+
+- **PreviewPage T&R crosswalk** (`c04c8d5`, `2ade706`): Replaced "coming in Phase 1.5" stub with live crosswalk panel. Resizable 50/50 split — drag the divider bar to shift emphasis between the JTS form and the crosswalk panel. Clamps at 20%/80%.
+
+- **Cleanup**: Removed one-time `admin-reset` endpoint from `auth.py` (password recovery no longer needed). Removed stale "draft, needs SME review" label from AssessmentPage crosswalk panel header.
+
+**Key decisions**:
+- Exercise selection is memory-only (page refresh clears it, same as auth token) — intentional for CUI field posture.
+- Non-admin exercise filtering is client-side; backend returns all assessments for the authenticated user. Acceptable for pilot scale.
+- `RESET_TOKEN` env var pattern kept as guard in case someone else sets it; endpoint itself removed.
+
+**Commits**: `3ba7227` through cleanup commit — all on `claude/usmc-role2-checklist-wiSpY`, merged to `main` this session.
+
+---
 
 ### 2026-05-02 — Session 16: AWS cloud deployment, CI/CD, UX polish
 
