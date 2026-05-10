@@ -18,14 +18,9 @@ from app.database import get_db
 from app.models.unit import Unit
 from app.models.unit_evidence import UnitEvidence
 from app.models.user import User
+from app.upload_validation import validate_upload
 
 router = APIRouter(prefix="/api/units", tags=["unit-library"])
-
-ALLOWED_CONTENT_TYPES = {
-    "image/jpeg", "image/png", "image/webp", "image/gif",
-    "application/pdf",
-    "text/plain",
-}
 
 VALID_CATEGORIES = {"roster", "cert", "sop", "equipment", "eval", "other"}
 
@@ -95,20 +90,11 @@ def upload_library_item(
 ):
     unit = _require_unit(db, uic)
 
-    if file.content_type not in ALLOWED_CONTENT_TYPES:
-        raise HTTPException(
-            status_code=415,
-            detail=f"Unsupported type '{file.content_type}'. Allowed: JPEG, PNG, WebP, GIF, PDF, TXT.",
-        )
     if category not in VALID_CATEGORIES:
         raise HTTPException(status_code=422, detail=f"category must be one of {VALID_CATEGORIES}")
 
     content = file.file.read()
-    if len(content) > settings.max_upload_bytes:
-        raise HTTPException(
-            status_code=413,
-            detail=f"File exceeds {settings.max_upload_bytes // (1024 * 1024)} MB limit.",
-        )
+    validate_upload(content, file.content_type or "", settings.max_upload_bytes)
 
     sha256 = hashlib.sha256(content).hexdigest()
     item_id = str(uuid.uuid4())

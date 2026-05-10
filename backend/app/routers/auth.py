@@ -1,7 +1,10 @@
+import collections
+import threading
+import time
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from jose import JWTError
 from sqlalchemy.orm import Session
 
@@ -16,12 +19,14 @@ from app.auth.totp import generate_totp_secret, get_totp_uri, verify_totp
 from app.database import get_db
 from app.models.user import User
 from app.schemas.auth import (
+    ChangePasswordRequest,
     LoginRequest,
     LoginResponse,
     RegisterRequest,
     TotpCompleteRequest,
     TotpConfirmRequest,
     TotpEnrollResponse,
+    TotpUnenrollRequest,
     UserOut,
 )
 
@@ -33,6 +38,31 @@ _INVALID = HTTPException(
     headers={"WWW-Authenticate": "Bearer"},
 )
 
+# ---------------------------------------------------------------------------
+# In-memory sliding-window rate limiter for login attempts
+# Keyed by IP; max 10 attempts per 60-second window.
+# Thread-safe for single-process deployments (uvicorn workers=1 on EB).
+# ---------------------------------------------------------------------------
+_LOGIN_WINDOW = 60        # seconds
+_LOGIN_MAX_ATTEMPTS = 10
+_login_attempts: dict[str, collections.deque] = {}
+_login_lock = threading.Lock()
+
+
+def _check_login_rate(ip: str) -> None:
+    now = time.monotonic()
+    cutoff = now - _LOGIN_WINDOW
+    with _login_lock:
+        dq = _login_attempts.setdefault(ip, collections.deque())
+        while dq and dq[0] < cutoff:
+            dq.popleft()
+        if len(dq) >= _LOGIN_MAX_ATTEMPTS:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too many login attempts. Try again in a minute.",
+            )
+        dq.append(now)
+
 
 # ---------------------------------------------------------------------------
 # Login / token
@@ -40,7 +70,8 @@ _INVALID = HTTPException(
 
 
 @router.post("/login", response_model=LoginResponse)
-def login(body: LoginRequest, db: Session = Depends(get_db)):
+def login(body: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    _check_login_rate(request.client.host if request.client else "unknown")
     user: User | None = db.query(User).filter(User.email == body.email).first()
     if not user or not user.is_active or not verify_password(body.password, user.hashed_password):
         raise _INVALID
@@ -134,27 +165,26 @@ def totp_confirm(
 
 @router.post("/change-password", status_code=status.HTTP_204_NO_CONTENT)
 def change_password(
-    body: dict,
+    body: ChangePasswordRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Change the current user's password. Requires current password."""
-    current_pw = body.get("current_password", "")
-    new_pw = body.get("new_password", "")
-    if not verify_password(current_pw, current_user.hashed_password):
+    if not verify_password(body.current_password, current_user.hashed_password):
         raise HTTPException(status_code=401, detail="Current password is incorrect")
-    if len(new_pw) < 8:
-        raise HTTPException(status_code=422, detail="New password must be at least 8 characters")
-    current_user.hashed_password = hash_password(new_pw)
+    current_user.hashed_password = hash_password(body.new_password)
     db.commit()
 
 
 @router.delete("/totp", status_code=status.HTTP_204_NO_CONTENT)
 def totp_unenroll(
+    body: TotpUnenrollRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Remove TOTP from the current user's account."""
+    """Remove TOTP from the current user's account. Requires current password."""
+    if not verify_password(body.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
     current_user.totp_secret = None
     db.commit()
 

@@ -105,10 +105,11 @@ function TotpSection({ enrolled, onChanged }: { enrolled: boolean; onChanged: ()
   }
 
   async function handleUnenroll() {
-    if (!confirm('Remove TOTP? Your next login will only require a password.')) return
+    const pw = window.prompt('Enter your current password to remove TOTP:')
+    if (!pw) return
     setBusy(true); setMsg(null)
     try {
-      await api.totpUnenroll()
+      await api.totpUnenroll(pw)
       setMsg({ ok: true, text: 'TOTP removed.' })
       onChanged()
     } catch (err) {

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 
 class LoginRequest(BaseModel):
@@ -35,6 +35,24 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
     global_role: str = "assessor"
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("New password must be at least 8 characters")
+        if len(v) > 128:
+            raise ValueError("Password too long")
+        return v
+
+
+class TotpUnenrollRequest(BaseModel):
+    current_password: str
 
 
 class UserOut(BaseModel):

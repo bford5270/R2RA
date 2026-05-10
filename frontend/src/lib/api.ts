@@ -81,7 +81,12 @@ export const api = {
   totpEnroll: () => get<{ secret: string; uri: string }>('/auth/totp/enroll'),
   totpConfirm: (secret: string, code: string) =>
     post<void>('/auth/totp/confirm', { secret, code }),
-  totpUnenroll: () => del<void>('/auth/totp'),
+  totpUnenroll: (currentPassword: string) =>
+    request<void>('/auth/totp', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ current_password: currentPassword }),
+    }),
 
   register: (display_name: string, email: string, password: string, global_role = 'admin') =>
     post<AuthUser>('/auth/register', { display_name, email, password, global_role }),

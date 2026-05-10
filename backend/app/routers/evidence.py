@@ -18,14 +18,9 @@ from app.models.evidence import Evidence
 from app.models.response import Response
 from app.models.user import User
 from app.routers.assessments import _require_assessment
+from app.upload_validation import validate_upload
 
 router = APIRouter(tags=["evidence"])
-
-ALLOWED_CONTENT_TYPES = {
-    "image/jpeg", "image/png", "image/webp", "image/gif",
-    "application/pdf",
-    "text/plain",
-}
 
 
 # ---------------------------------------------------------------------------
@@ -45,18 +40,8 @@ def upload_evidence(
 ):
     _require_assessment(db, assessment_id)
 
-    if file.content_type not in ALLOWED_CONTENT_TYPES:
-        raise HTTPException(
-            status_code=415,
-            detail=f"Unsupported file type '{file.content_type}'. Allowed: JPEG, PNG, WebP, GIF, PDF, TXT.",
-        )
-
     content = file.file.read()
-    if len(content) > settings.max_upload_bytes:
-        raise HTTPException(
-            status_code=413,
-            detail=f"File exceeds {settings.max_upload_bytes // (1024 * 1024)} MB limit.",
-        )
+    validate_upload(content, file.content_type or "", settings.max_upload_bytes)
 
     sha256 = hashlib.sha256(content).hexdigest()
     ev_id = str(uuid.uuid4())
