@@ -1,0 +1,39 @@
+{
+  "id": "medical_equipment",
+  "ordinal": 12,
+  "title": "MEDICAL EQUIPMENT",
+  "items": [
+    {
+      "id": "equip.table",
+      "type": "table_equipment",
+      "label": "Equipment Item",
+      "columns": [
+        { "id": "name_brand",         "label": "Name / Brand",        "type": "text" },
+        { "id": "on_hand",            "label": "# On Hand",           "type": "number" },
+        { "id": "mission_capable",    "label": "# Mission Capable",   "type": "number" },
+        { "id": "inspection_current", "label": "Inspection Current?", "type": "yn" }
+      ],
+      "rows": [
+        { "id": "anesthesia",  "label": "Anesthesia Machine" },
+        { "id": "defib",       "label": "Defibrillator" },
+        { "id": "vent",        "label": "Ventilators" },
+        { "id": "suction",     "label": "Suction" },
+        { "id": "video_laryngoscopy", "label": "Indirect or Video Laryngoscopy" },
+        { "id": "rapid_trans", "label": "Rapid Transfuser" },
+        { "id": "xray",        "label": "Xray Machine" },
+        { "id": "ultrasound",  "label": "Ultrasound" },
+        { "id": "doppler",     "label": "Handheld doppler" },
+        { "id": "lab_device",  "label": "Lab Device" },
+        { "id": "lab_cart",    "label": "Lab Cartriges" },
+        { "id": "monitors",    "label": "Patient Monitors" },
+        { "id": "o2_source",   "label": "Oxygen Source" },
+        { "id": "additional",  "label": "Additional Equip" }
+      ]
+    },
+    {
+      "id": "equip.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

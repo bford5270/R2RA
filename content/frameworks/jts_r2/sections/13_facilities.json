@@ -1,0 +1,61 @@
+{
+  "id": "facilities",
+  "ordinal": 13,
+  "title": "FACILITIES",
+  "items": [
+    {
+      "id": "fac.climate",
+      "type": "group",
+      "label": "Climate control adequate/reliable for patient care",
+      "sub_items": [
+        {
+          "id": "fac.climate.main",
+          "type": "binary",
+          "prompt": "Climate control adequate/reliable for patient care"
+        },
+        {
+          "id": "fac.climate.backup",
+          "type": "binary",
+          "prompt": "Back Up plan briefed"
+        }
+      ]
+    },
+    {
+      "id": "fac.power",
+      "type": "group",
+      "label": "Electric power adequate/reliable for equipment",
+      "sub_items": [
+        {
+          "id": "fac.power.main",
+          "type": "binary",
+          "prompt": "Electric power adequate/reliable for equipment"
+        },
+        {
+          "id": "fac.power.backup",
+          "type": "binary",
+          "prompt": "Back Up plan briefed"
+        }
+      ]
+    },
+    {
+      "id": "fac.voltage",
+      "type": "binary",
+      "prompt": "Voltage converters/adapters available (as applicable)"
+    },
+    {
+      "id": "fac.light",
+      "type": "binary",
+      "prompt": "Light source back up plan briefed"
+    },
+    {
+      "id": "fac.mascal",
+      "type": "binary",
+      "prompt": "Alternate facility/flex plan for MASCAL briefed"
+    },
+    {
+      "id": "fac.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

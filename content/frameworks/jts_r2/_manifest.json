@@ -1,0 +1,233 @@
+{
+  "framework_id": "jts_r2",
+  "version": "2024.0",
+  "title": "Role 2 Readiness Assessment",
+  "subtitle": "with ARSRA Appendix",
+  "source": {
+    "authority": "Joint Trauma System",
+    "document": "Role_2_Readiness_Assessment_with_ARSRA_Appendix.docx",
+    "url": "https://jts.health.mil/assets/docs/forms/Role_2_Readiness_Assessment_with_ARSRA_Appendix.docx",
+    "checksum": "sha256:001492c6bf4d9d2ba980bfaf0e1e90a46ee76218e246262e7f5d1e46833c1e42"
+  },
+  "preamble": "The purpose is to provide the theater Trauma Medical Director (TMD) with the means to communicate with, and assess a Role 2 unit's readiness for deployment within an operational environment; identify major gaps and determine mitigation strategies with the leaders of the deploying unit. This list is not designed to be comprehensive, TMDs can modify/expand based on mission unique requirements.",
+  "classification_notice": "Exercise caution with regards to classification status as this document is completed.",
+  "variables": [
+    {
+      "id": "unique_identifier",
+      "label": "Unique identifier",
+      "type": "text_short",
+      "required": true,
+      "help": "See SIPR ID information for actual team ID and location."
+    },
+    {
+      "id": "mission_type",
+      "label": "Mission (IAW Joint Publication 4-02, Joint Health Service Support)",
+      "type": "select_one",
+      "required": true,
+      "options": [
+        {
+          "value": "r2lm_non_split",
+          "label": "Role 2 Light Maneuver performing DCS in non split-based operations",
+          "description": "Unit's mission is in one location."
+        },
+        {
+          "value": "r2lm_split",
+          "label": "Role 2 Light Maneuver performing DCS in split-based operations",
+          "description": "Unit's mission is in 2 or more locations."
+        },
+        {
+          "value": "r2e",
+          "label": "Role 2 Enhanced",
+          "description": "Includes capabilities built around primary surgery (e.g., ICU beds, dental, radiology, lab)."
+        },
+        {
+          "value": "arst",
+          "label": "Austere Resuscitative Surgical Team (SOST / GST / GHOST)",
+          "description": "Special Operations Surgical Team, Ground Surgical Team, or Golden Hour Offset Surgical Team. Triggers the ARSRA Appendix.",
+          "triggers": [
+            "arsra_appendix"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "service",
+      "label": "Service",
+      "type": "select_one",
+      "required": true,
+      "options": [
+        {
+          "value": "usa",
+          "label": "USA"
+        },
+        {
+          "value": "usn",
+          "label": "USN"
+        },
+        {
+          "value": "usaf",
+          "label": "USAF"
+        },
+        {
+          "value": "coalition",
+          "label": "Coalition Military"
+        },
+        {
+          "value": "civilian",
+          "label": "Civilian"
+        },
+        {
+          "value": "contract",
+          "label": "Contract"
+        }
+      ]
+    },
+    {
+      "id": "component",
+      "label": "Component",
+      "type": "select_one",
+      "required": true,
+      "options": [
+        {
+          "value": "active",
+          "label": "Active"
+        },
+        {
+          "value": "reserve",
+          "label": "Reserve Component"
+        },
+        {
+          "value": "national_guard",
+          "label": "National Guard"
+        }
+      ]
+    }
+  ],
+  "sections_manifest": [
+    {
+      "id": "predeployment_prep",
+      "ordinal": 1,
+      "title": "Predeployment Prep",
+      "file": "sections/01_predeployment_prep.json",
+      "item_prefix": "pdp"
+    },
+    {
+      "id": "c2",
+      "ordinal": 2,
+      "title": "Command and Control (C2)",
+      "file": "sections/02_command_and_control.json",
+      "item_prefix": "c2"
+    },
+    {
+      "id": "mroe",
+      "ordinal": 3,
+      "title": "Medical Rules of Engagement (MROE)",
+      "file": "sections/03_mroe.json",
+      "item_prefix": "mroe"
+    },
+    {
+      "id": "communications",
+      "ordinal": 4,
+      "title": "Communications",
+      "file": "sections/04_communications.json",
+      "item_prefix": "comms"
+    },
+    {
+      "id": "adjacent_support",
+      "ordinal": 5,
+      "title": "Adjacent / Co-Located Medical Support",
+      "file": "sections/05_adjacent_support.json",
+      "item_prefix": "adj"
+    },
+    {
+      "id": "orsop",
+      "ordinal": 6,
+      "title": "Operational Readiness and Standard Operating Procedures (SOPs)",
+      "file": "sections/06_operational_readiness_sops.json",
+      "item_prefix": "orsop"
+    },
+    {
+      "id": "clinical_readiness",
+      "ordinal": 7,
+      "title": "Clinical Readiness Assessment",
+      "file": "sections/07_clinical_readiness.json",
+      "item_prefix": "cra"
+    },
+    {
+      "id": "clinical_capabilities",
+      "ordinal": 8,
+      "title": "Clinical Capabilities",
+      "file": "sections/08_clinical_capabilities.json",
+      "item_prefix": "cc"
+    },
+    {
+      "id": "blood_resources",
+      "ordinal": 9,
+      "title": "Blood Resources",
+      "file": "sections/09_blood_resources.json",
+      "item_prefix": "blood"
+    },
+    {
+      "id": "team_composition",
+      "ordinal": 10,
+      "title": "Team Composition",
+      "file": "sections/10_team_composition.json",
+      "item_prefix": "team"
+    },
+    {
+      "id": "critical_supplies",
+      "ordinal": 11,
+      "title": "Inventory of Critical Supplies",
+      "file": "sections/11_critical_supplies.json",
+      "item_prefix": "supplies"
+    },
+    {
+      "id": "medical_equipment",
+      "ordinal": 12,
+      "title": "Medical Equipment",
+      "file": "sections/12_medical_equipment.json",
+      "item_prefix": "equip"
+    },
+    {
+      "id": "facilities",
+      "ordinal": 13,
+      "title": "Facilities",
+      "file": "sections/13_facilities.json",
+      "item_prefix": "fac"
+    },
+    {
+      "id": "closing",
+      "ordinal": 14,
+      "title": "Closing \u00e2\u20ac\u201d TMD Summary",
+      "file": "sections/14_closing.json",
+      "item_prefix": "close"
+    },
+    {
+      "id": "arsra_appendix",
+      "ordinal": 15,
+      "title": "ARSRA Appendix",
+      "file": "sections/15_arsra_appendix.json",
+      "visible_when": {
+        "mission_type": "arst"
+      },
+      "item_prefix": "arsra"
+    }
+  ],
+  "signoff": [
+    {
+      "role": "role2_team_chief",
+      "label": "Role 2 Team Chief"
+    },
+    {
+      "role": "tmd",
+      "label": "Theater Trauma Director"
+    },
+    {
+      "role": "arst_chief",
+      "label": "Austere Resuscitative Surgical Team, Chief",
+      "visible_when": {
+        "mission_type": "arst"
+      }
+    }
+  ]
+}

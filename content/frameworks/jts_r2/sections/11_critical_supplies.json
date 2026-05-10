@@ -1,0 +1,104 @@
+{
+  "id": "critical_supplies",
+  "ordinal": 11,
+  "title": "INVENTORY OF CRITICAL SUPPLIES",
+  "description": "This list is not meant to be comprehensive.",
+  "items": [
+    {
+      "id": "supplies.peds",
+      "type": "table_yn",
+      "label": "Pediatric Emergency Supplies",
+      "columns": [
+        { "id": "y",  "label": "Y",   "type": "yn_na" },
+        { "id": "n",  "label": "N",   "type": "yn_na" },
+        { "id": "na", "label": "N/A", "type": "yn_na" }
+      ],
+      "rows": [
+        { "id": "broselow",      "label": "Broselow Tape" },
+        { "id": "o2_mask",       "label": "O2 Mask" },
+        { "id": "laryngoscope",  "label": "Laryngoscope blades 1-3" },
+        { "id": "ett",           "label": "ETT 4-6 Fr" },
+        { "id": "foley",         "label": "Foley" },
+        { "id": "chest_tubes",   "label": "Chest Tubes 16-20 Fr" },
+        { "id": "bp_cuff",       "label": "BP Cuff" },
+        { "id": "io",            "label": "Interosseous device" }
+      ]
+    },
+    {
+      "id": "supplies.ortho",
+      "type": "table_yn",
+      "label": "Orthopedic Emergency Supplies",
+      "columns": [
+        { "id": "y",  "label": "Y",   "type": "yn_na" },
+        { "id": "n",  "label": "N",   "type": "yn_na" },
+        { "id": "na", "label": "N/A", "type": "yn_na" }
+      ],
+      "rows": [
+        { "id": "ext_fix",      "label": "External Fixator Hardware" },
+        { "id": "splinting",    "label": "Plaster/Fiberglass for Splinting" }
+      ]
+    },
+    {
+      "id": "supplies.neuro",
+      "type": "table_yn",
+      "label": "Neurosurgical Emergency Supplies",
+      "columns": [
+        { "id": "y",  "label": "Y",   "type": "yn_na" },
+        { "id": "n",  "label": "N",   "type": "yn_na" },
+        { "id": "na", "label": "N/A", "type": "yn_na" }
+      ],
+      "rows": [
+        { "id": "hypertonic_saline", "label": "Hypertonic Saline" },
+        { "id": "mannitol",          "label": "Mannitol" },
+        { "id": "keppra",            "label": "Keppra" },
+        { "id": "drill_kit",         "label": "Codman/Hudson Drill Kit" },
+        { "id": "gigli_passer",      "label": "Gigli Saw passer" },
+        { "id": "gigli_handles",     "label": "Gigli Saw handles" },
+        { "id": "bipolar",           "label": "Bipolar cautery" }
+      ]
+    },
+    {
+      "id": "supplies.thor",
+      "type": "table_yn",
+      "label": "Thoracic Emergency Supplies",
+      "columns": [
+        { "id": "y",  "label": "Y",   "type": "yn_na" },
+        { "id": "n",  "label": "N",   "type": "yn_na" },
+        { "id": "na", "label": "N/A", "type": "yn_na" }
+      ],
+      "rows": [
+        { "id": "finochietto",   "label": "Finochietto or equivalent retractor" },
+        { "id": "lebsche",       "label": "Lebsche Knife w Mallet" },
+        { "id": "defib_pads",    "label": "Internal Defib pads (tested)" },
+        { "id": "chest_tubes",   "label": "Chest Tubes (Adequate supply)" },
+        { "id": "pleurevac",     "label": "Pleurevac (adequate supply)" },
+        { "id": "gia_stapler",   "label": "GIA stapler with white loads" },
+        { "id": "prolene",       "label": "2-0 Prolene (cardiac repair)" },
+        { "id": "pledgets",      "label": "Pledgets" }
+      ]
+    },
+    {
+      "id": "supplies.vasc",
+      "type": "table_yn",
+      "label": "Vascular Emergency Supplies",
+      "columns": [
+        { "id": "y",  "label": "Y",   "type": "yn_na" },
+        { "id": "n",  "label": "N",   "type": "yn_na" },
+        { "id": "na", "label": "N/A", "type": "yn_na" }
+      ],
+      "rows": [
+        { "id": "vasc_instruments", "label": "Vascular instruments" },
+        { "id": "shunts",           "label": "Vascular Shunts" },
+        { "id": "fogarty",          "label": "Thrombectomy catheters (Fogarty)" },
+        { "id": "heparin",          "label": "Heparin" },
+        { "id": "reboa_catheter",   "label": "REBOA Catheter" },
+        { "id": "reboa_access",     "label": "REBOA Access Kit" }
+      ]
+    },
+    {
+      "id": "supplies.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "catalog_id": "mct_hss_seed",
+  "version": "0.1",
+  "title": "MCT Seed Catalog (HSS-relevant)",
+  "source": {
+    "authority": "USMC / Joint Staff",
+    "documents": [
+      "MCRP 8-10B.1 / MCT 8-10A Marine Corps Task List",
+      "CJCSM 3500.04 Universal Joint Task List (UJTL)",
+      "MCTP 3-40A Health Service Support Operations",
+      "NAVMC 3500.84B Health Services Support T&R Manual (referenced METs)"
+    ],
+    "notes": "Seed catalog; definitions paraphrased from doctrinal taxonomies for tooltip display. Operators should consult the authoritative publication for any compliance-bearing use. Expand as additional METs are encountered during assessments."
+  },
+  "mets": [
+    {
+      "id": "MCT 1",
+      "family": "MCT",
+      "title": "Deploy/Conduct Maneuver",
+      "domain_hint": "Maneuver",
+      "description": "Top-level Marine Corps Task covering deployment and maneuver of forces to position and displace for mission accomplishment."
+    },
+    {
+      "id": "MCT 1.1",
+      "family": "MCT",
+      "parent_id": "MCT 1",
+      "title": "Conduct Force Projection",
+      "description": "Project combat forces from a home station, staging area, or other location to a designated operational area."
+    },
+    {
+      "id": "MCT 1.1.2",
+      "family": "MCT",
+      "parent_id": "MCT 1.1",
+      "title": "Provide Forces",
+      "description": "Make trained, equipped, and ready forces available to a supported commander to meet an operational requirement.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 1.12",
+      "family": "MCT",
+      "parent_id": "MCT 1",
+      "title": "Conduct Amphibious Operations",
+      "description": "Plan and execute operations launched from the sea by a landing force embarked in ships or craft."
+    },
+    {
+      "id": "MCT 1.12.2",
+      "family": "MCT",
+      "parent_id": "MCT 1.12",
+      "title": "Support Amphibious Operations",
+      "description": "Provide combat, combat support, and combat service support (including HSS) to the amphibious force.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 4",
+      "family": "MCT",
+      "title": "Provide Sustainment",
+      "domain_hint": "Logistics / HSS",
+      "description": "Top-level Marine Corps Task covering sustainment of the MAGTF, including supply, maintenance, transportation, general engineering, services, and Health Service Support."
+    },
+    {
+      "id": "MCT 4.5",
+      "family": "MCT",
+      "parent_id": "MCT 4",
+      "title": "Provide Health Service Support (HSS)",
+      "domain_hint": "HSS",
+      "description": "Provide a coordinated system of medical capabilities to promote, protect, and restore the health of the force; deliver combat casualty care across the continuum from point of injury to definitive care.",
+      "references": ["MCTP 3-40A"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 4.5.3",
+      "family": "MCT",
+      "parent_id": "MCT 4.5",
+      "title": "Conduct Casualty Treatment",
+      "description": "Treat combat and non-combat casualties through initial and resuscitative care, damage control resuscitation, and stabilization for evacuation.",
+      "references": ["NAVMC 3500.84B Ch 2", "MCTP 3-40A"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 4.5.3.1",
+      "family": "MCT",
+      "parent_id": "MCT 4.5.3",
+      "title": "Conduct Casualty Triage",
+      "description": "Sort casualties based on the severity of injury, urgency of treatment, and availability of resources to do the greatest good for the greatest number.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 4.5.4",
+      "family": "MCT",
+      "parent_id": "MCT 4.5",
+      "title": "Conduct Temporary Casualty Holding",
+      "description": "Provide short-duration holding of casualties awaiting return to duty or onward evacuation; includes ICU hold in a Role 2 context.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 4.5.5",
+      "family": "MCT",
+      "parent_id": "MCT 4.5",
+      "title": "Conduct Casualty Evacuation",
+      "description": "Move casualties from the point of injury to successive echelons of care using designated CASEVAC and/or MEDEVAC assets.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "core"
+    },
+    {
+      "id": "MCT 4.5.7",
+      "family": "MCT",
+      "parent_id": "MCT 4.5",
+      "title": "Provide Dental Services",
+      "description": "Maintain dental health readiness and deliver emergency dental services in support of the MAGTF."
+    },
+    {
+      "id": "MCT 4.5.7.2",
+      "family": "MCT",
+      "parent_id": "MCT 4.5.7",
+      "title": "Maintain Dental Health Readiness",
+      "description": "Conduct routine and sustainment dental examinations and care to ensure personnel meet individual medical readiness standards.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "supporting"
+    },
+    {
+      "id": "MCT 4.5.7.3",
+      "family": "MCT",
+      "parent_id": "MCT 4.5.7",
+      "title": "Provide Emergency Dental Services",
+      "description": "Deliver emergency dental treatment for maxillofacial trauma, acute dental pain, and infection.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "supporting"
+    },
+    {
+      "id": "MCT 4.5.8",
+      "family": "MCT",
+      "parent_id": "MCT 4.5",
+      "title": "Conduct Medical Regulating",
+      "description": "Coordinate movement of patients between treatment facilities to match patient condition with capability available and optimize bed usage across the theater.",
+      "references": ["NAVMC 3500.84B Ch 2"],
+      "role2_relevance": "core"
+    }
+  ]
+}

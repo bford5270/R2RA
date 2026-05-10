@@ -1,0 +1,42 @@
+{
+  "id": "clinical_capabilities",
+  "ordinal": 8,
+  "title": "CLINICAL CAPABILITIES",
+  "items": [
+    {
+      "id": "cc.1",
+      "type": "binary",
+      "prompt": "Team trained on sterilization procedures"
+    },
+    {
+      "id": "cc.2",
+      "type": "binary",
+      "prompt": "Non-OR team members oriented/trained for surgical procedures"
+    },
+    {
+      "id": "cc.3",
+      "type": "binary",
+      "prompt": "Cross training clinical requirements identified; planned; completed"
+    },
+    {
+      "id": "cc.4",
+      "type": "binary",
+      "prompt": "Team briefed/rehearsed on holding expansion capability"
+    },
+    {
+      "id": "cc.5",
+      "type": "binary",
+      "prompt": "Crash cart supplies/equipment identifed/trained on"
+    },
+    {
+      "id": "cc.6",
+      "type": "binary",
+      "prompt": "Hypothermia management for patient care briefed/trained"
+    },
+    {
+      "id": "cc.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

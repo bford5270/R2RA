@@ -1,0 +1,75 @@
+{
+  "id": "team_composition",
+  "ordinal": 10,
+  "title": "TEAM COMPOSITION",
+  "items": [
+    {
+      "id": "team.mc",
+      "type": "table_counts",
+      "label": "Medical Corps Officers",
+      "columns": [
+        { "id": "count", "label": "#", "type": "number" }
+      ],
+      "rows": [
+        { "id": "trauma",    "label": "Trauma" },
+        { "id": "gs",        "label": "General Surgeon (GS)" },
+        { "id": "ortho",     "label": "Ortho" },
+        { "id": "other_surg","label": "Other Surg" },
+        { "id": "anes",      "label": "Anes" },
+        { "id": "em",        "label": "EM" },
+        { "id": "im_cc",     "label": "IM / CC" },
+        { "id": "fp",        "label": "FP" },
+        { "id": "gmo",       "label": "GMO / FS / UMO" },
+        { "id": "other",     "label": "Other" },
+        { "id": "total",     "label": "Total" }
+      ]
+    },
+    {
+      "id": "team.nc",
+      "type": "table_counts",
+      "label": "Nurse Corps Officers",
+      "columns": [
+        { "id": "count", "label": "#", "type": "number" }
+      ],
+      "rows": [
+        { "id": "crna",  "label": "CRNA" },
+        { "id": "er",    "label": "ER" },
+        { "id": "or",    "label": "OR" },
+        { "id": "icu",   "label": "ICU" },
+        { "id": "other", "label": "Other" },
+        { "id": "total", "label": "Total" }
+      ]
+    },
+    {
+      "id": "team.msc",
+      "type": "table_counts",
+      "label": "Medical Service Corps Officers",
+      "columns": [
+        { "id": "count", "label": "#", "type": "number" }
+      ],
+      "rows": [
+        { "id": "total", "label": "Total" }
+      ]
+    },
+    {
+      "id": "team.enlisted",
+      "type": "table_counts",
+      "label": "Enlisted Personnel",
+      "columns": [
+        { "id": "count", "label": "#", "type": "number" }
+      ],
+      "rows": [
+        { "id": "medic",   "label": "Medic" },
+        { "id": "or_tech", "label": "OR Tech" },
+        { "id": "icu",     "label": "ICU" },
+        { "id": "other",   "label": "Other" },
+        { "id": "total",   "label": "Total" }
+      ]
+    },
+    {
+      "id": "team.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

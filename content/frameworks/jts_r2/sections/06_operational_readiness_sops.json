@@ -1,0 +1,86 @@
+{
+  "id": "orsop",
+  "ordinal": 6,
+  "title": "OPERATIONAL READINESS AND STANDARD OPERATING PROCEDURES",
+  "items": [
+    {
+      "id": "orsop.medevac",
+      "type": "binary",
+      "prompt": "Team briefed and rehearsed MEDEVAC operations; includes transportation to and from LZ and a communication plan",
+      "capture": [
+        { "id": "training_date", "label": "Training Date", "type": "date" }
+      ]
+    },
+    {
+      "id": "orsop.trauma_naming_policy",
+      "type": "binary",
+      "prompt": "Team has copy of CCMDs Trauma Naming Policy"
+    },
+    {
+      "id": "orsop.rehearsed_on",
+      "type": "group",
+      "label": "Team rehearsed on:",
+      "sub_items": [
+        {
+          "id": "orsop.rehearsed_on.cpg",
+          "type": "binary",
+          "prompt": "JTS Clinical Practice Guidelines (CPGs)"
+        },
+        {
+          "id": "orsop.rehearsed_on.mwd",
+          "type": "binary",
+          "prompt": "Military Working Dog (MWD) procedures"
+        }
+      ]
+    },
+    {
+      "id": "orsop.weapons_clearing",
+      "type": "binary",
+      "prompt": "Team briefed/rehearsed casualty weapons clearing process; includes location identification",
+      "capture": [
+        { "id": "training_date", "label": "Training Date", "type": "date" }
+      ]
+    },
+    {
+      "id": "orsop.uxo",
+      "type": "binary",
+      "prompt": "Management of unexploded ordinance (UXO)"
+    },
+    {
+      "id": "orsop.detainee",
+      "type": "binary",
+      "prompt": "Detainee Healthcare Training IAW DoDI 2310.08, Medical Program Support for Detainee Operations",
+      "help": "Consider the JKO Course US019 \"Medical Ethics and Detainee Operations Basic Course\"."
+    },
+    {
+      "id": "orsop.narcotics",
+      "type": "binary",
+      "prompt": "Team has Narcotics Storage, Control and Accountability SOP and sustainment plan"
+    },
+    {
+      "id": "orsop.waste",
+      "type": "binary",
+      "prompt": "Medical Waste and Biohazard plan"
+    },
+    {
+      "id": "orsop.human_remains",
+      "type": "binary",
+      "prompt": "Human Remains plan"
+    },
+    {
+      "id": "orsop.linguists",
+      "type": "binary",
+      "prompt": "Linguists SOP (if applicable)"
+    },
+    {
+      "id": "orsop.hn_transfer",
+      "type": "binary",
+      "prompt": "Transfer to and from Host Nation hospital (if applicable)"
+    },
+    {
+      "id": "orsop.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

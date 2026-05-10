@@ -1,0 +1,54 @@
+{
+  "id": "blood_resources",
+  "ordinal": 9,
+  "title": "BLOOD RESOURCES",
+  "items": [
+    {
+      "id": "blood.wbb",
+      "type": "binary",
+      "prompt": "Team rehearsed Walking Blood Bank (WBB); and conducted screening of ancillary base personnel",
+      "capture": [
+        { "id": "training_date", "label": "Training Date", "type": "date" }
+      ]
+    },
+    {
+      "id": "blood.jbo",
+      "type": "binary",
+      "prompt": "Team briefed on the Theater Joint Blood Office Point of Contact (POC)"
+    },
+    {
+      "id": "blood.storage",
+      "type": "binary",
+      "prompt": "Blood storage and transportation procedures briefed"
+    },
+    {
+      "id": "blood.prep",
+      "type": "binary",
+      "prompt": "Preparation of blood/blood products briefed",
+      "help": "e.g., Thawing FFP; stored vs Fresh Whole Blood (FWB)."
+    },
+    {
+      "id": "blood.inventory",
+      "type": "table_counts",
+      "label": "Current blood levels and PAR",
+      "columns": [
+        { "id": "par",     "label": "PAR",     "type": "number" },
+        { "id": "on_hand", "label": "On Hand", "type": "number" }
+      ],
+      "rows": [
+        { "id": "fwb",           "label": "Fresh Whole Blood (FWB)" },
+        { "id": "swb",           "label": "Stored Whole Blood (SWB)" },
+        { "id": "rbc",           "label": "Red Blood Cells (RBC)" },
+        { "id": "ffp",           "label": "FFP" },
+        { "id": "liquid_plasma", "label": "Liquid Plasma" },
+        { "id": "cryo",          "label": "Cryo" },
+        { "id": "platelets",     "label": "Platelets" }
+      ]
+    },
+    {
+      "id": "blood.discussion",
+      "type": "text_long",
+      "label": "Discussion / Shortfalls"
+    }
+  ]
+}

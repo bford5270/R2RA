@@ -1,0 +1,22 @@
+{
+  "id": "closing",
+  "ordinal": 14,
+  "title": "Closing — TMD Summary",
+  "items": [
+    {
+      "id": "close.concerns",
+      "type": "text_long",
+      "label": "TMD documents concerns, deficiencies, and/or issues identified through this assessment"
+    },
+    {
+      "id": "close.actions",
+      "type": "text_long",
+      "label": "TMD documents actions taken to resolve; and at what level they were resolved (i.e. Unit; TMD; TF MED; JTF/CTF MED; Service Component Surgeon; CCMD Surgeon)"
+    },
+    {
+      "id": "close.reporting",
+      "type": "text_long",
+      "label": "TMD develops a reporting process of completed assessments in coordination with the CCMD Surgeons office (with copy sent to JTS for inclusion into the joint lessons learned process)"
+    }
+  ]
+}

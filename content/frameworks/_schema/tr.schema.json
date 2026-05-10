@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://r2ra.local/schema/tr.schema.json",
+  "title": "R2RA Training & Readiness Framework",
+  "description": "Schema for a T&R manual such as USMC NAVMC 3500.84B HSS T&R. A T&R framework contains wickets (events) organized into chapters.",
+  "type": "object",
+  "required": ["framework_id", "version", "title", "source", "chapters", "wickets"],
+  "additionalProperties": false,
+  "properties": {
+    "framework_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "version": { "type": "string" },
+    "title": { "type": "string" },
+    "source": {
+      "type": "object",
+      "required": ["authority", "document"],
+      "properties": {
+        "authority": { "type": "string" },
+        "document": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "effective": { "type": "string" },
+        "checksum": { "type": "string" }
+      }
+    },
+    "chapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["number", "title"],
+        "properties": {
+          "number": { "type": ["number", "string"] },
+          "title": { "type": "string" },
+          "scope": { "type": "string", "description": "e.g., 'collective' or 'individual'." },
+          "community": { "type": "string", "description": "e.g., 'HSS', 'L03A'." }
+        }
+      }
+    },
+    "wickets": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/wicket" }
+    }
+  },
+  "$defs": {
+    "wicket": {
+      "type": "object",
+      "required": ["event_code", "title"],
+      "additionalProperties": false,
+      "properties": {
+        "event_code": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]+(-[A-Z0-9]+)+$",
+          "description": "e.g., HSS-MED-2002, L03A-HSS-2002."
+        },
+        "title": { "type": "string" },
+        "chapter": { "type": ["number", "string"] },
+        "community": { "type": "string" },
+        "scope": { "enum": ["collective", "individual"] },
+        "evaluation_coded": { "type": "boolean" },
+        "readiness_coded": { "type": "boolean" },
+        "sustainment_interval_months": { "type": ["number", "null"] },
+        "grades": { "type": "array", "items": { "type": "string" } },
+        "initial_learning_setting": { "type": "string" },
+        "mos_billets": { "type": "array", "items": { "type": "string" } },
+        "description": { "type": "string" },
+        "condition": { "type": "string" },
+        "standard": { "type": "string" },
+        "event_components": { "type": "array", "items": { "type": "string" } },
+        "performance_steps": { "type": "array", "items": { "type": "string" } },
+        "references": { "type": "array", "items": { "type": "string" } },
+        "chained_events": {
+          "type": "object",
+          "properties": {
+            "internal_supporting": { "type": "array", "items": { "type": "string" } },
+            "external_supporting": { "type": "array", "items": { "type": "string" } },
+            "supported_mets": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "role2_relevance": {
+          "type": "string",
+          "enum": ["core", "supporting", "adjacent", "none"],
+          "description": "Curatorial tag applied during ingest for quick filtering in the Role 2 context."
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "source_page": { "type": "number" },
+            "ingested_at": { "type": "string", "format": "date-time" },
+            "ingested_by": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
