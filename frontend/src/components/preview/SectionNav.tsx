@@ -15,13 +15,14 @@ interface Props {
 }
 
 export function SectionNav({ sections, activeSectionId, onSelect, responses, assignments }: Props) {
-  function hasSectionAnswered(s: SectionManifestEntry): boolean {
-    if (!responses || !s.item_prefix) return false
+  function sectionAnsweredCount(s: SectionManifestEntry): number {
+    if (!responses || !s.item_prefix) return 0
     const prefix = s.item_prefix + '.'
+    let count = 0
     for (const [id, r] of responses.entries()) {
-      if (id.startsWith(prefix) && r.status !== 'unanswered') return true
+      if (id.startsWith(prefix) && r.status !== 'unanswered') count++
     }
-    return false
+    return count
   }
 
   function sectionAssignees(s: SectionManifestEntry): AssignmentOut[] {
@@ -36,7 +37,10 @@ export function SectionNav({ sections, activeSectionId, onSelect, responses, ass
     <nav aria-label="Form sections" className="flex flex-col gap-0.5 py-2">
       {sections.map((s) => {
         const isActive = activeSectionId === s.id
-        const hasAnswered = hasSectionAnswered(s)
+        const answeredCount = sectionAnsweredCount(s)
+        const total = s.item_count ?? 0
+        const complete = total > 0 && answeredCount >= total
+        const started = answeredCount > 0
         const assignees = sectionAssignees(s)
         return (
           <button
@@ -75,10 +79,18 @@ export function SectionNav({ sections, activeSectionId, onSelect, responses, ass
                 {assignees.length > 2 && (
                   <span className="text-[8px] text-neutral-400">+{assignees.length - 2}</span>
                 )}
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${hasAnswered ? 'bg-green-500' : 'bg-neutral-200'}`}
-                  title={hasAnswered ? 'Has responses' : 'No responses yet'}
-                />
+                {total > 0 ? (
+                  <span
+                    className={`text-[9px] font-mono font-semibold tabular-nums ${complete ? 'text-green-600' : started ? 'text-amber-600' : 'text-neutral-300'}`}
+                    title={`${answeredCount} of ${total} items answered`}
+                  >
+                    {answeredCount}/{total}
+                  </span>
+                ) : (
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${started ? 'bg-green-500' : 'bg-neutral-200'}`}
+                  />
+                )}
               </div>
             )}
           </button>

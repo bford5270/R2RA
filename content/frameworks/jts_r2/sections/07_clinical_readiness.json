@@ -21,7 +21,10 @@
     {
       "id": "cra.4",
       "type": "binary",
-      "prompt": "Gen Surgeon has attended Emergency War Surgery Course (EWSC) in the last 3 years"
+      "prompt": "Gen Surgeon has attended Emergency War Surgery Course (EWSC) in the last 3 years",
+      "capture": [
+        { "id": "cra.4__date", "label": "Date of attendance", "type": "date" }
+      ]
     },
     {
       "id": "cra.5",
@@ -31,12 +34,18 @@
     {
       "id": "cra.6",
       "type": "binary",
-      "prompt": "Ortho Surgeon (if applicable) has attended Combat Extremity Surgical Course (CESC) or equivalent in last 3 years"
+      "prompt": "Ortho Surgeon (if applicable) has attended Combat Extremity Surgical Course (CESC) or equivalent in last 3 years",
+      "capture": [
+        { "id": "cra.6__date", "label": "Date of attendance", "type": "date" }
+      ]
     },
     {
       "id": "cra.7",
       "type": "binary",
-      "prompt": "All physicians are current (< 3 years) in Advance Trauma Life Support (ATLS)"
+      "prompt": "All physicians are current (< 3 years) in Advance Trauma Life Support (ATLS)",
+      "capture": [
+        { "id": "cra.7__date", "label": "Most recent completion date", "type": "date" }
+      ]
     },
     {
       "id": "cra.8",

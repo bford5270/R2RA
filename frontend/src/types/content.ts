@@ -86,6 +86,7 @@ export interface SectionManifestEntry {
   title: string
   file: string
   item_prefix?: string
+  item_count?: number
   visible_when?: Record<string, string>
 }
 

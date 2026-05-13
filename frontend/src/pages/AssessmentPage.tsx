@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import { encryptBundle, decryptBundle } from '../lib/bundle'
 import { useAuth } from '../lib/auth'
+import { useExercise } from '../lib/exercise'
 import { useManifest, useSection } from '@/hooks/useContent'
 import { SectionNav } from '@/components/preview/SectionNav'
 import { AcronymProvider } from '@/components/preview/AcronymContext'
@@ -41,6 +42,10 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
   const [saveState, setSaveState] = useState<SaveState>('idle')
   const noteTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const status = current?.status ?? 'unanswered'
+
+  // Auto-show corrective action field whenever status is NO
+  const isNo = status === 'no'
+  const noteVisible = showNote || isNo
 
   async function handleToggle(next: ResponseStatus) {
     if (next === status) return
@@ -95,7 +100,7 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
             {s.toUpperCase()}
           </button>
         ))}
-        {!locked && (
+        {!locked && !isNo && (
           <button
             type="button"
             onClick={() => setShowNote(v => !v)}
@@ -117,15 +122,23 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
         {saveState === 'error'  && <span className="text-[10px] text-red-500 ml-auto">error</span>}
       </div>
 
-      {showNote && (
-        <textarea
-          rows={2}
-          placeholder="Note…"
-          value={note}
-          readOnly={locked}
-          onChange={e => !locked && handleNoteChange(e.target.value)}
-          className={`w-full rounded border border-neutral-200 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-scarlet/40 focus:border-scarlet resize-none ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
-        />
+      {noteVisible && (
+        <div>
+          {isNo && (
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-red-500 mb-0.5">
+              Corrective action required
+            </p>
+          )}
+          <textarea
+            rows={2}
+            placeholder={isNo ? 'Describe corrective action…' : 'Note…'}
+            value={note}
+            readOnly={locked}
+            autoFocus={isNo && !locked && !note}
+            onChange={e => !locked && handleNoteChange(e.target.value)}
+            className={`w-full rounded border px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isNo ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-200 focus:ring-scarlet/40 focus:border-scarlet'} ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
+          />
+        </div>
       )}
 
       {showAttach && (
@@ -190,27 +203,53 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
   }
 
   if (item.type === 'binary') {
+    function expiryWarning(dateVal: string, years: number): string | null {
+      if (!dateVal) return null
+      const d = new Date(dateVal)
+      if (isNaN(d.getTime())) return null
+      const expiry = new Date(d)
+      expiry.setFullYear(expiry.getFullYear() + years)
+      const now = new Date()
+      const msLeft = expiry.getTime() - now.getTime()
+      const daysLeft = Math.ceil(msLeft / 86400000)
+      if (daysLeft < 0) return `Expired ${Math.abs(daysLeft)} days ago`
+      if (daysLeft <= 180) return `Expires in ${daysLeft} days (${expiry.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })})`
+      return null
+    }
+
     return (
       <div className={`py-3 border-b border-neutral-100 last:border-0 ${indent}`}>
         <p className="text-sm text-neutral-800 leading-snug">
           <AcronymText text={item.prompt} />
         </p>
         {item.capture && (
-          <div className="mt-1.5 space-y-1">
-            {item.capture.map(field => (
-              <div key={field.id} className="flex items-center gap-2">
-                <label className="text-xs text-neutral-500 w-28 shrink-0">
-                  <AcronymText text={field.label} />
-                </label>
-                <input
-                  type="text"
-                  value={captureValues[field.id] ?? ''}
-                  onChange={e => handleCaptureChange(field.id, e.target.value)}
-                  className="flex-1 h-7 rounded border border-neutral-200 px-2 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
-                  placeholder="—"
-                />
-              </div>
-            ))}
+          <div className="mt-1.5 space-y-1.5">
+            {item.capture.map(field => {
+              const val = captureValues[field.id] ?? ''
+              const warning = field.type === 'date' ? expiryWarning(val, 3) : null
+              const expired = warning?.startsWith('Expired') ?? false
+              return (
+                <div key={field.id}>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs text-neutral-500 w-28 shrink-0">
+                      <AcronymText text={field.label} />
+                    </label>
+                    <input
+                      type={field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text'}
+                      value={val}
+                      onChange={e => handleCaptureChange(field.id, e.target.value)}
+                      readOnly={locked}
+                      className={`flex-1 h-7 rounded border px-2 text-xs focus:outline-none focus:ring-1 ${warning ? (expired ? 'border-red-300 focus:ring-red-300' : 'border-amber-300 focus:ring-amber-300') : 'border-neutral-200 focus:ring-scarlet/40'} ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
+                    />
+                  </div>
+                  {warning && (
+                    <p className={`text-[10px] font-semibold mt-0.5 ml-[7.5rem] ${expired ? 'text-red-600' : 'text-amber-600'}`}>
+                      ⚠ {warning}
+                    </p>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
         <ResponseControls assessmentId={assessmentId} itemId={item.id} current={responses.get(item.id)} locked={locked} onSave={onSave} />
@@ -951,6 +990,7 @@ export function AssessmentPage() {
   const { assessmentId } = useParams<{ assessmentId: string }>()
   const navigate = useNavigate()
   const { user: currentUser } = useAuth()
+  const { exercise } = useExercise()
   const { data: manifest, isLoading: manifestLoading } = useManifest()
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null)
   const { data: section, isLoading: sectionLoading } = useSection(
@@ -1081,6 +1121,18 @@ export function AssessmentPage() {
           <p className="text-xs font-bold text-neutral-800 leading-tight">{assessment.unit_name}</p>
           <p className="text-[11px] text-neutral-500 font-mono">{assessment.unit_uic}</p>
           <p className="text-[11px] text-neutral-500">{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
+
+          {exercise && (
+            <div className="rounded bg-red-50 border border-red-200 px-2 py-1.5">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-red-400">Exercise</p>
+              <p className="text-[11px] font-semibold text-scarlet leading-tight">{exercise.name}</p>
+              <p className="text-[10px] text-red-400">
+                {new Date(exercise.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                {' – '}
+                {new Date(exercise.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </p>
+            </div>
+          )}
 
           {editingScenario ? (
             <div className="space-y-1">

@@ -109,98 +109,112 @@
       "ordinal": 1,
       "title": "Predeployment Prep",
       "file": "sections/01_predeployment_prep.json",
-      "item_prefix": "pdp"
+      "item_prefix": "pdp",
+      "item_count": 12
     },
     {
       "id": "c2",
       "ordinal": 2,
       "title": "Command and Control (C2)",
       "file": "sections/02_command_and_control.json",
-      "item_prefix": "c2"
+      "item_prefix": "c2",
+      "item_count": 5
     },
     {
       "id": "mroe",
       "ordinal": 3,
       "title": "Medical Rules of Engagement (MROE)",
       "file": "sections/03_mroe.json",
-      "item_prefix": "mroe"
+      "item_prefix": "mroe",
+      "item_count": 3
     },
     {
       "id": "communications",
       "ordinal": 4,
       "title": "Communications",
       "file": "sections/04_communications.json",
-      "item_prefix": "comms"
+      "item_prefix": "comms",
+      "item_count": 3
     },
     {
       "id": "adjacent_support",
       "ordinal": 5,
       "title": "Adjacent / Co-Located Medical Support",
       "file": "sections/05_adjacent_support.json",
-      "item_prefix": "adj"
+      "item_prefix": "adj",
+      "item_count": 1
     },
     {
       "id": "orsop",
       "ordinal": 6,
       "title": "Operational Readiness and Standard Operating Procedures (SOPs)",
       "file": "sections/06_operational_readiness_sops.json",
-      "item_prefix": "orsop"
+      "item_prefix": "orsop",
+      "item_count": 13
     },
     {
       "id": "clinical_readiness",
       "ordinal": 7,
       "title": "Clinical Readiness Assessment",
       "file": "sections/07_clinical_readiness.json",
-      "item_prefix": "cra"
+      "item_prefix": "cra",
+      "item_count": 14
     },
     {
       "id": "clinical_capabilities",
       "ordinal": 8,
       "title": "Clinical Capabilities",
       "file": "sections/08_clinical_capabilities.json",
-      "item_prefix": "cc"
+      "item_prefix": "cc",
+      "item_count": 7
     },
     {
       "id": "blood_resources",
       "ordinal": 9,
       "title": "Blood Resources",
       "file": "sections/09_blood_resources.json",
-      "item_prefix": "blood"
+      "item_prefix": "blood",
+      "item_count": 6
     },
     {
       "id": "team_composition",
       "ordinal": 10,
       "title": "Team Composition",
       "file": "sections/10_team_composition.json",
-      "item_prefix": "team"
+      "item_prefix": "team",
+      "item_count": 5
     },
     {
       "id": "critical_supplies",
       "ordinal": 11,
       "title": "Inventory of Critical Supplies",
       "file": "sections/11_critical_supplies.json",
-      "item_prefix": "supplies"
+      "item_prefix": "supplies",
+      "item_count": 6
     },
     {
       "id": "medical_equipment",
       "ordinal": 12,
       "title": "Medical Equipment",
       "file": "sections/12_medical_equipment.json",
-      "item_prefix": "equip"
+      "item_prefix": "equip",
+      "item_count": 1
     },
     {
       "id": "facilities",
       "ordinal": 13,
       "title": "Facilities",
       "file": "sections/13_facilities.json",
-      "item_prefix": "fac"
+      "item_prefix": "fac",
+      "item_count": 8
     },
     {
       "id": "closing",
       "ordinal": 14,
-      "title": "Closing \u00e2\u20ac\u201d TMD Summary",
+      "title": "Closing \u2014 TMD Summary",
       "file": "sections/14_closing.json",
-      "item_prefix": "close"
+      "item_prefix": "close",
+      "item_count": 3
     },
     {
       "id": "arsra_appendix",
@@ -210,7 +224,8 @@
       "visible_when": {
         "mission_type": "arst"
       },
-      "item_prefix": "arsra"
+      "item_prefix": "arsra",
+      "item_count": 2
     }
   ],
   "signoff": [
