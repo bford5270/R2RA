@@ -7,10 +7,10 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-05-10 (Session 17)
+- **Last session**: 2026-05-23 (Session 18)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
-- **Branch**: `claude/usmc-role2-checklist-wiSpY` (just merged to `main` — pipeline deploying)
-- **Last commit**: cleanup — remove admin-reset endpoint, fix stale crosswalk label
+- **Branch**: `main`
+- **Last commit**: design system implementation (`3fb5d32`)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
@@ -133,6 +133,34 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-05-23 — Session 18: Role 2 Forward design system implementation
+
+**In**: App live on AWS. Two unlogged commits since Session 17 (`2b79628` UX improvements, `766b838` security hardening) had already landed a partial design system skeleton (CSS vars + font vars in tailwind). User provided a claude.ai/design bundle (`role-2-forward-design-system`) with complete design spec.
+
+**Out**:
+
+- **`@fontsource` packages** (`package.json`): added `roboto-slab`, `ibm-plex-sans`, `ibm-plex-mono`. Self-hosted WOFF2 — no CDN, CUI-compliant. Imported all weight files in `main.tsx`.
+
+- **`index.css`** (complete rewrite, resolved merge conflict): full two-theme CSS custom property set inside `@layer base`. Manual theme (warm coyote paper — R2RA default) + Console theme (dark olive — for future scenario-builder integration). All tokens: surface/ink/accent/border/shadow/signal/motion/spacing/radii. `h1–h4` default to `--font-display` (Roboto Slab). Semantic utility classes `.eyebrow` and `.numeric`.
+
+- **`tailwind.config.ts`** (resolved merge conflict, merged best of both branches): dual strategy — CSS-var tokens (`surface`, `ink`, `accent`, `signal`, `border1/2`) for theme-aware new code + resolved hex values for `neutral/green/red/amber/yellow/blue` so existing Tailwind classes automatically pick up the warm palette. Added `olive` accent, `display` font stack, `borderRadius/boxShadow/letterSpacing` extensions wired to CSS vars.
+
+- **`CuiBanner.tsx`**: rewrote to use `--classification-bg`/`--classification-fg` CSS vars (dark coyote #3A3025 / cream #F1E8D4). Removed Tailwind class dependency. `App.tsx` now imports `CuiBannerTop`/`CuiBannerBottom` instead of inline duplicates.
+
+- **Logo + icon assets**: `public/logo-mark.svg`, `public/logo-wordmark.svg` (dual-hexagon mark with ROLE 2 / FORWARD wordmark). `public/icons/medical/` (airway, blood-drop, tourniquet, triage-diamond, vitals) and `public/icons/tactical/` (affiliation-friendly/hostile, evac-window, hlz).
+
+- **`HomePage.tsx`**: added logo mark + wordmark lockup above the page title.
+
+**Key decisions**:
+- CUI banner changed from NARA-green (#006B35) to design system dark coyote (#3A3025) per design spec. NARA CUI requirements govern text/labeling content, not background color.
+- `fontFamily` in Tailwind uses actual string names (not CSS-var references) because CSS-var font references cause Tailwind JIT issues with fallback stacks.
+- `bg-white` instances across the app are NOT migrated — they'll appear as pure white against the warm page surface which looks fine. Can migrate incrementally.
+- Merge conflict with partial design system from sessions since 17: resolved by merging both sides — remote's CSS-var namespaces (`surface/ink/accent/signal`) + my hex remapping of `neutral/green/red/amber/yellow/blue`.
+
+**Commits**: `3fb5d32` (pushed to `main`).
+
+---
 
 ### 2026-05-10 — Session 17: exercise gate, T&R scoring, MCTIMS/feedback, role2-builder deploy, PreviewPage split
 
