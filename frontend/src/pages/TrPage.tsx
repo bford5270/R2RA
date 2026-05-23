@@ -19,11 +19,11 @@ const SCORE_LABELS: Record<number, string> = {
 }
 
 const SCORE_ACTIVE: Record<number, string> = {
-  1: 'border-red-500 bg-red-50 text-red-700',
-  2: 'border-orange-400 bg-orange-50 text-orange-700',
-  3: 'border-amber-400 bg-amber-50 text-amber-700',
-  4: 'border-green-500 bg-green-50 text-green-700',
-  5: 'border-green-600 bg-green-100 text-green-800',
+  1: 'border-red-600 bg-red-100 text-red-700 shadow-sm',
+  2: 'border-orange-500 bg-orange-100 text-orange-700 shadow-sm',
+  3: 'border-amber-500 bg-amber-100 text-amber-700 shadow-sm',
+  4: 'border-green-600 bg-green-100 text-green-700 shadow-sm',
+  5: 'border-green-700 bg-green-200 text-green-800 shadow-sm',
 }
 
 // ---------------------------------------------------------------------------
@@ -40,9 +40,9 @@ function ScoreButtons({
   small?: boolean
 }) {
   const base = small
-    ? 'text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded border transition-colors select-none'
-    : 'text-[11px] font-bold px-2 py-1 rounded border transition-colors select-none'
-  const inactive = 'border-neutral-400 text-neutral-400 hover:border-neutral-400 hover:text-neutral-600'
+    ? 'text-[9px] font-bold w-6 h-6 flex items-center justify-center rounded border-2 transition-all select-none'
+    : 'text-sm font-bold w-11 h-11 flex items-center justify-center rounded border-2 transition-all select-none'
+  const inactive = 'border-neutral-400 bg-neutral-100 text-neutral-500 hover:border-neutral-500 hover:text-neutral-700'
 
   return (
     <div className="flex items-center gap-0.5">
@@ -194,10 +194,10 @@ function TrScoreControls({
             : onSave(eventCode, 'na', note || null, null, null)
         }
         className={[
-          'self-start text-[10px] px-1.5 py-0.5 rounded border transition-colors',
+          'self-start text-xs font-semibold px-3 py-1.5 rounded border-2 transition-all',
           current?.status === 'na'
-            ? 'border-neutral-400 bg-neutral-100 text-neutral-600'
-            : 'border-neutral-400 text-neutral-300 hover:border-neutral-300 hover:text-neutral-500',
+            ? 'border-neutral-500 bg-neutral-300 text-neutral-700'
+            : 'border-neutral-400 bg-neutral-100 text-neutral-400 hover:border-neutral-500 hover:text-neutral-600',
         ].join(' ')}
       >
         N/A
@@ -437,6 +437,7 @@ export function TrPage() {
   const [responses, setResponses] = useState<Map<string, TrResponse>>(new Map())
   const [activeChapter, setActiveChapter] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [showMobileNav, setShowMobileNav] = useState(false)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -516,15 +517,37 @@ export function TrPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Mobile nav backdrop */}
+      {showMobileNav && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setShowMobileNav(false)}
+        />
+      )}
+
       {/* Left pane — chapter nav */}
-      <aside className="w-64 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col">
+      <aside className={[
+        'w-72 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col',
+        'fixed inset-y-0 left-0 z-50 transition-transform duration-200',
+        'lg:static lg:translate-x-0',
+        showMobileNav ? 'translate-x-0' : '-translate-x-full',
+      ].join(' ')}>
         <div className="px-3 pt-4 pb-3 border-b border-neutral-100 space-y-1.5">
+          <div className="flex items-center justify-between">
           <Link
             to={`/assessments/${assessmentId}`}
-            className="text-xs text-neutral-400 hover:text-neutral-600 block"
+            className="text-xs text-neutral-400 hover:text-neutral-600"
           >
             ← JTS Assessment
           </Link>
+          <button
+            onClick={() => setShowMobileNav(false)}
+            className="lg:hidden p-1 text-neutral-400 hover:text-neutral-600 rounded"
+            aria-label="Close navigation"
+          >
+            ✕
+          </button>
+          </div>
           <p className="text-xs font-bold text-neutral-800 leading-tight">{assessment.unit_name}</p>
           <p className="text-[11px] font-mono text-neutral-500">{assessment.unit_uic}</p>
           <p className="text-[11px] text-neutral-500">{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
@@ -582,15 +605,35 @@ export function TrPage() {
       </aside>
 
       {/* Main pane — wickets */}
-      <main className="flex-1 overflow-y-auto bg-neutral-100">
-        <div className="max-w-2xl mx-auto px-6 py-6">
+      <main className="flex-1 overflow-y-auto bg-neutral-100 flex flex-col min-w-0">
+        {/* Mobile-only sticky top bar */}
+        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-100 border-b border-neutral-400 shrink-0">
+          <button
+            onClick={() => setShowMobileNav(true)}
+            className="p-2 -ml-2 text-neutral-600 rounded hover:bg-neutral-200 transition-colors"
+            aria-label="Open navigation"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-neutral-800 truncate">{assessment.unit_name}</p>
+            <p className="text-[10px] text-neutral-500">T&amp;R Assessment</p>
+          </div>
+          {activeChapter !== null && (
+            <span className="text-[10px] text-neutral-500 shrink-0">Ch. {activeChapter}</span>
+          )}
+        </div>
+
+        <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-6">
           {activeChapter !== null && (
             <>
               <div className="mb-5">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-0.5">
                   Chapter {activeChapter} · T&R Wickets
                 </p>
-                <h2 className="text-base font-bold text-neutral-900">
+                <h2 className="font-display text-lg font-bold text-neutral-900">
                   {chaptersWithWickets.find(c => c.number === activeChapter)?.title ?? ''}
                 </h2>
                 <p className="text-xs text-neutral-500 mt-0.5">

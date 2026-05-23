@@ -8,12 +8,12 @@ import { useExercise } from '../lib/exercise'
 
 function statusBadge(status: string) {
   const map: Record<string, string> = {
-    draft: 'bg-neutral-100 text-neutral-600',
-    in_progress: 'bg-blue-50 text-blue-700',
-    ready_for_review: 'bg-yellow-50 text-yellow-700',
-    certified: 'bg-green-50 text-green-700',
+    draft:            'bg-neutral-300 text-neutral-700',
+    in_progress:      'bg-blue-100 text-blue-700',
+    ready_for_review: 'bg-amber-100 text-amber-700',
+    certified:        'bg-green-100 text-green-700',
   }
-  return map[status] ?? 'bg-neutral-100 text-neutral-600'
+  return map[status] ?? 'bg-neutral-300 text-neutral-700'
 }
 
 export function HomePage() {
@@ -120,7 +120,7 @@ export function HomePage() {
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-neutral-700">Assessments</h2>
+        <h2 className="font-display text-sm font-semibold text-neutral-700 uppercase tracking-widest">Assessments</h2>
         <button
           onClick={() => navigate('/assessments/new')}
           className="rounded bg-scarlet text-white text-xs font-semibold px-3 py-1.5 hover:bg-scarlet-dark transition-colors"

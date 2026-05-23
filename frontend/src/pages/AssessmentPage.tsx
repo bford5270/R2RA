@@ -74,21 +74,21 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
     }, 600)
   }
 
-  const btnBase = 'text-[11px] font-bold px-2 py-1 rounded border transition-colors select-none'
+  const btnBase = 'flex-1 text-sm font-bold py-2.5 px-3 rounded border-2 transition-all select-none min-h-[44px] tracking-wide'
   const active = (s: ResponseStatus) => ({
-    yes:  'border-green-500 bg-green-50 text-green-700',
-    no:   'border-red-400 bg-red-50 text-red-700',
-    na:   'border-neutral-400 bg-neutral-100 text-neutral-600',
+    yes:  'border-green-600 bg-green-100 text-green-700 shadow-sm',
+    no:   'border-red-600 bg-red-100 text-red-700 shadow-sm',
+    na:   'border-neutral-500 bg-neutral-300 text-neutral-700 shadow-sm',
     unanswered: '',
   }[s])
-  const inactive = 'border-neutral-400 text-neutral-400 hover:border-neutral-400 hover:text-neutral-600'
+  const inactive = 'border-neutral-400 bg-neutral-100 text-neutral-500 hover:border-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
 
   return (
-    <div className="mt-2 flex flex-col gap-1.5">
+    <div className="mt-2.5 flex flex-col gap-2">
       {locked && (
         <p className="text-[10px] text-green-600 font-semibold">✓ Certified — read-only</p>
       )}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-stretch gap-2">
         {(['yes', 'no', 'na'] as ResponseStatus[]).map(s => (
           <button
             key={s}
@@ -97,29 +97,31 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
             disabled={locked}
             className={`${btnBase} ${status === s ? active(s) : inactive} ${locked ? 'opacity-50 cursor-default' : ''}`}
           >
-            {s.toUpperCase()}
+            {s === 'na' ? 'N/A' : s.toUpperCase()}
           </button>
         ))}
-        {!locked && !isNo && (
+        <div className="flex flex-col items-end justify-between ml-1 shrink-0">
+          {!locked && !isNo && (
+            <button
+              type="button"
+              onClick={() => setShowNote(v => !v)}
+              className="text-[11px] text-neutral-400 hover:text-neutral-600"
+            >
+              {showNote ? 'hide note' : '+ note'}
+            </button>
+          )}
           <button
             type="button"
-            onClick={() => setShowNote(v => !v)}
-            className="text-[11px] text-neutral-400 hover:text-neutral-600 ml-1"
+            onClick={() => setShowAttach(v => !v)}
+            className="text-[11px] text-neutral-400 hover:text-neutral-600"
+            title="Evidence"
           >
-            {showNote ? 'hide note' : 'add note'}
+            📎
           </button>
-        )}
-        <button
-          type="button"
-          onClick={() => setShowAttach(v => !v)}
-          className="text-[11px] text-neutral-400 hover:text-neutral-600"
-          title="View evidence"
-        >
-          📎
-        </button>
-        {saveState === 'saving' && <span className="text-[10px] text-neutral-400 ml-auto">saving…</span>}
-        {saveState === 'saved'  && <span className="text-[10px] text-green-600 ml-auto">saved</span>}
-        {saveState === 'error'  && <span className="text-[10px] text-red-500 ml-auto">error</span>}
+          {saveState === 'saving' && <span className="text-[10px] text-neutral-400">saving…</span>}
+          {saveState === 'saved'  && <span className="text-[10px] text-green-600">saved</span>}
+          {saveState === 'error'  && <span className="text-[10px] text-red-500">error</span>}
+        </div>
       </div>
 
       {noteVisible && (
@@ -393,10 +395,10 @@ function ResponseSectionView({
   return (
     <AcronymProvider key={section.id}>
       <div>
-        <h2 className="text-base font-semibold text-neutral-900 mb-1">{section.title}</h2>
+        <h2 className="font-display text-lg font-bold text-neutral-900 mb-2 leading-snug">{section.title}</h2>
         {section.sections?.map(sub => (
           <div key={sub.id} className="mb-4">
-            <h3 className="text-sm font-semibold text-neutral-700 mb-1 mt-3">{sub.title}</h3>
+            <h3 className="font-display text-sm font-semibold text-neutral-700 mb-1 mt-4">{sub.title}</h3>
             {sub.items.map(item => (
               <ResponseItem key={item.id} assessmentId={assessmentId} item={item} responses={responses} locked={locked} onSave={onSave} onSaveCapture={onSaveCapture} />
             ))}
@@ -431,10 +433,10 @@ const STATUS_NEXT_LABEL: Record<string, string> = {
   ready_for_review: 'Certify',
 }
 const STATUS_COLOR: Record<string, string> = {
-  draft:            'bg-neutral-100 text-neutral-500',
-  in_progress:      'bg-blue-50 text-blue-700',
-  ready_for_review: 'bg-yellow-50 text-yellow-700',
-  certified:        'bg-green-50 text-green-700',
+  draft:            'bg-neutral-300 text-neutral-700',
+  in_progress:      'bg-blue-100 text-blue-700',
+  ready_for_review: 'bg-amber-100 text-amber-700',
+  certified:        'bg-green-100 text-green-700',
 }
 
 // ---------------------------------------------------------------------------
@@ -1005,6 +1007,7 @@ export function AssessmentPage() {
   const [advancing, setAdvancing] = useState(false)
   const [showCertifyModal, setShowCertifyModal] = useState(false)
   const [showCrosswalk, setShowCrosswalk] = useState(false)
+  const [showMobileNav, setShowMobileNav] = useState(false)
   const [editingScenario, setEditingScenario] = useState(false)
   const [scenarioDraft, setScenarioDraft] = useState('')
   const [scenarioSaving, setScenarioSaving] = useState(false)
@@ -1109,15 +1112,37 @@ export function AssessmentPage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Mobile nav backdrop */}
+      {showMobileNav && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          onClick={() => setShowMobileNav(false)}
+        />
+      )}
+
       {/* Left pane — section nav */}
-      <aside className="w-64 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col">
+      <aside className={[
+        'w-72 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col',
+        'fixed inset-y-0 left-0 z-50 transition-transform duration-200',
+        'lg:static lg:translate-x-0',
+        showMobileNav ? 'translate-x-0' : '-translate-x-full',
+      ].join(' ')}>
         <div className="px-3 pt-4 pb-3 border-b border-neutral-100 space-y-2">
-          <button
-            onClick={() => navigate('/')}
-            className="text-xs text-neutral-400 hover:text-neutral-600 block"
-          >
-            ← Assessments
-          </button>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => navigate('/')}
+              className="text-xs text-neutral-400 hover:text-neutral-600"
+            >
+              ← Assessments
+            </button>
+            <button
+              onClick={() => setShowMobileNav(false)}
+              className="lg:hidden p-1 text-neutral-400 hover:text-neutral-600 rounded"
+              aria-label="Close navigation"
+            >
+              ✕
+            </button>
+          </div>
           <p className="text-xs font-bold text-neutral-800 leading-tight">{assessment.unit_name}</p>
           <p className="text-[11px] text-neutral-500 font-mono">{assessment.unit_uic}</p>
           <p className="text-[11px] text-neutral-500">{MISSION_TYPE_LABELS[assessment.mission_type]}</p>
@@ -1295,8 +1320,40 @@ export function AssessmentPage() {
       </aside>
 
       {/* Main pane — items with response controls */}
-      <main className="flex-1 overflow-y-auto bg-neutral-100">
-        <div className="max-w-2xl mx-auto px-6 py-6">
+      <main className="flex-1 overflow-y-auto bg-neutral-100 flex flex-col min-w-0">
+        {/* Mobile-only sticky top bar */}
+        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-100 border-b border-neutral-400 shrink-0">
+          <button
+            onClick={() => setShowMobileNav(true)}
+            className="p-2 -ml-2 text-neutral-600 rounded hover:bg-neutral-200 transition-colors"
+            aria-label="Open navigation"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-neutral-800 truncate">{assessment?.unit_name}</p>
+            <p className="text-[10px] text-neutral-500 font-mono">{assessment?.unit_uic}</p>
+          </div>
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLOR[assessment?.status ?? 'draft']}`}>
+            {STATUS_LABELS[assessment?.status ?? 'draft']}
+          </span>
+          <button
+            onClick={() => setShowCrosswalk(v => !v)}
+            className={[
+              'p-2 rounded border text-[10px] font-bold shrink-0 transition-colors',
+              showCrosswalk
+                ? 'border-scarlet/40 bg-scarlet/5 text-scarlet'
+                : 'border-neutral-400 text-neutral-500',
+            ].join(' ')}
+            title="T&R crosswalk"
+          >
+            T&amp;R
+          </button>
+        </div>
+
+        <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-6">
           {sectionLoading && (
             <p className="text-sm text-neutral-400">Loading section…</p>
           )}
