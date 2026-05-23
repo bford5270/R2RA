@@ -7,10 +7,10 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-05-23 (Session 19)
+- **Last session**: 2026-05-23 (Session 20)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
 - **Branch**: `main`
-- **Last commit**: Phase C — LoginPage redesign, font-display headings (`8aa97c5`)
+- **Last commit**: Signal color chip pattern from design bundle (`9dd1cd7`)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
@@ -188,6 +188,38 @@ Will need user input to proceed on:
 - Mobile nav drawer slides in with CSS translate (not display:none) so the transition is smooth on low-power devices.
 
 **Commits**: `9514313` (Phase A), `5b87935` (Phase B), `8aa97c5` (Phase C) — all pushed to `main`.
+
+---
+
+### 2026-05-23 — Session 20: Signal color chip pattern from design bundle
+
+**In**: Session 19 Phase A–C complete. User asked: "what about all of the color recommendations from design?" — referring to the Session 18 design bundle (`role-2-forward-design-system`). Design bundle's `_shared/primitives.jsx` `Chip` component used translucent rgba backgrounds with signal CSS vars — not the solid Tailwind `-100` shades that were implemented in Phase B.
+
+**Out**:
+
+- **`StatusChip.tsx`** (new shared component at `frontend/src/components/`): Translucent rgba background + dot indicator + uppercase small-caps label. All four assessment statuses keyed to signal CSS vars:
+  - `draft` → `var(--surface-2)` bg / `var(--ink-2)` text / `var(--ink-3)` dot
+  - `in_progress` → `rgba(91,122,139,0.22)` bg / `var(--signal-blue)` text + dot
+  - `ready_for_review` → `rgba(201,154,46,0.20)` bg / `var(--signal-amber)` text + dot
+  - `certified` → `rgba(107,127,79,0.22)` bg / `var(--signal-green)` text + dot
+
+- **Status badges**: Replaced solid Tailwind `-100` shades with `<StatusChip>` in `HomePage`, `AssessmentPage` (sidebar + mobile header), and `ReadinessPage` table. Removed `statusBadge()` / `STATUS_COLOR` records from all three files.
+
+- **Exercise context badge** (HomePage): Updated to `rgba(91,122,139,0.15)` / `var(--signal-blue)` inline style pattern.
+
+- **YES/NO/NA button active states** (AssessmentPage `ResponseControls`): Replaced Tailwind class-based active states with `ACTIVE_STYLE` record using inline `style` prop for rgba backgrounds:
+  - YES: `rgba(107,127,79,0.12)` bg / `var(--signal-green)` border + text
+  - NO: `rgba(179,58,58,0.10)` bg / `var(--signal-red)` border + text
+  - N/A: `var(--surface-2)` bg / `var(--ink-3)` border / `var(--ink-2)` text
+
+- **T&R 1–5 ScoreButtons** (TrPage): Replaced `SCORE_ACTIVE` Tailwind class record with `SCORE_ACTIVE_STYLE` inline styles; 1=signal-red, 2=signal-amber (lower opacity), 3=signal-amber, 4=signal-green, 5=signal-green (deeper opacity). Added `import type React from 'react'`.
+
+**Key decisions**:
+- Translucent rgba values are hardcoded from design bundle (not derived from CSS vars) because CSS `color-mix()` with transparency requires modern browser support not guaranteed in field environments.
+- Score 2 maps to signal-amber at 0.10 opacity (between red and amber) — no orange in the signal palette; amber at low opacity reads as "approaching caution" which is semantically appropriate for "Significant deficiencies."
+- `StatusChip` uses inline styles throughout (not Tailwind) because the rgba values + CSS var combinations can't be expressed in Tailwind's utility system.
+
+**Commit**: `9dd1cd7` — pushed to `main`.
 
 ---
 
