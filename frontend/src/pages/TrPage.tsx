@@ -42,7 +42,7 @@ function ScoreButtons({
   const base = small
     ? 'text-[9px] font-bold w-5 h-5 flex items-center justify-center rounded border transition-colors select-none'
     : 'text-[11px] font-bold px-2 py-1 rounded border transition-colors select-none'
-  const inactive = 'border-neutral-200 text-neutral-400 hover:border-neutral-400 hover:text-neutral-600'
+  const inactive = 'border-neutral-400 text-neutral-400 hover:border-neutral-400 hover:text-neutral-600'
 
   return (
     <div className="flex items-center gap-0.5">
@@ -197,7 +197,7 @@ function TrScoreControls({
           'self-start text-[10px] px-1.5 py-0.5 rounded border transition-colors',
           current?.status === 'na'
             ? 'border-neutral-400 bg-neutral-100 text-neutral-600'
-            : 'border-neutral-200 text-neutral-300 hover:border-neutral-300 hover:text-neutral-500',
+            : 'border-neutral-400 text-neutral-300 hover:border-neutral-300 hover:text-neutral-500',
         ].join(' ')}
       >
         N/A
@@ -250,7 +250,7 @@ function TrScoreControls({
           placeholder="Note…"
           value={note}
           onChange={e => handleNoteChange(e.target.value)}
-          className="w-full rounded border border-neutral-200 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-scarlet/40 focus:border-scarlet resize-none"
+          className="w-full rounded border border-neutral-400 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 resize-none"
         />
       )}
     </div>
@@ -336,7 +336,7 @@ function WicketCard({
       ref={cardRef}
       className={[
         'border rounded-lg p-4 mb-3 transition-colors',
-        highlighted ? 'border-scarlet ring-1 ring-scarlet/30 bg-scarlet/5' : 'border-neutral-200',
+        highlighted ? 'border-scarlet ring-1 ring-scarlet/30 bg-scarlet/5' : 'border-neutral-400',
       ].join(' ')}
     >
       <div className="flex items-start gap-3">
@@ -517,7 +517,7 @@ export function TrPage() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Left pane — chapter nav */}
-      <aside className="w-64 shrink-0 border-r border-neutral-200 bg-white overflow-y-auto flex flex-col">
+      <aside className="w-64 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col">
         <div className="px-3 pt-4 pb-3 border-b border-neutral-100 space-y-1.5">
           <Link
             to={`/assessments/${assessmentId}`}
@@ -538,7 +538,7 @@ export function TrPage() {
           </div>
           <Link
             to={`/assessments/${assessmentId}/tr/print`}
-            className="block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1 mt-1"
+            className="block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1 mt-1"
           >
             Print / Export PDF →
           </Link>
@@ -582,7 +582,7 @@ export function TrPage() {
       </aside>
 
       {/* Main pane — wickets */}
-      <main className="flex-1 overflow-y-auto bg-white">
+      <main className="flex-1 overflow-y-auto bg-neutral-100">
         <div className="max-w-2xl mx-auto px-6 py-6">
           {activeChapter !== null && (
             <>

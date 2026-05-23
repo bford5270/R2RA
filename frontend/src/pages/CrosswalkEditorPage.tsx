@@ -46,12 +46,12 @@ function WicketRow({ w, onChange, onRemove }: WicketRowProps) {
         value={w.event_code}
         onChange={e => onChange({ ...w, event_code: e.target.value })}
         placeholder="Event code"
-        className="rounded border border-neutral-200 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+        className="rounded border border-neutral-400 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-amber-500/40"
       />
       <select
         value={w.confidence}
         onChange={e => onChange({ ...w, confidence: e.target.value as WicketRef['confidence'] })}
-        className="rounded border border-neutral-200 px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+        className="rounded border border-neutral-400 px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/40"
       >
         {CONFIDENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
@@ -59,7 +59,7 @@ function WicketRow({ w, onChange, onRemove }: WicketRowProps) {
         value={w.rationale ?? ''}
         onChange={e => onChange({ ...w, rationale: e.target.value })}
         placeholder="Rationale"
-        className="rounded border border-neutral-200 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+        className="rounded border border-neutral-400 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/40"
       />
       <button
         onClick={onRemove}
@@ -85,12 +85,12 @@ function MetRow({ m, onChange, onRemove }: MetRowProps) {
         value={m.id}
         onChange={e => onChange({ ...m, id: e.target.value })}
         placeholder="MCT ID (e.g. MCT 4.5.3)"
-        className="rounded border border-neutral-200 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+        className="rounded border border-neutral-400 px-2 py-1 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-amber-500/40"
       />
       <select
         value={m.confidence}
         onChange={e => onChange({ ...m, confidence: e.target.value as MetRef['confidence'] })}
-        className="rounded border border-neutral-200 px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+        className="rounded border border-neutral-400 px-1 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/40"
       >
         {CONFIDENCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
@@ -98,7 +98,7 @@ function MetRow({ m, onChange, onRemove }: MetRowProps) {
         value={m.rationale ?? ''}
         onChange={e => onChange({ ...m, rationale: e.target.value })}
         placeholder="Rationale"
-        className="rounded border border-neutral-200 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+        className="rounded border border-neutral-400 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/40"
       />
       <button
         onClick={onRemove}
@@ -246,7 +246,7 @@ function ItemEditor({ entry, onSaved }: ItemEditorProps) {
           onChange={e => setNote(e.target.value)}
           rows={3}
           placeholder="Explain why there's no wicket, or where evidence lives…"
-          className="w-full rounded border border-neutral-200 px-3 py-2 text-xs resize-y focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+          className="w-full rounded border border-neutral-400 px-3 py-2 text-xs resize-y focus:outline-none focus:ring-1 focus:ring-amber-500/40"
         />
       </section>
 
@@ -328,7 +328,7 @@ export function CrosswalkEditorPage() {
   return (
     <main className="min-h-screen flex flex-col">
       {/* Top bar */}
-      <div className="border-b border-neutral-200 px-4 py-3 flex items-center justify-between gap-4">
+      <div className="border-b border-neutral-400 px-4 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link to="/" className="text-xs text-neutral-400 hover:text-neutral-600">← Home</Link>
           <h1 className="text-sm font-bold text-neutral-900">Crosswalk SME Editor</h1>
@@ -353,7 +353,7 @@ export function CrosswalkEditorPage() {
           </button>
           <button
             onClick={handleExport}
-            className="text-xs font-semibold px-3 py-1.5 rounded border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
+            className="text-xs font-semibold px-3 py-1.5 rounded border border-neutral-400 text-neutral-600 hover:bg-neutral-50 transition-colors"
           >
             Export YAML
           </button>
@@ -363,7 +363,7 @@ export function CrosswalkEditorPage() {
       {/* Two-panel body */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left: item list */}
-        <aside className="w-64 border-r border-neutral-200 overflow-y-auto flex-shrink-0">
+        <aside className="w-64 border-r border-neutral-400 overflow-y-auto flex-shrink-0">
           {sections.map(sec => (
             <div key={sec.prefix}>
               <div className="px-3 pt-3 pb-1">

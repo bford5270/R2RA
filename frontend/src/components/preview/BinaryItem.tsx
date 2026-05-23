@@ -31,7 +31,7 @@ export function BinaryItem({ item }: Props) {
               <label className="text-xs text-neutral-500">
                 <AcronymText text={field.label} />
               </label>
-              <div className="h-7 rounded border border-neutral-200 bg-neutral-50 w-full" />
+              <div className="h-7 rounded border border-neutral-400 bg-neutral-50 w-full" />
             </div>
           ))}
         </div>

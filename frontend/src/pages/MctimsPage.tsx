@@ -81,7 +81,7 @@ function CopyBlock({ label, text }: { label: string; text: string }) {
         value={text}
         onFocus={() => ref.current?.select()}
         rows={Math.min(Math.max(text.split('\n').length + 1, 4), 20)}
-        className="w-full rounded border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-xs font-mono text-neutral-700 focus:outline-none focus:ring-1 focus:ring-scarlet/40 resize-none leading-relaxed"
+        className="w-full rounded border border-neutral-400 bg-neutral-50 px-3 py-2.5 text-xs font-mono text-neutral-700 focus:outline-none focus:ring-1 focus:ring-amber-500/40 resize-none leading-relaxed"
       />
     </div>
   )
@@ -273,9 +273,9 @@ export function MctimsPage() {
   const jtsNo       = [...jtsResponses.values()].filter(r => r.status === 'no').length
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-100">
       {/* Toolbar */}
-      <div className="print:hidden sticky top-0 z-10 bg-white border-b border-neutral-200 px-6 py-3 flex items-center justify-between">
+      <div className="print:hidden sticky top-0 z-10 bg-neutral-100 border-b border-neutral-400 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button onClick={() => window.history.back()} className="text-xs text-neutral-500 hover:text-neutral-700">
             ← Back
@@ -299,7 +299,7 @@ export function MctimsPage() {
 
       <div className="max-w-3xl mx-auto px-6 py-6">
         {/* Info header */}
-        <div className="mb-6 p-4 rounded-lg border border-neutral-200 bg-neutral-50">
+        <div className="mb-6 p-4 rounded-lg border border-neutral-400 bg-neutral-50">
           <p className="text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2">How to use this page</p>
           <p className="text-sm text-neutral-600 leading-relaxed">
             Copy each section below and paste directly into MCTIMS. Use <strong>"Copy entire document"</strong> above
@@ -310,7 +310,7 @@ export function MctimsPage() {
 
         {/* Quick stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="border border-neutral-200 rounded-lg p-3">
+          <div className="border border-neutral-400 rounded-lg p-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">T&R Results</p>
             <div className="flex gap-4 text-sm">
               <span><span className="font-bold text-neutral-700">{trAnswered}</span> <span className="text-neutral-400">scored</span></span>
@@ -318,7 +318,7 @@ export function MctimsPage() {
               <span><span className="font-bold text-red-700">{trNoGo}</span> <span className="text-neutral-400">NO-GO</span></span>
             </div>
           </div>
-          <div className="border border-neutral-200 rounded-lg p-3">
+          <div className="border border-neutral-400 rounded-lg p-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">JTS Results</p>
             <div className="flex gap-4 text-sm">
               <span><span className="font-bold text-neutral-700">{jtsAnswered}</span> <span className="text-neutral-400">answered</span></span>

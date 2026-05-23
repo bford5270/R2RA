@@ -88,7 +88,7 @@ export function ExerciseSelectPage() {
                     <button
                       key={ex.id}
                       onClick={() => { setExercise(ex); navigate('/') }}
-                      className="w-full text-left rounded-lg border border-neutral-200 bg-white px-4 py-3 hover:border-scarlet hover:shadow-sm transition-all group"
+                      className="w-full text-left rounded-lg border border-neutral-400 bg-neutral-100 px-4 py-3 hover:border-scarlet hover:shadow-sm transition-all group"
                     >
                       <div className="flex items-center justify-between">
                         <p className="font-semibold text-neutral-900 group-hover:text-scarlet">{ex.name}</p>
@@ -113,7 +113,7 @@ export function ExerciseSelectPage() {
                 + Create new exercise
               </button>
             ) : (
-              <form onSubmit={handleCreate} className="rounded-lg border border-neutral-200 bg-white p-5 space-y-4">
+              <form onSubmit={handleCreate} className="rounded-lg border border-neutral-400 bg-neutral-100 p-5 space-y-4">
                 <h2 className="text-sm font-semibold text-neutral-800">New Exercise</h2>
                 <div>
                   <label className="block text-xs font-semibold text-neutral-600 mb-1">Exercise Name *</label>
@@ -122,7 +122,7 @@ export function ExerciseSelectPage() {
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="e.g. Iron Fist 2026, MCCRE FY26-1"
-                    className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-scarlet"
+                    className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -133,7 +133,7 @@ export function ExerciseSelectPage() {
                       type="date"
                       value={startDate}
                       onChange={e => setStartDate(e.target.value)}
-                      className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-scarlet"
+                      className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                     />
                   </div>
                   <div>
@@ -143,7 +143,7 @@ export function ExerciseSelectPage() {
                       type="date"
                       value={endDate}
                       onChange={e => setEndDate(e.target.value)}
-                      className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-scarlet"
+                      className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                     />
                   </div>
                 </div>
@@ -153,7 +153,7 @@ export function ExerciseSelectPage() {
                     value={location}
                     onChange={e => setLocation(e.target.value)}
                     placeholder="e.g. Camp Pendleton, CA"
-                    className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-scarlet"
+                    className="w-full border border-neutral-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div className="flex gap-2 pt-1">
@@ -167,7 +167,7 @@ export function ExerciseSelectPage() {
                   <button
                     type="button"
                     onClick={() => setShowCreate(false)}
-                    className="px-4 py-2 text-sm border border-neutral-200 rounded text-neutral-600 hover:border-neutral-400"
+                    className="px-4 py-2 text-sm border border-neutral-400 rounded text-neutral-600 hover:border-neutral-400"
                   >
                     Cancel
                   </button>
@@ -184,7 +184,7 @@ export function ExerciseSelectPage() {
                     <button
                       key={ex.id}
                       onClick={() => { setExercise(ex); navigate('/') }}
-                      className="w-full text-left rounded border border-neutral-100 bg-white px-4 py-2.5 hover:border-neutral-300 transition-colors"
+                      className="w-full text-left rounded border border-neutral-300 bg-neutral-100 px-4 py-2.5 hover:border-neutral-300 transition-colors"
                     >
                       <p className="text-sm text-neutral-600">{ex.name}</p>
                       <p className="text-xs text-neutral-400">

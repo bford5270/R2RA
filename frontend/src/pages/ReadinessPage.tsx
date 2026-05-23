@@ -99,7 +99,7 @@ export function ReadinessPage() {
       {error && <p className="text-sm text-red-600 py-4">{error}</p>}
 
       {!loading && !error && rows.length === 0 && (
-        <div className="border border-dashed border-neutral-200 rounded p-8 text-center">
+        <div className="border border-dashed border-neutral-300 rounded p-8 text-center">
           <p className="text-sm text-neutral-500">No assessments yet.</p>
           <Link to="/assessments/new" className="mt-2 text-sm text-scarlet hover:text-scarlet-dark font-medium block">
             Start the first one →
@@ -112,19 +112,19 @@ export function ReadinessPage() {
           <table className="w-full text-[11px] border-collapse">
             <thead>
               <tr>
-                <th className="text-left px-3 py-2 bg-neutral-50 border border-neutral-200 font-semibold text-neutral-700 whitespace-nowrap sticky left-0 z-10 min-w-[180px]">
+                <th className="text-left px-3 py-2 bg-neutral-50 border border-neutral-400 font-semibold text-neutral-700 whitespace-nowrap sticky left-0 z-10 min-w-[180px]">
                   Unit
                 </th>
-                <th className="px-2 py-2 bg-neutral-50 border border-neutral-200 font-semibold text-neutral-600 whitespace-nowrap">
+                <th className="px-2 py-2 bg-neutral-50 border border-neutral-400 font-semibold text-neutral-600 whitespace-nowrap">
                   Status
                 </th>
-                <th className="px-2 py-2 bg-neutral-50 border border-neutral-200 font-semibold text-neutral-600 whitespace-nowrap">
+                <th className="px-2 py-2 bg-neutral-50 border border-neutral-400 font-semibold text-neutral-600 whitespace-nowrap">
                   Answered
                 </th>
                 {sections.map(s => (
                   <th
                     key={s.id}
-                    className="px-1 py-2 bg-neutral-50 border border-neutral-200 font-semibold text-neutral-500 whitespace-nowrap max-w-[60px]"
+                    className="px-1 py-2 bg-neutral-50 border border-neutral-400 font-semibold text-neutral-500 whitespace-nowrap max-w-[60px]"
                     title={s.title}
                   >
                     <span className="block truncate max-w-[56px] font-mono text-[9px] uppercase tracking-wide">
@@ -132,7 +132,7 @@ export function ReadinessPage() {
                     </span>
                   </th>
                 ))}
-                <th className="px-2 py-2 bg-neutral-50 border border-neutral-200 font-semibold text-neutral-600 whitespace-nowrap">
+                <th className="px-2 py-2 bg-neutral-50 border border-neutral-400 font-semibold text-neutral-600 whitespace-nowrap">
                   Date
                 </th>
               </tr>
@@ -148,7 +148,7 @@ export function ReadinessPage() {
 
                 return (
                   <tr key={row.assessment_id} className="hover:bg-neutral-50 transition-colors">
-                    <td className="px-3 py-2 border border-neutral-200 sticky left-0 bg-white hover:bg-neutral-50 z-10">
+                    <td className="px-3 py-2 border border-neutral-400 sticky left-0 bg-neutral-100 hover:bg-neutral-50 z-10">
                       <Link
                         to={`/assessments/${row.assessment_id}`}
                         className="font-semibold text-neutral-800 hover:text-scarlet block leading-tight"
@@ -160,12 +160,12 @@ export function ReadinessPage() {
                         · {MISSION_TYPE_LABELS[row.mission_type as keyof typeof MISSION_TYPE_LABELS] ?? row.mission_type}
                       </span>
                     </td>
-                    <td className="px-2 py-2 border border-neutral-200 text-center whitespace-nowrap">
+                    <td className="px-2 py-2 border border-neutral-400 text-center whitespace-nowrap">
                       <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${STATUS_COLOR[row.status] ?? ''}`}>
                         {row.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="px-2 py-2 border border-neutral-200 text-center whitespace-nowrap">
+                    <td className="px-2 py-2 border border-neutral-400 text-center whitespace-nowrap">
                       <span className="font-mono">{pct}%</span>
                       <span className="text-neutral-400 ml-1">({row.total_answered})</span>
                     </td>
@@ -174,7 +174,7 @@ export function ReadinessPage() {
                       return (
                         <td
                           key={s.id}
-                          className={`border border-neutral-200 text-center ${cellColor(stats)}`}
+                          className={`border border-neutral-400 text-center ${cellColor(stats)}`}
                           title={`${s.title}\n${cellTitle(stats)}`}
                         >
                           {stats && (stats.yes + stats.no + stats.na) > 0 ? (
@@ -187,7 +187,7 @@ export function ReadinessPage() {
                         </td>
                       )
                     })}
-                    <td className="px-2 py-2 border border-neutral-200 text-neutral-400 whitespace-nowrap">
+                    <td className="px-2 py-2 border border-neutral-400 text-neutral-400 whitespace-nowrap">
                       {row.certified_at
                         ? <span className="text-green-600 font-semibold">{new Date(row.certified_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}</span>
                         : new Date(row.started_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
@@ -232,7 +232,7 @@ export function ReadinessPage() {
                 const yesPct = total > 0 ? Math.round((totals.yes / total) * 100) : 0
 
                 return (
-                  <div key={s.id} className="border border-neutral-200 rounded p-3 bg-white">
+                  <div key={s.id} className="border border-neutral-400 rounded p-3 bg-neutral-100">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-neutral-500 truncate mb-1">
                       {s.title}
                     </p>

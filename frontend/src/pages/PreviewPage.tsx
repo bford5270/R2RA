@@ -40,7 +40,7 @@ function CrosswalkContent({ sectionId }: { sectionId: string | null }) {
           <div key={entry.jts_item} className="text-xs">
             <p className="font-mono text-neutral-500 text-[10px] mb-1">{entry.jts_item}</p>
             {entry.wickets.map(w => (
-              <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-200">
+              <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-400">
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-mono text-scarlet text-[10px] font-semibold">{w.event_code}</span>
                   <span className={`text-[10px] font-semibold ${confidenceColor(w.confidence)}`}>
@@ -124,7 +124,7 @@ export function PreviewPage() {
     <div className="flex h-screen overflow-hidden">
       {/* Left nav — fixed width */}
       <aside
-        className="shrink-0 border-r border-neutral-200 bg-white overflow-y-auto flex flex-col"
+        className="shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col"
         style={{ width: NAV_WIDTH }}
       >
         <div className="px-3 pt-4 pb-2 border-b border-neutral-100 shrink-0">
@@ -144,7 +144,7 @@ export function PreviewPage() {
       <div ref={containerRef} className="flex flex-1 overflow-hidden">
         {/* JTS form pane */}
         <main
-          className="overflow-y-auto bg-white"
+          className="overflow-y-auto bg-neutral-100"
           style={{ width: `${100 - crosswalkPct}%` }}
         >
           <div className="max-w-2xl mx-auto px-6 py-6">
@@ -164,7 +164,7 @@ export function PreviewPage() {
 
         {/* T&R crosswalk pane */}
         <aside
-          className="overflow-y-auto bg-neutral-50 border-l border-neutral-200 flex flex-col"
+          className="overflow-y-auto bg-neutral-50 border-l border-neutral-400 flex flex-col"
           style={{ width: `${crosswalkPct}%` }}
         >
           <CrosswalkContent sectionId={effectiveSectionId} />

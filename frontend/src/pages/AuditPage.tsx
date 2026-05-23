@@ -117,13 +117,13 @@ export function AuditPage() {
       {error && <p className="text-sm text-red-600 py-4">{error}</p>}
 
       {!loading && !error && entries.length === 0 && (
-        <div className="border border-dashed border-neutral-200 rounded p-8 text-center">
+        <div className="border border-dashed border-neutral-300 rounded p-8 text-center">
           <p className="text-sm text-neutral-500">No audit entries yet.</p>
         </div>
       )}
 
       {entries.length > 0 && (
-        <div className="border border-neutral-200 rounded bg-white">
+        <div className="border border-neutral-400 rounded bg-neutral-100">
           <div className="px-4 py-2 border-b border-neutral-100 flex items-center justify-between">
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Activity</p>
             <p className="text-[10px] text-neutral-400">{entries.length} entries</p>

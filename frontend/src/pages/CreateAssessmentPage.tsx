@@ -80,7 +80,7 @@ export function CreateAssessmentPage() {
                     placeholder="e.g. 1MARDIV"
                     value={unitUic}
                     onChange={e => setUnitUic(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
                 <div>
@@ -94,7 +94,7 @@ export function CreateAssessmentPage() {
                     placeholder="e.g. 1st Medical Battalion"
                     value={unitName}
                     onChange={e => setUnitName(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -110,7 +110,7 @@ export function CreateAssessmentPage() {
                     placeholder="e.g. USMC"
                     value={service}
                     onChange={e => setService(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
                 <div>
@@ -123,7 +123,7 @@ export function CreateAssessmentPage() {
                     placeholder="e.g. Active"
                     value={component}
                     onChange={e => setComponent(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -140,7 +140,7 @@ export function CreateAssessmentPage() {
                     className={`flex items-center gap-2 rounded border px-3 py-2.5 cursor-pointer text-sm transition-colors ${
                       missionType === mt
                         ? 'border-scarlet bg-scarlet/5 text-scarlet font-semibold'
-                        : 'border-neutral-200 text-neutral-700 hover:border-neutral-400'
+                        : 'border-neutral-400 text-neutral-700 hover:border-neutral-400'
                     }`}
                   >
                     <input

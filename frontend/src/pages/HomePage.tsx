@@ -138,7 +138,7 @@ export function HomePage() {
       )}
 
       {!loading && !error && visibleAssessments.length === 0 && (
-        <div className="border border-dashed border-neutral-200 rounded p-8 text-center">
+        <div className="border border-dashed border-neutral-300 rounded p-8 text-center">
           <p className="text-sm text-neutral-500">
             {exercise && !isAdmin
               ? `No assessments for ${exercise.name} yet. Use "+ New assessment" to get started.`
@@ -148,7 +148,7 @@ export function HomePage() {
       )}
 
       {visibleAssessments.length > 0 && (
-        <div className="divide-y divide-neutral-100 border border-neutral-200 rounded">
+        <div className="divide-y divide-neutral-100 border border-neutral-400 rounded">
           {visibleAssessments.map(a => (
             <Link
               key={a.id}

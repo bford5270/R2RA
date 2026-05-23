@@ -177,7 +177,7 @@ export function UnitLibraryPage() {
       {showUpload && (
         <form
           onSubmit={handleUpload}
-          className="mb-6 bg-white border border-neutral-200 rounded-lg p-5 space-y-3"
+          className="mb-6 bg-neutral-100 border border-neutral-400 rounded-lg p-5 space-y-3"
         >
           <p className="text-sm font-semibold text-neutral-800">Add document</p>
           <div className="grid grid-cols-2 gap-3">
@@ -190,7 +190,7 @@ export function UnitLibraryPage() {
                 value={label}
                 onChange={e => setLabel(e.target.value)}
                 placeholder="e.g. Provider Roster Q1 2026"
-                className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
               />
             </div>
             <div>
@@ -200,7 +200,7 @@ export function UnitLibraryPage() {
               <select
                 value={category}
                 onChange={e => setCategory(e.target.value)}
-                className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-amber-500/40"
               >
                 {CATEGORIES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </select>
@@ -226,7 +226,7 @@ export function UnitLibraryPage() {
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 placeholder="Brief notes about this document"
-                className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
               />
             </div>
           </div>
@@ -245,7 +245,7 @@ export function UnitLibraryPage() {
       {error && <p className="text-sm text-red-600 py-4">{error}</p>}
 
       {!loading && !error && items.length === 0 && (
-        <div className="border border-dashed border-neutral-200 rounded p-8 text-center">
+        <div className="border border-dashed border-neutral-300 rounded p-8 text-center">
           <p className="text-sm text-neutral-500">No documents yet.</p>
           <button
             onClick={() => setShowUpload(true)}
@@ -277,7 +277,7 @@ export function UnitLibraryPage() {
             ))}
           </div>
 
-          <div className="border border-neutral-200 rounded bg-white">
+          <div className="border border-neutral-400 rounded bg-neutral-100">
             {filtered.length === 0 && (
               <p className="px-4 py-4 text-sm text-neutral-400 italic">No items in this category.</p>
             )}

@@ -81,7 +81,7 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
     na:   'border-neutral-400 bg-neutral-100 text-neutral-600',
     unanswered: '',
   }[s])
-  const inactive = 'border-neutral-200 text-neutral-400 hover:border-neutral-400 hover:text-neutral-600'
+  const inactive = 'border-neutral-400 text-neutral-400 hover:border-neutral-400 hover:text-neutral-600'
 
   return (
     <div className="mt-2 flex flex-col gap-1.5">
@@ -136,7 +136,7 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
             readOnly={locked}
             autoFocus={isNo && !locked && !note}
             onChange={e => !locked && handleNoteChange(e.target.value)}
-            className={`w-full rounded border px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isNo ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-200 focus:ring-scarlet/40 focus:border-scarlet'} ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
+            className={`w-full rounded border px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isNo ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-400 focus:ring-amber-500/40 focus:border-amber-500'} ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
           />
         </div>
       )}
@@ -239,7 +239,7 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
                       value={val}
                       onChange={e => handleCaptureChange(field.id, e.target.value)}
                       readOnly={locked}
-                      className={`flex-1 h-7 rounded border px-2 text-xs focus:outline-none focus:ring-1 ${warning ? (expired ? 'border-red-300 focus:ring-red-300' : 'border-amber-300 focus:ring-amber-300') : 'border-neutral-200 focus:ring-scarlet/40'} ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
+                      className={`flex-1 h-7 rounded border px-2 text-xs focus:outline-none focus:ring-1 ${warning ? (expired ? 'border-red-300 focus:ring-red-300' : 'border-amber-300 focus:ring-amber-300') : 'border-neutral-400 focus:ring-amber-500/40'} ${locked ? 'bg-neutral-50 cursor-default' : ''}`}
                     />
                   </div>
                   {warning && (
@@ -279,7 +279,7 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
           {item.options.map(opt => (
             <span
               key={opt.value}
-              className="inline-flex items-center rounded border border-neutral-200 bg-neutral-50 text-neutral-500 text-xs px-2 py-0.5"
+              className="inline-flex items-center rounded border border-neutral-400 bg-neutral-50 text-neutral-500 text-xs px-2 py-0.5"
             >
               {opt.label}
             </span>
@@ -296,11 +296,11 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
         <p className="text-sm font-medium text-neutral-800 leading-snug mb-2">
           <AcronymText text={item.label} />
         </p>
-        <div className="divide-y divide-neutral-100 mb-3 rounded border border-neutral-200 overflow-hidden">
+        <div className="divide-y divide-neutral-100 mb-3 rounded border border-neutral-400 overflow-hidden">
           {item.rows.map(row => {
             const val = captureValues[row.id] ?? ''
             return (
-              <div key={row.id} className="flex items-center gap-2 px-3 py-1.5 bg-white">
+              <div key={row.id} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100">
                 <span className="flex-1 text-xs text-neutral-700">
                   <AcronymText text={row.label} />
                 </span>
@@ -314,7 +314,7 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
                         ? opt === 'Y'
                           ? 'bg-green-600 text-white border-green-600'
                           : 'bg-red-500 text-white border-red-500'
-                        : 'bg-white text-neutral-400 border-neutral-200 hover:border-neutral-400'
+                        : 'bg-neutral-100 text-neutral-400 border-neutral-400 hover:border-neutral-400'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {opt}
@@ -335,9 +335,9 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
         <p className="text-sm font-medium text-neutral-800 leading-snug mb-2">
           <AcronymText text={item.label} />
         </p>
-        <div className="divide-y divide-neutral-100 rounded border border-neutral-200 overflow-hidden">
+        <div className="divide-y divide-neutral-100 rounded border border-neutral-400 overflow-hidden">
           {item.rows.map(row => (
-            <div key={row.id} className="flex items-center gap-2 px-3 py-1.5 bg-white">
+            <div key={row.id} className="flex items-center gap-2 px-3 py-1.5 bg-neutral-100">
               <span className="flex-1 text-xs text-neutral-700">
                 <AcronymText text={row.label} />
               </span>
@@ -349,7 +349,7 @@ function ResponseItem({ assessmentId, item, responses, locked, onSave, onSaveCap
                   disabled={locked}
                   value={captureValues[`${row.id}__${col.id}`] ?? ''}
                   onChange={e => handleCaptureChange(`${row.id}__${col.id}`, e.target.value)}
-                  className="w-16 h-6 rounded border border-neutral-200 px-2 text-xs text-right focus:outline-none focus:ring-1 focus:ring-scarlet/40 disabled:opacity-50"
+                  className="w-16 h-6 rounded border border-neutral-400 px-2 text-xs text-right focus:outline-none focus:ring-1 focus:ring-amber-500/40 disabled:opacity-50"
                   placeholder="—"
                 />
               ))}
@@ -495,7 +495,7 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
   }
 
   return (
-    <aside className="w-72 shrink-0 border-l border-neutral-200 bg-neutral-50 overflow-y-auto flex flex-col">
+    <aside className="w-72 shrink-0 border-l border-neutral-400 bg-neutral-50 overflow-y-auto flex flex-col">
       <div className="px-4 pt-4 pb-2 border-b border-neutral-100">
         <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">T&amp;R Crosswalk</p>
         <p className="text-[10px] text-neutral-400 mt-0.5">NAVMC 3500.84B</p>
@@ -513,7 +513,7 @@ function CrosswalkPanel({ sectionId, assessmentId }: { sectionId: string | null;
               {itemSuggestion(entry.jts_item)}
             </div>
             {entry.wickets.map(w => (
-              <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-200">
+              <div key={w.event_code} className="mb-1.5 pl-2 border-l-2 border-neutral-400">
                 <div className="flex items-center gap-1 flex-wrap">
                   <Link
                     to={`/assessments/${assessmentId}/tr?wicket=${encodeURIComponent(w.event_code)}`}
@@ -590,7 +590,7 @@ function CertifyModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6 space-y-4"
+        className="bg-neutral-100 rounded-lg shadow-xl w-full max-w-md mx-4 p-6 space-y-4"
       >
         <div>
           <h2 className="text-base font-bold text-neutral-900">Sign and Certify</h2>
@@ -607,7 +607,7 @@ function CertifyModal({
             required
             value={printName}
             onChange={e => setPrintName(e.target.value)}
-            className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+            className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
             placeholder="e.g. Capt. Jane Smith, USMC, TMD"
           />
         </div>
@@ -619,7 +619,7 @@ function CertifyModal({
           <select
             value={signerRole}
             onChange={e => setSignerRole(e.target.value)}
-            className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+            className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-amber-500/40"
           >
             {SIGNER_ROLES.map(r => (
               <option key={r.value} value={r.value}>{r.label}</option>
@@ -654,7 +654,7 @@ function CertifyModal({
             type="button"
             onClick={onCancel}
             disabled={saving}
-            className="flex-1 rounded border border-neutral-200 text-sm text-neutral-600 py-2 hover:border-neutral-400 transition-colors disabled:opacity-50"
+            className="flex-1 rounded border border-neutral-400 text-sm text-neutral-600 py-2 hover:border-neutral-400 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
@@ -752,12 +752,12 @@ function BundlePanel({ assessmentId }: { assessmentId: string }) {
             value={passphrase}
             onChange={e => setPassphrase(e.target.value)}
             placeholder="Passphrase"
-            className="w-full rounded border border-neutral-200 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+            className="w-full rounded border border-neutral-400 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500/40"
           />
           <button
             onClick={handleExport}
             disabled={busy}
-            className="w-full rounded border border-neutral-200 text-[10px] text-neutral-500 px-2 py-1 hover:border-neutral-400 hover:text-neutral-700 disabled:opacity-50 transition-colors"
+            className="w-full rounded border border-neutral-400 text-[10px] text-neutral-500 px-2 py-1 hover:border-neutral-400 hover:text-neutral-700 disabled:opacity-50 transition-colors"
           >
             {busy ? '…' : '↓ Export encrypted bundle'}
           </button>
@@ -774,7 +774,7 @@ function BundlePanel({ assessmentId }: { assessmentId: string }) {
             <button
               onClick={handleImport}
               disabled={busy}
-              className="w-full rounded border border-neutral-200 text-[10px] text-neutral-500 px-2 py-1 hover:border-neutral-400 hover:text-neutral-700 disabled:opacity-50 transition-colors"
+              className="w-full rounded border border-neutral-400 text-[10px] text-neutral-500 px-2 py-1 hover:border-neutral-400 hover:text-neutral-700 disabled:opacity-50 transition-colors"
             >
               {busy ? '…' : '↑ Decrypt bundle'}
             </button>
@@ -922,7 +922,7 @@ function TeamPanel({
           {isLead && !showForm && (
             <button
               onClick={() => setShowForm(true)}
-              className="w-full text-[10px] text-neutral-400 hover:text-scarlet border border-dashed border-neutral-200 hover:border-scarlet rounded py-1 transition-colors"
+              className="w-full text-[10px] text-neutral-400 hover:text-scarlet border border-dashed border-neutral-300 hover:border-scarlet rounded py-1 transition-colors"
             >
               + Add contributor
             </button>
@@ -930,11 +930,11 @@ function TeamPanel({
 
           {/* Assignment form */}
           {isLead && showForm && (
-            <div className="border border-neutral-200 rounded p-2 space-y-2 bg-neutral-50">
+            <div className="border border-neutral-400 rounded p-2 space-y-2 bg-neutral-50">
               <select
                 value={selectedUserId}
                 onChange={e => setSelectedUserId(e.target.value)}
-                className="w-full text-xs rounded border border-neutral-200 px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                className="w-full text-xs rounded border border-neutral-400 px-2 py-1 bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-amber-500/40"
               >
                 <option value="">Select person…</option>
                 {unassignedUsers.map(u => (
@@ -969,7 +969,7 @@ function TeamPanel({
                 </button>
                 <button
                   onClick={() => { setShowForm(false); setSelectedUserId(''); setSelectedSections([]) }}
-                  className="flex-1 rounded border border-neutral-200 text-[10px] text-neutral-500 py-1 hover:border-neutral-400"
+                  className="flex-1 rounded border border-neutral-400 text-[10px] text-neutral-500 py-1 hover:border-neutral-400"
                 >
                   Cancel
                 </button>
@@ -1110,7 +1110,7 @@ export function AssessmentPage() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Left pane — section nav */}
-      <aside className="w-64 shrink-0 border-r border-neutral-200 bg-white overflow-y-auto flex flex-col">
+      <aside className="w-64 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col">
         <div className="px-3 pt-4 pb-3 border-b border-neutral-100 space-y-2">
           <button
             onClick={() => navigate('/')}
@@ -1141,7 +1141,7 @@ export function AssessmentPage() {
                 value={scenarioDraft}
                 onChange={e => setScenarioDraft(e.target.value)}
                 placeholder="role2-builder case ID or name"
-                className="w-full text-[11px] border border-neutral-300 rounded px-2 py-1 focus:outline-none focus:border-scarlet"
+                className="w-full text-[11px] border border-neutral-300 rounded px-2 py-1 focus:outline-none focus:border-amber-500"
               />
               <div className="flex gap-1">
                 <button
@@ -1162,7 +1162,7 @@ export function AssessmentPage() {
                 </button>
                 <button
                   onClick={() => setEditingScenario(false)}
-                  className="flex-1 text-[10px] border border-neutral-200 rounded px-2 py-0.5 text-neutral-500"
+                  className="flex-1 text-[10px] border border-neutral-400 rounded px-2 py-0.5 text-neutral-500"
                 >
                   Cancel
                 </button>
@@ -1171,7 +1171,7 @@ export function AssessmentPage() {
           ) : (
             <button
               onClick={() => { setScenarioDraft(assessment.scenario_ref ?? ''); setEditingScenario(true) }}
-              className="w-full text-left text-[10px] text-neutral-400 hover:text-neutral-700 border border-dashed border-neutral-200 rounded px-2 py-1 transition-colors"
+              className="w-full text-left text-[10px] text-neutral-400 hover:text-neutral-700 border border-dashed border-neutral-300 rounded px-2 py-1 transition-colors"
             >
               {assessment.scenario_ref
                 ? <><span className="text-neutral-500 font-medium">Scenario: </span>{assessment.scenario_ref}</>
@@ -1217,7 +1217,7 @@ export function AssessmentPage() {
           {assessment.status !== 'certified' && (
             <button
               onClick={jumpToUnanswered}
-              className="w-full rounded border border-neutral-200 text-[11px] text-neutral-500 px-3 py-1 hover:border-neutral-400 hover:text-neutral-700 transition-colors"
+              className="w-full rounded border border-neutral-400 text-[11px] text-neutral-500 px-3 py-1 hover:border-neutral-400 hover:text-neutral-700 transition-colors"
             >
               → Jump to first unanswered
             </button>
@@ -1226,7 +1226,7 @@ export function AssessmentPage() {
           <div className="flex gap-2 pt-0.5">
             <Link
               to={`/assessments/${assessmentId}/tr`}
-              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
             >
               T&amp;R Assessment →
             </Link>
@@ -1236,7 +1236,7 @@ export function AssessmentPage() {
                 'flex-1 text-center text-[10px] border rounded px-2 py-1 transition-colors',
                 showCrosswalk
                   ? 'text-scarlet border-scarlet/40 bg-scarlet/5'
-                  : 'text-neutral-400 hover:text-neutral-600 border-neutral-200',
+                  : 'text-neutral-400 hover:text-neutral-600 border-neutral-400',
               ].join(' ')}
               title="Toggle T&R crosswalk panel"
             >
@@ -1244,13 +1244,13 @@ export function AssessmentPage() {
             </button>
             <Link
               to={`/assessments/${assessmentId}/print`}
-              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
             >
               Print / PDF →
             </Link>
             <Link
               to={`/assessments/${assessmentId}/audit`}
-              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
             >
               Audit log →
             </Link>
@@ -1258,20 +1258,20 @@ export function AssessmentPage() {
           <div className="flex gap-2">
             <Link
               to={`/assessments/${assessmentId}/mctims`}
-              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
             >
               MCTIMS Export →
             </Link>
             <Link
               to={`/assessments/${assessmentId}/feedback`}
-              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1"
+              className="flex-1 text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
             >
               Unit Feedback →
             </Link>
           </div>
           <Link
             to={`/units/${assessment.unit_uic}/library`}
-            className="w-full text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-200 rounded px-2 py-1 block"
+            className="w-full text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1 block"
           >
             Unit document library →
           </Link>
@@ -1295,7 +1295,7 @@ export function AssessmentPage() {
       </aside>
 
       {/* Main pane — items with response controls */}
-      <main className="flex-1 overflow-y-auto bg-white">
+      <main className="flex-1 overflow-y-auto bg-neutral-100">
         <div className="max-w-2xl mx-auto px-6 py-6">
           {sectionLoading && (
             <p className="text-sm text-neutral-400">Loading section…</p>

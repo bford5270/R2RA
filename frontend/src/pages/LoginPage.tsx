@@ -77,7 +77,7 @@ export function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="border border-neutral-200 rounded bg-white shadow-sm p-6">
+        <div className="border border-neutral-400 rounded bg-neutral-100 shadow-sm p-6">
           {screen === 'credentials' ? (
             <form onSubmit={handleCredentials} noValidate>
               <fieldset disabled={busy} className="space-y-4">
@@ -92,7 +92,7 @@ export function LoginPage() {
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
                 <div>
@@ -106,7 +106,7 @@ export function LoginPage() {
                     required
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
 
@@ -148,7 +148,7 @@ export function LoginPage() {
                     required
                     value={totpCode}
                     onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm font-mono tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-scarlet/40 focus:border-scarlet disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm font-mono tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                     placeholder="000000"
                   />
                 </div>

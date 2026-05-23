@@ -134,7 +134,7 @@ export function AdminUsersPage() {
         {showCreate && (
           <form
             onSubmit={handleCreate}
-            className="mb-6 bg-white border border-neutral-200 rounded-lg p-5 space-y-3"
+            className="mb-6 bg-neutral-100 border border-neutral-400 rounded-lg p-5 space-y-3"
           >
             <p className="text-sm font-semibold text-neutral-800 mb-1">Create new account</p>
             <div className="grid grid-cols-2 gap-3">
@@ -146,7 +146,7 @@ export function AdminUsersPage() {
                   required
                   value={displayName}
                   onChange={e => setDisplayName(e.target.value)}
-                  className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                  className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
                   placeholder="Jane Smith"
                 />
               </div>
@@ -159,7 +159,7 @@ export function AdminUsersPage() {
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                  className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
                   placeholder="jane@example.mil"
                 />
               </div>
@@ -173,7 +173,7 @@ export function AdminUsersPage() {
                   minLength={8}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                  className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
                   placeholder="Min 8 characters"
                 />
               </div>
@@ -184,7 +184,7 @@ export function AdminUsersPage() {
                 <select
                   value={role}
                   onChange={e => setRole(e.target.value)}
-                  className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                  className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-amber-500/40"
                 >
                   <option value="assessor">Assessor</option>
                   <option value="observer">Observer</option>
@@ -204,7 +204,7 @@ export function AdminUsersPage() {
         )}
 
         {/* Active users */}
-        <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden mb-4">
+        <div className="bg-neutral-100 border border-neutral-400 rounded-lg overflow-hidden mb-4">
           <div className="px-4 py-2.5 border-b border-neutral-100 flex items-center justify-between">
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Active Users</p>
             <p className="text-[10px] text-neutral-400">{active.length}</p>
@@ -227,7 +227,7 @@ export function AdminUsersPage() {
 
         {/* Inactive users */}
         {inactive.length > 0 && (
-          <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden opacity-60">
+          <div className="bg-neutral-100 border border-neutral-400 rounded-lg overflow-hidden opacity-60">
             <div className="px-4 py-2.5 border-b border-neutral-100 flex items-center justify-between">
               <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Inactive / Deactivated</p>
               <p className="text-[10px] text-neutral-400">{inactive.length}</p>
@@ -290,7 +290,7 @@ function UserRow({
         value={editingRole}
         onChange={e => onRoleChange(e.target.value)}
         disabled={isSelf || saving}
-        className={`text-[10px] font-semibold rounded px-2 py-1 border-0 focus:outline-none focus:ring-1 focus:ring-scarlet/40 disabled:opacity-60 ${ROLE_COLOR[editingRole] ?? 'bg-neutral-100 text-neutral-500'}`}
+        className={`text-[10px] font-semibold rounded px-2 py-1 border-0 focus:outline-none focus:ring-1 focus:ring-amber-500/40 disabled:opacity-60 ${ROLE_COLOR[editingRole] ?? 'bg-neutral-100 text-neutral-500'}`}
       >
         <option value="assessor">Assessor</option>
         <option value="observer">Observer</option>
@@ -304,7 +304,7 @@ function UserRow({
           disabled={saving}
           className={`text-[10px] font-semibold px-2.5 py-1 rounded border transition-colors disabled:opacity-50 ${
             user.is_active
-              ? 'border-neutral-200 text-neutral-500 hover:border-red-300 hover:text-red-600'
+              ? 'border-neutral-400 text-neutral-500 hover:border-red-300 hover:text-red-600'
               : 'border-green-300 text-green-700 hover:bg-green-50'
           }`}
         >

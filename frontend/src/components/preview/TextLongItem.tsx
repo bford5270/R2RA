@@ -11,7 +11,7 @@ export function TextLongItem({ item }: Props) {
       <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
         <AcronymText text={item.label} />
       </label>
-      <div className="mt-1.5 h-20 rounded border border-neutral-200 bg-neutral-50 w-full" />
+      <div className="mt-1.5 h-20 rounded border border-neutral-400 bg-neutral-50 w-full" />
     </div>
   )
 }

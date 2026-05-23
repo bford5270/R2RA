@@ -41,7 +41,7 @@ function jtsPrefix(itemId: string) { return itemId.split('.')[0] }
 
 // Score → color utilities
 function scoreColor(score: number | null) {
-  if (score === null) return { bg: 'bg-neutral-100', text: 'text-neutral-400', border: 'border-neutral-200', label: 'Not scored' }
+  if (score === null) return { bg: 'bg-neutral-100', text: 'text-neutral-400', border: 'border-neutral-400', label: 'Not scored' }
   if (score >= 4) return { bg: 'bg-green-50',    text: 'text-green-800',   border: 'border-green-300',   label: score >= 5 ? 'Exceeds standard' : 'Meets standard' }
   if (score === 3) return { bg: 'bg-amber-50',   text: 'text-amber-800',   border: 'border-amber-300',   label: 'Approaches standard' }
   return             { bg: 'bg-red-50',     text: 'text-red-800',     border: 'border-red-300',     label: score === 2 ? 'Significant deficiencies' : 'Non-performant' }
@@ -234,9 +234,9 @@ export function FeedbackPage() {
     .filter(({ r }) => r?.note && effectiveTrStatus(r) === 'no_go')
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-100">
       {/* Toolbar */}
-      <div className="print:hidden sticky top-0 z-10 bg-white border-b border-neutral-200 px-6 py-3 flex items-center justify-between">
+      <div className="print:hidden sticky top-0 z-10 bg-neutral-100 border-b border-neutral-400 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button onClick={() => window.history.back()} className="text-xs text-neutral-500 hover:text-neutral-700">
             ← Back
@@ -256,7 +256,7 @@ export function FeedbackPage() {
       <div className="max-w-3xl mx-auto px-8 py-8 print:px-6 print:py-4">
 
         {/* Header */}
-        <div className="mb-6 pb-5 border-b-2 border-neutral-200">
+        <div className="mb-6 pb-5 border-b-2 border-neutral-400">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
             CONTROLLED UNCLASSIFIED INFORMATION // BASIC
           </p>
@@ -299,7 +299,7 @@ export function FeedbackPage() {
               { label: 'GO',    val: trGoCount,   cls: 'text-green-700' },
               { label: 'NO-GO', val: trNoGoCount, cls: 'text-red-700' },
             ].map(({ label, val, cls }) => (
-              <div key={label} className="border border-neutral-200 rounded-lg py-3 text-center">
+              <div key={label} className="border border-neutral-400 rounded-lg py-3 text-center">
                 <p className={`text-2xl font-black ${cls}`}>{val}</p>
                 <p className="text-[10px] uppercase tracking-wide text-neutral-400">{label}</p>
               </div>
@@ -332,7 +332,7 @@ export function FeedbackPage() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">
             JTS Role 2 Readiness Checklist Results
           </p>
-          <div className="border border-neutral-200 rounded-lg divide-y divide-neutral-100 px-4">
+          <div className="border border-neutral-400 rounded-lg divide-y divide-neutral-100 px-4">
             {visibleSections.map(sec => {
               const prefix = sec.item_prefix
               if (!prefix) return null
@@ -378,7 +378,7 @@ export function FeedbackPage() {
         )}
 
         {/* Signature block */}
-        <div className="mt-8 pt-5 border-t-2 border-neutral-200 break-inside-avoid-page">
+        <div className="mt-8 pt-5 border-t-2 border-neutral-400 break-inside-avoid-page">
           <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-4">Assessor Certification</p>
           {signatures.length > 0 ? (
             <div className="space-y-2">

@@ -45,7 +45,7 @@ function PasswordSection() {
                 type="password"
                 value={vals[i]}
                 onChange={e => setters[i](e.target.value)}
-                className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500/40"
               />
             </div>
           )
@@ -149,19 +149,19 @@ function TotpSection({ enrolled, onChanged }: { enrolled: boolean; onChanged: ()
       )}
 
       {step === 'confirming' && (
-        <div className="space-y-3 max-w-sm border border-neutral-200 rounded p-4 bg-neutral-50">
+        <div className="space-y-3 max-w-sm border border-neutral-400 rounded p-4 bg-neutral-50">
           <p className="text-xs text-neutral-700 font-semibold">
             Scan the URI in your authenticator app, then enter the 6-digit code to confirm.
           </p>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-1">Manual secret</p>
-            <code className="block text-xs font-mono bg-white border border-neutral-200 rounded px-3 py-2 select-all break-all">
+            <code className="block text-xs font-mono bg-neutral-50 border border-neutral-400 rounded px-3 py-2 select-all break-all">
               {secret}
             </code>
           </div>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400 mb-1">otpauth URI</p>
-            <code className="block text-[10px] font-mono bg-white border border-neutral-200 rounded px-3 py-2 select-all break-all text-neutral-600">
+            <code className="block text-[10px] font-mono bg-neutral-50 border border-neutral-400 rounded px-3 py-2 select-all break-all text-neutral-600">
               {uri}
             </code>
           </div>
@@ -178,7 +178,7 @@ function TotpSection({ enrolled, onChanged }: { enrolled: boolean; onChanged: ()
                 value={code}
                 onChange={e => setCode(e.target.value)}
                 placeholder="123 456"
-                className="w-full rounded border border-neutral-200 px-3 py-1.5 text-sm font-mono tracking-widest focus:outline-none focus:ring-1 focus:ring-scarlet/40"
+                className="w-full rounded border border-neutral-400 px-3 py-1.5 text-sm font-mono tracking-widest focus:outline-none focus:ring-1 focus:ring-amber-500/40"
               />
             </div>
             <div className="flex gap-2">
@@ -192,7 +192,7 @@ function TotpSection({ enrolled, onChanged }: { enrolled: boolean; onChanged: ()
               <button
                 type="button"
                 onClick={() => { setStep('idle'); setSecret(''); setUri(''); setCode('') }}
-                className="rounded border border-neutral-200 text-xs text-neutral-500 px-4 py-1.5 hover:border-neutral-400"
+                className="rounded border border-neutral-400 text-xs text-neutral-500 px-4 py-1.5 hover:border-neutral-400"
               >
                 Cancel
               </button>

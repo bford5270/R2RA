@@ -9,7 +9,7 @@ interface Props {
 function SectionItems({ section }: { section: Section }) {
   return (
     <div>
-      <h2 className="text-base font-bold text-neutral-900 pb-3 mb-1 border-b border-neutral-200">
+      <h2 className="text-base font-bold text-neutral-900 pb-3 mb-1 border-b border-neutral-400">
         {section.ordinal}. {section.title}
       </h2>
 
@@ -20,7 +20,7 @@ function SectionItems({ section }: { section: Section }) {
       {/* ARSRA appendix and similar sections have nested sub-sections */}
       {section.sections?.map((sub) => (
         <div key={sub.id} className="mt-6">
-          <h3 className="text-sm font-bold text-neutral-800 pb-2 mb-1 border-b border-neutral-200">
+          <h3 className="text-sm font-bold text-neutral-800 pb-2 mb-1 border-b border-neutral-400">
             {sub.ordinal}. {sub.title}
           </h3>
           {sub.items?.map((item) => (
