@@ -10,7 +10,7 @@ next session can resume cleanly.
 - **Last session**: 2026-05-23 (Session 20)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
 - **Branch**: `main`
-- **Last commit**: Signal color chip pattern from design bundle (`9dd1cd7`)
+- **Last commit**: Session 20 close — strategy doc updated to current (`HEAD`)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 

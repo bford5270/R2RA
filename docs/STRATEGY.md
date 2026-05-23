@@ -332,33 +332,45 @@ Ephemeral:
 | 2 | MVP user chain | Full chain: Assessor → OIC → HHQ | 2026-04-21 |
 | 3 | T&R integration | Side-by-side crosswalk panel | 2026-04-21 |
 | 4 | Data sensitivity | CUI-Basic | 2026-04-21 |
-| 5 | Authentication | Pluggable, CAC-ready | 2026-04-21 |
-| 6 | Stack | React + TS + Tailwind + shadcn/ui → FastAPI + Postgres (SQLite in field) | 2026-04-21 |
+| 5 | Authentication | Pluggable, CAC-ready; TOTP 2FA live | 2026-04-21 |
+| 6 | Stack | React + TS + Tailwind + FastAPI + Postgres | 2026-04-21 |
 | 7 | Visual identity | USMC-evocative, no protected marks until sponsored | 2026-04-21 |
-| 8 | Multi-assessor assignment | Section-level for MVP, item-level later | 2026-04-21 |
+| 8 | Multi-assessor assignment | Section-level scope; Lead reconciliation | 2026-04-21 |
 | 9 | Conflict model | Soft claim + Lead reconciliation | 2026-04-21 |
 | 10 | Visibility | Read-all, write-own (with Focus mode) | 2026-04-21 |
 | 11 | Source docs | Committed under `content/source/` | 2026-04-21 |
+| 12 | T&R scoring | 1–5 Likert per wicket (replaces binary GO/NO-GO); feeds forward to JTS crosswalk suggestions | 2026-05-10 |
+| 13 | Offline bundle | AES-GCM encrypted `.r2ra` bundle export/import (no CDN dependency) | 2026-05-10 |
+| 14 | Cloud hosting | AWS Elastic Beanstalk (Docker/AL2023) + RDS Postgres + CloudFront + S3; CodePipeline CI/CD on `main` | 2026-05-16 |
+| 15 | Design system | "Role 2 Forward" — two themes (Manual: warm coyote paper; Console: dark olive); CSS custom properties for all tokens; Tailwind dual-strategy (CSS-var tokens + resolved hex values for warm-palette neutral/green/red/amber/blue) | 2026-05-23 |
+| 16 | Fonts | Self-hosted via `@fontsource` (Roboto Slab / IBM Plex Sans / IBM Plex Mono) — no CDN, CUI-compliant | 2026-05-23 |
+| 17 | CUI banner color | Dark coyote (#3A3025) per design spec; NARA requirements govern labeling content, not background color | 2026-05-23 |
+| 18 | Signal color chips | Translucent rgba backgrounds (not solid Tailwind `-100` shades) + dot indicator + `--signal-*` CSS vars; hardcoded rgba values (not `color-mix()`) for broad browser compatibility | 2026-05-23 |
 
 ---
 
-## 14. Open questions (to resolve during Phase 0 / early Phase 1)
+## 14. Open questions
 
-- Final enumeration of JTS sections after full DOCX transcription.
-- Scope of HSS T&R wickets relevant to Role 2 (vs. general HSS) — SME call.
-- Target enclave for eventual hosting (NIPR / MHS enclave / MARFOR).
-- Sponsor identity — drives when we can adopt official marks.
-- Unit taxonomy (UIC canonical source; echelon model).
+- **Target hosting enclave** — NIPR / MHS / MARFOR / GovCloud. Drives CAC/smartcard auth integration timing.
+- **Sponsor identity** — when known, flips USMC-evocative assets → official USMC-branded marks.
+- **SME crosswalk review** — v0.1 crosswalk (`content/crosswalk/jts_r2__hss_tr.yaml`) needs subject matter expert sign-off before field use. In-app editor (`/admin/crosswalk`) is live.
+- **role2-builder history persistence** — DATABASE_URL env var on Elastic Beanstalk can be set to a Railway PostgreSQL URL to restore scenario history. Currently ephemeral.
 
 ---
 
-## 15. Next actions
+## 15. Current status and next actions
 
-1. **Phase 0 content ingest** — transcribe JTS form to
-   `content/frameworks/jts_r2.json`; extract T&R wickets to
-   `content/frameworks/hss_tr.json`; draft crosswalk v1.
-2. Author JSON Schemas for both frameworks.
-3. Stand up project scaffolding (frontend + backend) *only after* the content
-   schema is stable, so Phase 1 has a real target.
+### Complete (all phases through 2.6)
 
-No application code is written until (1) and (2) are complete.
+- Phase 0: Content ingest — JTS form + ARSRA transcribed, T&R wickets parsed, METs catalogued, crosswalk v0.2 drafted.
+- Phase 1: Full assessor flow — section nav, response controls, T&R crosswalk panel, print/PDF, status progression, certification/signatures.
+- Phase 2: Multi-assessor, offline bundle, audit log, user management, profile/TOTP, crosswalk SME editor, T&R Likert scoring, MCTIMS export, unit feedback report, exercise gate.
+- Phase 2.5/2.6: Production on AWS — Elastic Beanstalk, RDS Postgres, CloudFront, S3, CodePipeline CI/CD live.
+- Design: "Role 2 Forward" design system fully applied — warm palette, self-hosted fonts, signal color chips, mobile nav drawers, responsive layout.
+
+### Phase 3 — pending stakeholder input
+
+1. **Hosting enclave decision** → CAC/smartcard auth integration.
+2. **GovCloud account** → migrate from standard AWS to GovCloud per `docs/DEPLOY.md` runbook.
+3. **Sponsor identification** → adopt official USMC marks.
+4. **SME crosswalk review** → v0.1 → approved for field use (editor is live at `/admin/crosswalk`).
