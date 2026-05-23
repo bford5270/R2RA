@@ -7,10 +7,10 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-05-23 (Session 18)
+- **Last session**: 2026-05-23 (Session 19)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
 - **Branch**: `main`
-- **Last commit**: design system implementation (`3fb5d32`)
+- **Last commit**: Phase C — LoginPage redesign, font-display headings (`8aa97c5`)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
@@ -159,6 +159,35 @@ Will need user input to proceed on:
 - Merge conflict with partial design system from sessions since 17: resolved by merging both sides — remote's CSS-var namespaces (`surface/ink/accent/signal`) + my hex remapping of `neutral/green/red/amber/yellow/blue`.
 
 **Commits**: `3fb5d32` (pushed to `main`).
+
+---
+
+### 2026-05-23 — Session 19: UI polish — Phases A, B, C
+
+**In**: Design system landed in Session 18 (`3fb5d32`). neutral-200 remapped to page background (#E8DCC4), making all `border-neutral-200` invisible. `bg-white` renders jarring white against warm paper. Focus rings still scarlet. Three-phase polish plan approved by user.
+
+**Out**:
+
+- **Phase A — Regression fixes** (`9514313`): Replaced `border-neutral-200` → `border-neutral-400` (--border-1, #C8B295) across 22 non-print TSX files. `border-dashed border-neutral-200` → `border-dashed border-neutral-300` (still subtle but visible). Replaced `bg-white` context-appropriately: cards/panels/sidebars → `bg-neutral-100`, inputs/code blocks → `bg-neutral-50`. Focus rings: `focus:ring-scarlet/40` → `focus:ring-amber-500/40`, `focus:border-scarlet` → `focus:border-amber-500` to match `--border-focus` token. Print pages (`PrintPage.tsx`, `TrPrintPage.tsx`) intentionally left white.
+
+- **Phase B — Component upgrades** (`5b87935`):
+  - YES/NO/NA buttons: `min-h-[44px]`, `border-2`, signal-color active fills (`bg-green-100 border-green-600`, `bg-red-100 border-red-600`, `bg-neutral-300 border-neutral-500`), `flex-1` layout for equal touch targets. "NA" renamed "N/A".
+  - TrPage 1-5 ScoreButtons: `44px` squares, `border-2`, richer active palette.
+  - Status badges: `-100` shades instead of `-50` (neutral-300/blue-100/amber-100/green-100).
+  - Font-display headings: section h2/h3 in AssessmentPage, chapter h2 in TrPage.
+  - Mobile nav: sliding drawer sidebar (fixed, z-50, `lg:static`) with backdrop, hamburger bar (lg:hidden), close button — both AssessmentPage and TrPage. Sidebar is 72 (was 64) on desktop to give navigation items breathing room.
+
+- **Phase C — Page-level redesigns** (`8aa97c5`):
+  - **LoginPage**: logo-mark SVG + wordmark lockup (12px h), elevated card (`bg-neutral-50`, `shadow-2`, `rounded-lg`, `px-8 py-8`), eyebrow labels (uppercase tracking-wide), larger CTA (`py-3 font-bold`), TOTP input with `tracking-[0.3em]` for digit clarity. Mobile-friendly `max-w-sm` centered.
+  - **font-display** applied to major headings: PrintPage h1 + section h2, TrPrintPage h1 + chapter h2, FeedbackPage report h1, CreateAssessmentPage h1, ReadinessPage h1. Print pages retain white background throughout.
+
+**Key decisions**:
+- `border-neutral-300` on form inputs inside card surfaces (`bg-neutral-100`) is intentional — provides subtle visual affordance without the visual weight of `border-neutral-400`. Contextually appropriate.
+- Scarlet hover states (`hover:border-scarlet`, `hover:text-scarlet`) are acceptable interactive accents, distinct from focus rings.
+- Print pages kept fully white — only font-display applied to headings there; no surface/border changes.
+- Mobile nav drawer slides in with CSS translate (not display:none) so the transition is smooth on low-power devices.
+
+**Commits**: `9514313` (Phase A), `5b87935` (Phase B), `8aa97c5` (Phase C) — all pushed to `main`.
 
 ---
 
