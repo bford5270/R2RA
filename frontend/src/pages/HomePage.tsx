@@ -41,8 +41,19 @@ export function HomePage() {
     <main className="min-h-screen p-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between mt-8 mb-6">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900">Role 2 Readiness Assessment</h1>
-          <p className="text-xs text-neutral-400 mt-0.5">Unofficial — not endorsed by USMC, Navy, DHA, or JTS</p>
+          {/* Logo mark + wordmark */}
+          <div className="flex items-center gap-3 mb-2">
+            <img src="/logo-mark.svg" alt="" aria-hidden="true" className="h-7 w-7" style={{ color: 'var(--ink-1)' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, letterSpacing: '-0.01em', color: 'var(--ink-1)' }}>
+                ROLE 2
+              </span>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 9, letterSpacing: '0.16em', color: 'var(--ink-3)', marginTop: 1 }}>
+                READINESS ASSESSMENT
+              </span>
+            </div>
+          </div>
+          <p className="text-xs text-neutral-600 mt-0.5">Unofficial — not endorsed by USMC, Navy, DHA, or JTS</p>
           {exercise && (
             <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs text-blue-700">
               <span className="font-semibold">{exercise.name}</span>

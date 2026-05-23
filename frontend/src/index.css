@@ -3,120 +3,178 @@
 @tailwind utilities;
 
 /* ============================================================
-   Role 2 Forward design system — manual theme (default).
-   Fonts use system fallbacks because R2RA forbids external CDN
-   assets (CUI/OPSEC). If self-hosted Roboto Slab / IBM Plex Sans
-   webfonts are added under /public/fonts, swap them in via
-   @font-face declarations below.
-   ============================================================ */
+ * Role 2 Forward — Design System Tokens
+ * Two themes: data-theme="manual" (default) and data-theme="console"
+ * Set on <html> or any ancestor. Tokens cascade.
+ *
+ * Fonts are self-hosted via @fontsource (see main.tsx imports).
+ * CUI/OPSEC: no external CDN requests at runtime.
+ * ============================================================ */
 
 @layer base {
+
+  /* -----------------------------------------------------------
+   * BASE — typography & structural tokens (theme-independent)
+   * --------------------------------------------------------- */
   :root {
-    --cui-banner-height: 2rem;
-
-    /* Fonts (system fallbacks; replace with self-hosted webfonts
-       per OPSEC posture when available) */
+    /* Font families */
     --font-display: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-    --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --font-body:    'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-    /* Spacing */
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-5: 20px;
-    --space-6: 24px;
-    --space-8: 32px;
+    /* Type scale */
+    --fs-xs:  0.75rem;
+    --fs-sm:  0.875rem;
+    --fs-md:  1rem;
+    --fs-lg:  1.125rem;
+    --fs-xl:  1.25rem;
+    --fs-2xl: 1.5rem;
+    --fs-3xl: 2rem;
+    --fs-4xl: 2.5rem;
+    --fs-5xl: 3rem;
+
+    /* Line heights */
+    --lh-tight:   1.15;
+    --lh-display: 1.2;
+    --lh-ui:      1.4;
+    --lh-body:    1.5;
+
+    /* Letter spacing */
+    --ls-display:    -0.01em;
+    --ls-caps:        0.08em;
+    --ls-caps-tight:  0.04em;
+
+    /* Weights */
+    --fw-regular:  400;
+    --fw-medium:   500;
+    --fw-semibold: 600;
+    --fw-bold:     700;
+
+    /* Spacing (4px base) */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  20px;
+    --space-6:  24px;
+    --space-8:  32px;
     --space-10: 40px;
+    --space-14: 56px;
+    --space-18: 72px;
 
     /* Radii */
-    --radius-sm: 2px;
-    --radius-md: 4px;
-    --radius-lg: 8px;
+    --radius-sm:   2px;
+    --radius-md:   4px;
+    --radius-lg:   8px;
     --radius-pill: 9999px;
 
     /* Motion */
-    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-    --dur-fast: 120ms;
-    --dur-med: 200ms;
+    --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --ease-enter:    cubic-bezier(0.2, 0.0, 0, 1);
+    --dur-fast:  120ms;
+    --dur-med:   200ms;
+    --dur-slow:  280ms;
 
-    /* Signal colors (theme-independent) */
-    --signal-red: #B33A3A;
-    --signal-red-2: #8E2A2A;
-    --signal-amber: #C99A2E;
+    /* Signal colors — medical triage palette (theme-independent) */
+    --signal-red:     #B33A3A;
+    --signal-red-2:   #8E2A2A;
+    --signal-amber:   #C99A2E;
     --signal-amber-2: #A07820;
-    --signal-green: #6B7F4F;
+    --signal-green:   #6B7F4F;
     --signal-green-2: #54653D;
-    --signal-blue: #5B7A8B;
-    --signal-blue-2: #3F5A6B;
-    --expectant: #1B1B1B;
+    --signal-blue:    #5B7A8B;
+    --signal-blue-2:  #3F5A6B;
+    --expectant:      #1B1B1B;
+
+    /* CUI banner height reservation */
+    --cui-banner-height: 2rem;
   }
 
+  /* -----------------------------------------------------------
+   * THEME: MANUAL — warm coyote paper (assessment tool / default)
+   * --------------------------------------------------------- */
   :root,
   [data-theme="manual"] {
-    --surface-0: #E8DCC4;
-    --surface-1: #F1E8D4;
-    --surface-2: #DCCDB1;
-    --surface-3: #C8B295;
+    --surface-0:    #E8DCC4;
+    --surface-1:    #F1E8D4;
+    --surface-2:    #DCCDB1;
+    --surface-3:    #C8B295;
     --surface-elev: #FBF6EA;
 
-    --ink-1: #2A2218;
-    --ink-2: #4A3F30;
-    --ink-3: #6B5E4A;
-    --ink-4: #8A7B62;
+    --ink-1:       #2A2218;
+    --ink-2:       #4A3F30;
+    --ink-3:       #6B5E4A;
+    --ink-4:       #8A7B62;
     --ink-inverse: #F1E8D4;
 
-    --accent: #3F4A33;
+    --accent:       #3F4A33;
     --accent-hover: #4F5C41;
     --accent-press: #2F3826;
-    --accent-on: #F1E8D4;
+    --accent-on:    #F1E8D4;
     --accent-focus: var(--signal-amber);
 
-    --border-1: #C8B295;
-    --border-2: #A88B6E;
+    --border-1:     #C8B295;
+    --border-2:     #A88B6E;
     --border-focus: var(--signal-amber);
 
-    --shadow-1: 0 1px 0 rgba(58,48,37,0.08), 0 1px 2px rgba(58,48,37,0.06);
-    --shadow-2: 0 2px 4px rgba(58,48,37,0.10), 0 4px 8px rgba(58,48,37,0.06);
-    --shadow-3: 0 8px 24px rgba(58,48,37,0.18);
+    --shadow-1:     0 1px 0 rgba(58,48,37,.08), 0 1px 2px rgba(58,48,37,.06);
+    --shadow-2:     0 2px 4px rgba(58,48,37,.10), 0 4px 8px rgba(58,48,37,.06);
+    --shadow-3:     0 8px 24px rgba(58,48,37,.18);
+    --shadow-inset: inset 0 1px 0 rgba(58,48,37,.10);
 
-    --scrim: rgba(40,32,20,0.55);
+    --classification-bg: #3A3025;
+    --classification-fg: #F1E8D4;
+
+    --selection-bg: rgba(63,74,51,.25);
+    --scrim:        rgba(40,32,20,.55);
 
     color-scheme: light;
   }
 
+  /* -----------------------------------------------------------
+   * THEME: CONSOLE — dark olive / charcoal (scenario builder)
+   * --------------------------------------------------------- */
   [data-theme="console"] {
-    --surface-0: #161814;
-    --surface-1: #1E211C;
-    --surface-2: #22251F;
-    --surface-3: #2D3128;
+    --surface-0:    #161814;
+    --surface-1:    #1E211C;
+    --surface-2:    #22251F;
+    --surface-3:    #2D3128;
     --surface-elev: #2A2E26;
 
-    --ink-1: #E8DCC4;
-    --ink-2: #C8B295;
-    --ink-3: #8E8068;
-    --ink-4: #5B5345;
+    --ink-1:       #E8DCC4;
+    --ink-2:       #C8B295;
+    --ink-3:       #8E8068;
+    --ink-4:       #5B5345;
     --ink-inverse: #161814;
 
-    --accent: #C8B295;
+    --accent:       #C8B295;
     --accent-hover: #D5C2A8;
     --accent-press: #B09877;
-    --accent-on: #161814;
+    --accent-on:    #161814;
     --accent-focus: var(--signal-amber);
 
-    --border-1: #2D3128;
-    --border-2: #3F4438;
+    --border-1:     #2D3128;
+    --border-2:     #3F4438;
     --border-focus: var(--signal-amber);
 
-    --shadow-1: 0 1px 0 rgba(0,0,0,0.4);
-    --shadow-2: 0 2px 6px rgba(0,0,0,0.5);
-    --shadow-3: 0 12px 32px rgba(0,0,0,0.6);
+    --shadow-1:     0 1px 0 rgba(0,0,0,.4);
+    --shadow-2:     0 2px 6px rgba(0,0,0,.5);
+    --shadow-3:     0 12px 32px rgba(0,0,0,.6);
+    --shadow-inset: inset 0 1px 0 rgba(0,0,0,.5);
 
-    --scrim: rgba(0,0,0,0.65);
+    --classification-bg: #0E0F0C;
+    --classification-fg: #C8B295;
+
+    --selection-bg: rgba(200,178,149,.25);
+    --scrim:        rgba(0,0,0,.65);
 
     color-scheme: dark;
   }
+
+  /* -----------------------------------------------------------
+   * GLOBAL BASE
+   * --------------------------------------------------------- */
+  *, *::before, *::after { box-sizing: border-box; }
 
   html {
     font-family: var(--font-body);
@@ -132,27 +190,54 @@
     font-family: var(--font-body);
     color: var(--ink-1);
     background: var(--surface-0);
+    line-height: var(--lh-body);
     /* Reserve top + bottom for CUI banners */
     padding-top: var(--cui-banner-height);
     padding-bottom: var(--cui-banner-height);
   }
 
-  h1, h2, h3, h4 {
-    font-family: var(--font-display);
-    color: var(--ink-1);
-    letter-spacing: -0.01em;
-  }
-  h1 { font-size: 2.5rem; font-weight: 700; line-height: 1.2; }
-  h2 { font-size: 2rem; font-weight: 700; line-height: 1.2; }
-  h3 { font-size: 1.5rem; font-weight: 500; line-height: 1.2; }
-  h4 { font-size: 1.25rem; font-weight: 500; line-height: 1.15; }
+  /* Heading defaults — display font */
+  h1 { font-family: var(--font-display); font-size: var(--fs-4xl); font-weight: var(--fw-bold);    line-height: var(--lh-display); letter-spacing: var(--ls-display); color: var(--ink-1); }
+  h2 { font-family: var(--font-display); font-size: var(--fs-3xl); font-weight: var(--fw-bold);    line-height: var(--lh-display); letter-spacing: var(--ls-display); color: var(--ink-1); }
+  h3 { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: var(--fw-medium);  line-height: var(--lh-display); color: var(--ink-1); }
+  h4 { font-family: var(--font-display); font-size: var(--fs-xl);  font-weight: var(--fw-medium);  line-height: var(--lh-tight);   color: var(--ink-1); }
 
   code, kbd, samp { font-family: var(--font-mono); font-size: 0.92em; }
+
+  ::selection { background: var(--selection-bg); }
 
   :focus-visible {
     outline: 2px solid var(--border-focus);
     outline-offset: 2px;
   }
 
-  ::selection { background: rgba(63, 74, 51, 0.25); }
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-1); border-radius: var(--radius-pill); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+
+} /* end @layer base */
+
+/* -----------------------------------------------------------
+ * SEMANTIC UTILITY CLASSES (outside @layer so they aren't reset)
+ * --------------------------------------------------------- */
+.font-display { font-family: var(--font-display) !important; }
+.font-body    { font-family: var(--font-body) !important; }
+.font-mono    { font-family: var(--font-mono) !important; }
+
+/* Eyebrow / taxon labels */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* Monospace numerics (vitals, timestamps, IDs) */
+.numeric {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' on, 'lnum' on;
 }

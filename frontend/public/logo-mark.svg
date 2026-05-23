@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Role 2 Forward mark">
+  <g fill="currentColor">
+    <polygon points="2,8 24,8 38,32 24,56 2,56 16,32"></polygon>
+    <polygon points="26,8 48,8 62,32 48,56 26,56 40,32" opacity="0.55"></polygon>
+  </g>
+</svg>
