@@ -63,26 +63,32 @@ export function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6">
+    <main className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="inline-block w-2 h-8 bg-scarlet mr-2 align-middle" aria-hidden />
-          <span className="text-lg font-bold tracking-tight text-neutral-900 align-middle">
-            R2RA
-          </span>
-          <p className="mt-1 text-xs text-neutral-500">
-            Role 2 Readiness Assessment — sign in to continue
-          </p>
+
+        {/* Brand lockup */}
+        <div className="mb-10 text-center">
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <img src="/logo-mark.svg" alt="" aria-hidden="true" className="h-12 w-12" />
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, textAlign: 'left' }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, letterSpacing: '-0.01em', color: 'var(--ink-1)' }}>
+                ROLE 2
+              </span>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 9, letterSpacing: '0.16em', color: 'var(--ink-3)', marginTop: 3 }}>
+                READINESS ASSESSMENT
+              </span>
+            </div>
+          </div>
+          <p className="text-xs text-neutral-500">Sign in to continue</p>
         </div>
 
         {/* Card */}
-        <div className="border border-neutral-400 rounded bg-neutral-100 shadow-sm p-6">
+        <div className="bg-neutral-50 border border-neutral-400 rounded-lg shadow-2 px-8 py-8">
           {screen === 'credentials' ? (
             <form onSubmit={handleCredentials} noValidate>
-              <fieldset disabled={busy} className="space-y-4">
+              <fieldset disabled={busy} className="space-y-5">
                 <div>
-                  <label htmlFor="email" className="block text-xs font-semibold text-neutral-600 mb-1">
+                  <label htmlFor="email" className="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase tracking-wide">
                     Email
                   </label>
                   <input
@@ -92,11 +98,11 @@ export function LoginPage() {
                     required
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2.5 text-sm bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-xs font-semibold text-neutral-600 mb-1">
+                  <label htmlFor="password" className="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase tracking-wide">
                     Password
                   </label>
                   <input
@@ -106,7 +112,7 @@ export function LoginPage() {
                     required
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
+                    className="w-full rounded border border-neutral-300 px-3 py-2.5 text-sm bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
                   />
                 </div>
 
@@ -118,23 +124,23 @@ export function LoginPage() {
 
                 <button
                   type="submit"
-                  className="w-full rounded bg-scarlet text-white text-sm font-semibold px-4 py-2.5 hover:bg-scarlet-dark transition-colors disabled:opacity-50"
+                  className="w-full rounded bg-scarlet text-white text-sm font-bold px-4 py-3 hover:bg-scarlet-dark transition-colors disabled:opacity-50 mt-2"
                 >
-                  {busy ? 'Signing in…' : 'Sign in'}
+                  {busy ? 'Signing in…' : 'Sign in →'}
                 </button>
               </fieldset>
             </form>
           ) : (
             <form onSubmit={handleTotp} noValidate>
-              <div className="mb-4">
-                <p className="text-sm font-semibold text-neutral-800">Two-factor authentication</p>
+              <div className="mb-6 text-center">
+                <p className="font-display text-base font-semibold text-neutral-800">Two-factor</p>
                 <p className="mt-1 text-xs text-neutral-500">
-                  Enter the 6-digit code from your authenticator app.
+                  Enter the 6-digit code from your authenticator.
                 </p>
               </div>
-              <fieldset disabled={busy} className="space-y-4">
+              <fieldset disabled={busy} className="space-y-5">
                 <div>
-                  <label htmlFor="totp" className="block text-xs font-semibold text-neutral-600 mb-1">
+                  <label htmlFor="totp" className="block text-xs font-semibold text-neutral-500 mb-1.5 uppercase tracking-wide">
                     Authenticator code
                   </label>
                   <input
@@ -148,8 +154,8 @@ export function LoginPage() {
                     required
                     value={totpCode}
                     onChange={e => setTotpCode(e.target.value.replace(/\D/g, ''))}
-                    className="w-full rounded border border-neutral-300 px-3 py-2 text-sm font-mono tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
-                    placeholder="000000"
+                    className="w-full rounded border border-neutral-300 px-3 py-3 text-lg font-mono tracking-[0.3em] text-center bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-500 disabled:opacity-50"
+                    placeholder="— — — — — —"
                   />
                 </div>
 
@@ -161,23 +167,23 @@ export function LoginPage() {
 
                 <button
                   type="submit"
-                  className="w-full rounded bg-scarlet text-white text-sm font-semibold px-4 py-2.5 hover:bg-scarlet-dark transition-colors disabled:opacity-50"
+                  className="w-full rounded bg-scarlet text-white text-sm font-bold px-4 py-3 hover:bg-scarlet-dark transition-colors disabled:opacity-50"
                 >
-                  {busy ? 'Verifying…' : 'Verify'}
+                  {busy ? 'Verifying…' : 'Verify →'}
                 </button>
                 <button
                   type="button"
                   onClick={() => { setScreen('credentials'); setError(null); setTotpCode('') }}
-                  className="w-full text-xs text-neutral-500 hover:text-neutral-700 py-1"
+                  className="w-full text-xs text-neutral-400 hover:text-neutral-600 py-1 transition-colors"
                 >
-                  ← Back
+                  ← Back to sign in
                 </button>
               </fieldset>
             </form>
           )}
         </div>
 
-        <p className="mt-6 text-center text-xs text-neutral-400">
+        <p className="mt-8 text-center text-[10px] text-neutral-400 leading-relaxed">
           Unofficial — not endorsed by USMC, Navy, DHA, or JTS
         </p>
       </div>

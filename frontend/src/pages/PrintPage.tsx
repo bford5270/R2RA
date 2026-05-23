@@ -272,7 +272,7 @@ function PrintSection({
     <div className="mb-6 break-inside-avoid-page">
       {/* Section header */}
       <div className="flex items-baseline justify-between mb-1 border-b-2 border-neutral-800 pb-1">
-        <h2 className="text-[12px] font-bold text-neutral-900 uppercase tracking-wide">
+        <h2 className="font-display text-[12px] font-bold text-neutral-900 uppercase tracking-wide">
           {typeof section.ordinal === 'number' ? `${section.ordinal}. ` : ''}{section.title}
         </h2>
         <span className="text-[9px] text-neutral-400 shrink-0 ml-4">{answered}/{total}</span>
@@ -464,7 +464,7 @@ export function PrintPage() {
           </p>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-xl font-bold text-neutral-900 leading-tight">
+              <h1 className="font-display text-xl font-bold text-neutral-900 leading-tight">
                 JTS Role 2 Readiness Assessment
               </h1>
               <p className="text-sm text-neutral-600 mt-0.5">{manifest.subtitle}</p>

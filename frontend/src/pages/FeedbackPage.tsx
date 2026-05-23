@@ -262,7 +262,7 @@ export function FeedbackPage() {
           </p>
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-xl font-black text-neutral-900">Assessment Feedback Report</h1>
+              <h1 className="font-display text-xl font-black text-neutral-900">Assessment Feedback Report</h1>
               <p className="text-sm text-neutral-500 mt-0.5">Role 2 Readiness Assessment · JTS Form + NAVMC 3500.84B</p>
             </div>
             <div className="text-right text-xs text-neutral-500 space-y-0.5">

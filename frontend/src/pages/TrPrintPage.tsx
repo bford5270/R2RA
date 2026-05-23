@@ -76,7 +76,7 @@ function ChapterBlock({
   return (
     <div className="mb-6 break-inside-avoid-page">
       <div className="flex items-baseline justify-between mb-1 border-b-2 border-neutral-200 pb-1">
-        <h2 className="text-sm font-bold text-neutral-900">
+        <h2 className="font-display text-sm font-bold text-neutral-900">
           Ch {chapter.number} — {chapter.title}
         </h2>
         <span className="text-[10px] text-neutral-400">{answered}/{wickets.length}</span>
@@ -162,7 +162,7 @@ export function TrPrintPage() {
               <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
                 CONTROLLED UNCLASSIFIED INFORMATION // BASIC
               </p>
-              <h1 className="text-xl font-bold text-neutral-900">
+              <h1 className="font-display text-xl font-bold text-neutral-900">
                 T&R Readiness Record
               </h1>
               <p className="text-sm text-neutral-600 mt-0.5">NAVMC 3500.84B — HSS T&R Manual</p>

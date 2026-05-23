@@ -65,7 +65,7 @@ export function ReadinessPage() {
         </Link>
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-lg font-bold text-neutral-900">Readiness Dashboard</h1>
+            <h1 className="font-display text-lg font-bold text-neutral-900">Readiness Dashboard</h1>
             <p className="text-xs text-neutral-400 mt-0.5">Latest assessment per unit · all statuses</p>
           </div>
           <div className="flex items-center gap-4 text-right">

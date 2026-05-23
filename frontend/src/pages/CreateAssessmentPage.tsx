@@ -49,7 +49,7 @@ export function CreateAssessmentPage() {
           >
             ← Back
           </button>
-          <h1 className="text-xl font-bold text-neutral-900">New Assessment</h1>
+          <h1 className="font-display text-xl font-bold text-neutral-900">New Assessment</h1>
           <p className="text-sm text-neutral-500 mt-1">
             JTS Role 2 Readiness Assessment
           </p>
