@@ -4,6 +4,7 @@ import { api } from '../lib/api'
 import { useManifest } from '@/hooks/useContent'
 import type { ReadinessRow, SectionStats } from '../types/reports'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
+import { StatusChip } from '../components/StatusChip'
 
 // ---- cell color --------------------------------------------------------
 
@@ -23,15 +24,6 @@ function cellColor(s: SectionStats | undefined): string {
 function cellTitle(s: SectionStats | undefined): string {
   if (!s) return 'No responses'
   return `YES ${s.yes}  NO ${s.no}  N/A ${s.na}  unanswered ${s.unanswered}`
-}
-
-// ---- status badge -------------------------------------------------------
-
-const STATUS_COLOR: Record<string, string> = {
-  draft:             'bg-neutral-100 text-neutral-500',
-  in_progress:       'bg-blue-50 text-blue-700',
-  ready_for_review:  'bg-yellow-50 text-yellow-700',
-  certified:         'bg-green-50 text-green-700',
 }
 
 // ---- main ---------------------------------------------------------------
@@ -161,9 +153,7 @@ export function ReadinessPage() {
                       </span>
                     </td>
                     <td className="px-2 py-2 border border-neutral-400 text-center whitespace-nowrap">
-                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${STATUS_COLOR[row.status] ?? ''}`}>
-                        {row.status.replace('_', ' ')}
-                      </span>
+                      <StatusChip status={row.status} />
                     </td>
                     <td className="px-2 py-2 border border-neutral-400 text-center whitespace-nowrap">
                       <span className="font-mono">{pct}%</span>

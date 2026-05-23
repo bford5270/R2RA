@@ -5,16 +5,7 @@ import type { Assessment } from '../types/assessment'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 import { useAuth } from '../lib/auth'
 import { useExercise } from '../lib/exercise'
-
-function statusBadge(status: string) {
-  const map: Record<string, string> = {
-    draft:            'bg-neutral-300 text-neutral-700',
-    in_progress:      'bg-blue-100 text-blue-700',
-    ready_for_review: 'bg-amber-100 text-amber-700',
-    certified:        'bg-green-100 text-green-700',
-  }
-  return map[status] ?? 'bg-neutral-300 text-neutral-700'
-}
+import { StatusChip } from '../components/StatusChip'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -55,7 +46,7 @@ export function HomePage() {
           </div>
           <p className="text-xs text-neutral-600 mt-0.5">Unofficial — not endorsed by USMC, Navy, DHA, or JTS</p>
           {exercise && (
-            <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs text-blue-700">
+            <div className="mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium border" style={{ background: 'rgba(91,122,139,0.15)', color: 'var(--signal-blue)', borderColor: 'rgba(91,122,139,0.30)' }}>
               <span className="font-semibold">{exercise.name}</span>
               <Link
                 to="/exercise-select"
@@ -164,9 +155,7 @@ export function HomePage() {
                   {MISSION_TYPE_LABELS[a.mission_type]} · {new Date(a.started_at).toLocaleDateString()}
                 </div>
               </div>
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusBadge(a.status)}`}>
-                {a.status.replace('_', ' ')}
-              </span>
+              <StatusChip status={a.status} />
             </Link>
           ))}
         </div>

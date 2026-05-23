@@ -1,3 +1,4 @@
+import type React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
@@ -18,12 +19,12 @@ const SCORE_LABELS: Record<number, string> = {
   5: 'Exceeds standard',
 }
 
-const SCORE_ACTIVE: Record<number, string> = {
-  1: 'border-red-600 bg-red-100 text-red-700 shadow-sm',
-  2: 'border-orange-500 bg-orange-100 text-orange-700 shadow-sm',
-  3: 'border-amber-500 bg-amber-100 text-amber-700 shadow-sm',
-  4: 'border-green-600 bg-green-100 text-green-700 shadow-sm',
-  5: 'border-green-700 bg-green-200 text-green-800 shadow-sm',
+const SCORE_ACTIVE_STYLE: Record<number, React.CSSProperties> = {
+  1: { borderColor: 'var(--signal-red)',   background: 'rgba(179,58,58,0.18)',  color: 'var(--signal-red)' },
+  2: { borderColor: 'var(--signal-amber)', background: 'rgba(201,154,46,0.10)', color: 'var(--signal-amber)' },
+  3: { borderColor: 'var(--signal-amber)', background: 'rgba(201,154,46,0.20)', color: 'var(--signal-amber)' },
+  4: { borderColor: 'var(--signal-green)', background: 'rgba(107,127,79,0.22)', color: 'var(--signal-green)' },
+  5: { borderColor: 'var(--signal-green)', background: 'rgba(107,127,79,0.32)', color: 'var(--signal-green)' },
 }
 
 // ---------------------------------------------------------------------------
@@ -52,7 +53,8 @@ function ScoreButtons({
           type="button"
           // clicking the active score clears it (toggle off)
           onClick={() => onChange(value === n ? null : n)}
-          className={`${base} ${value === n ? SCORE_ACTIVE[n] : inactive}`}
+          className={`${base} ${value === n ? 'shadow-sm' : inactive}`}
+          style={value === n ? SCORE_ACTIVE_STYLE[n] : undefined}
           title={SCORE_LABELS[n]}
         >
           {n}

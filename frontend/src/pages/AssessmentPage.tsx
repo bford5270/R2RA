@@ -14,6 +14,7 @@ import type { AssessmentItem, Section, SectionManifestEntry } from '@/types/cont
 import type { CrosswalkEntry } from '../types/crosswalk'
 import type { UserOut, AssignmentOut } from '../types/user'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
+import { StatusChip } from '../components/StatusChip'
 
 function isVisible(section: SectionManifestEntry, missionType: string): boolean {
   if (!section.visible_when) return true
@@ -75,12 +76,12 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
   }
 
   const btnBase = 'flex-1 text-sm font-bold py-2.5 px-3 rounded border-2 transition-all select-none min-h-[44px] tracking-wide'
-  const active = (s: ResponseStatus) => ({
-    yes:  'border-green-600 bg-green-100 text-green-700 shadow-sm',
-    no:   'border-red-600 bg-red-100 text-red-700 shadow-sm',
-    na:   'border-neutral-500 bg-neutral-300 text-neutral-700 shadow-sm',
-    unanswered: '',
-  }[s])
+  const ACTIVE_STYLE: Record<ResponseStatus, React.CSSProperties> = {
+    yes:        { borderColor: 'var(--signal-green)', background: 'rgba(107,127,79,0.12)',  color: 'var(--signal-green)' },
+    no:         { borderColor: 'var(--signal-red)',   background: 'rgba(179,58,58,0.10)',   color: 'var(--signal-red)' },
+    na:         { borderColor: 'var(--ink-3)',        background: 'var(--surface-2)',        color: 'var(--ink-2)' },
+    unanswered: {},
+  }
   const inactive = 'border-neutral-400 bg-neutral-100 text-neutral-500 hover:border-neutral-500 hover:text-neutral-700 hover:bg-neutral-50'
 
   return (
@@ -95,7 +96,8 @@ function ResponseControls({ assessmentId, itemId, current, locked, onSave }: Res
             type="button"
             onClick={() => !locked && handleToggle(s)}
             disabled={locked}
-            className={`${btnBase} ${status === s ? active(s) : inactive} ${locked ? 'opacity-50 cursor-default' : ''}`}
+            className={`${btnBase} ${status === s ? 'shadow-sm' : inactive} ${locked ? 'opacity-50 cursor-default' : ''}`}
+            style={status === s ? ACTIVE_STYLE[s] : undefined}
           >
             {s === 'na' ? 'N/A' : s.toUpperCase()}
           </button>
@@ -432,13 +434,6 @@ const STATUS_NEXT_LABEL: Record<string, string> = {
   in_progress:      'Submit for Review',
   ready_for_review: 'Certify',
 }
-const STATUS_COLOR: Record<string, string> = {
-  draft:            'bg-neutral-300 text-neutral-700',
-  in_progress:      'bg-blue-100 text-blue-700',
-  ready_for_review: 'bg-amber-100 text-amber-700',
-  certified:        'bg-green-100 text-green-700',
-}
-
 // ---------------------------------------------------------------------------
 // Crosswalk panel
 // ---------------------------------------------------------------------------
@@ -1205,9 +1200,7 @@ export function AssessmentPage() {
           )}
 
           <div className="flex items-center justify-between pt-1">
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${STATUS_COLOR[assessment.status]}`}>
-              {STATUS_LABELS[assessment.status]}
-            </span>
+            <StatusChip status={assessment.status} />
             <span className="text-[10px] text-neutral-400">{answered} answered</span>
           </div>
 
@@ -1336,9 +1329,7 @@ export function AssessmentPage() {
             <p className="text-sm font-bold text-neutral-800 truncate">{assessment?.unit_name}</p>
             <p className="text-[10px] text-neutral-500 font-mono">{assessment?.unit_uic}</p>
           </div>
-          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${STATUS_COLOR[assessment?.status ?? 'draft']}`}>
-            {STATUS_LABELS[assessment?.status ?? 'draft']}
-          </span>
+          <StatusChip status={assessment?.status ?? 'draft'} className="shrink-0" />
           <button
             onClick={() => setShowCrosswalk(v => !v)}
             className={[
