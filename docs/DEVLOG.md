@@ -7,10 +7,10 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-05-23 (Session 20)
+- **Last session**: 2026-05-23 (Session 21)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
 - **Branch**: `main`
-- **Last commit**: Session 20 close — strategy doc updated to current (`185f57c`)
+- **Last commit**: Session 21 — scarlet sidebar stripe + signal nav indicators + CF cache fix (`08ff17d`)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
@@ -220,6 +220,34 @@ Will need user input to proceed on:
 - `StatusChip` uses inline styles throughout (not Tailwind) because the rgba values + CSS var combinations can't be expressed in Tailwind's utility system.
 
 **Commit**: `9dd1cd7` — pushed to `main`.
+
+---
+
+### 2026-05-23 — Session 21: T&R crosswalk reverse-link (JTS → T&R signal), sidebar scarlet stripe, signal nav indicators
+
+**In**: Session 20 StatusChip pattern landed. User asked to build out T&R further — specifically: per-wicket notes (like JTS items have), and cross-referencing JTS responses into T&R to surface affirmative/negative signals. Also visual complaint: "the whole thing is black and white?"
+
+**Out**:
+
+- **`TrJtsEvidence` backend endpoint** (`GET /assessments/{id}/tr-jts-evidence`): Inverts crosswalk YAML (T&R event code → JTS items) and joins against the assessment's JTS responses. Returns per-event-code signal aggregate: `go / no_go / mixed / unanswered` + per-item status, confidence, note, rationale.
+
+- **`JtsEvidencePanel`** (TrPage): Collapsed panel on each WicketCard showing which JTS items cross-reference the wicket, their YES/NO/NA/unanswered status, confidence badge, note, rationale, and a GO/NO-GO/MIXED/UNANSWERED aggregate chip.
+
+- **`TrScoreControls` auto-note**: When `effectiveScore ≤ 2`, the note textarea expands automatically with a red "Note required for scores 1–2" label.
+
+- **`types/assessment.ts`**: Added `TrJtsEvidence` and `TrJtsEvidenceItem` interfaces. `api.ts`: Added `getTrJtsEvidence()` call.
+
+- **Sidebar chroma fix**: AssessmentPage and TrPage sidebars get `bg-neutral-200 border-t-4 border-t-scarlet`; main content area `bg-neutral-50`. Creates visible warm-vs-cool hierarchy without white/black.
+
+- **Signal nav completion indicators**: `SectionNav` and TrPage chapter nav items now show a signal-green or signal-amber left border (`border-l-2`) + matching number circle border/text + counter text color based on completion state. Active item remains scarlet.
+
+- **CloudFront invalidation**: `buildspec.yml` changed from `"/index.html" "/*.js" "/*.css"` to `"/*"` to bust service worker and all cached paths on each deploy.
+
+**Key decisions**:
+- JTS→T&R evidence direction is read-only display (no separate T&R response inputs triggered by JTS state). The score control is still entirely manual; evidence panel is informational context only.
+- Note auto-expand at score ≤ 2 is UX nudge only — not a hard validation block. Field assessors may score low without a note if they choose.
+
+**Commits**: `69092e8` (T&R crosswalk + score controls), `08ff17d` (visual design) — pushed to `main`.
 
 ---
 
