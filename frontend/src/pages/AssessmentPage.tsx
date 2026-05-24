@@ -1117,7 +1117,7 @@ export function AssessmentPage() {
 
       {/* Left pane — section nav */}
       <aside className={[
-        'w-72 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col',
+        'w-72 shrink-0 border-r border-neutral-400 bg-neutral-200 overflow-y-auto flex flex-col border-t-4 border-t-scarlet',
         'fixed inset-y-0 left-0 z-50 transition-transform duration-200',
         'lg:static lg:translate-x-0',
         showMobileNav ? 'translate-x-0' : '-translate-x-full',
@@ -1313,9 +1313,9 @@ export function AssessmentPage() {
       </aside>
 
       {/* Main pane — items with response controls */}
-      <main className="flex-1 overflow-y-auto bg-neutral-100 flex flex-col min-w-0">
+      <main className="flex-1 overflow-y-auto bg-neutral-50 flex flex-col min-w-0">
         {/* Mobile-only sticky top bar */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-100 border-b border-neutral-400 shrink-0">
+        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-50 border-b border-neutral-400 shrink-0">
           <button
             onClick={() => setShowMobileNav(true)}
             className="p-2 -ml-2 text-neutral-600 rounded hover:bg-neutral-200 transition-colors"

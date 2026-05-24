@@ -628,7 +628,7 @@ export function TrPage() {
 
       {/* Left pane — chapter nav */}
       <aside className={[
-        'w-72 shrink-0 border-r border-neutral-400 bg-neutral-100 overflow-y-auto flex flex-col',
+        'w-72 shrink-0 border-r border-neutral-400 bg-neutral-200 overflow-y-auto flex flex-col border-t-4 border-t-scarlet',
         'fixed inset-y-0 left-0 z-50 transition-transform duration-200',
         'lg:static lg:translate-x-0',
         showMobileNav ? 'translate-x-0' : '-translate-x-full',
@@ -683,20 +683,36 @@ export function TrPage() {
                 key={ch.number}
                 onClick={() => setActiveChapter(ch.number)}
                 className={[
-                  'flex items-start gap-2 px-3 py-2 rounded text-left transition-colors',
+                  'flex items-start gap-2 px-3 py-2 rounded text-left transition-colors border-l-2',
                   isActive
-                    ? 'bg-scarlet text-white font-semibold'
-                    : 'text-neutral-700 hover:bg-neutral-100',
+                    ? 'bg-scarlet text-white font-semibold border-scarlet'
+                    : answered === total && total > 0
+                    ? 'text-neutral-700 hover:bg-neutral-100 border-signal-green'
+                    : answered > 0
+                    ? 'text-neutral-700 hover:bg-neutral-100 border-signal-amber'
+                    : 'text-neutral-600 hover:bg-neutral-100 border-transparent',
                 ].join(' ')}
               >
                 <span className={[
                   'inline-flex items-center justify-center w-5 h-5 rounded-full text-[9px] font-bold shrink-0 border mt-0.5',
-                  isActive ? 'border-white/40 text-white' : 'border-neutral-300 text-neutral-400',
+                  isActive
+                    ? 'border-white/40 text-white'
+                    : answered === total && total > 0
+                    ? 'border-signal-green text-signal-green'
+                    : answered > 0
+                    ? 'border-signal-amber text-signal-amber'
+                    : 'border-neutral-300 text-neutral-400',
                 ].join(' ')}>
                   {ch.number}
                 </span>
                 <span className="flex-1 leading-snug text-xs">{ch.title}</span>
-                <span className={['text-[9px] shrink-0 mt-0.5', isActive ? 'text-white/70' : 'text-neutral-400'].join(' ')}>
+                <span className={[
+                  'text-[9px] shrink-0 mt-0.5',
+                  isActive ? 'text-white/70'
+                  : answered === total && total > 0 ? 'text-signal-green'
+                  : answered > 0 ? 'text-signal-amber'
+                  : 'text-neutral-400',
+                ].join(' ')}>
                   {answered}/{total}
                 </span>
               </button>
@@ -706,9 +722,9 @@ export function TrPage() {
       </aside>
 
       {/* Main pane — wickets */}
-      <main className="flex-1 overflow-y-auto bg-neutral-100 flex flex-col min-w-0">
+      <main className="flex-1 overflow-y-auto bg-neutral-50 flex flex-col min-w-0">
         {/* Mobile-only sticky top bar */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-100 border-b border-neutral-400 shrink-0">
+        <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-50 border-b border-neutral-400 shrink-0">
           <button
             onClick={() => setShowMobileNav(true)}
             className="p-2 -ml-2 text-neutral-600 rounded hover:bg-neutral-200 transition-colors"

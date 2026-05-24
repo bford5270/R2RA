@@ -26,11 +26,11 @@ phases:
         aws s3 cp frontend/dist/index.html s3://$FRONTEND_BUCKET/index.html
         --cache-control "no-cache, no-store, must-revalidate"
 
-      # Bust the CDN so users get the new index.html immediately
+      # Bust the CDN — invalidate everything so SW and assets are fresh
       - >
         aws cloudfront create-invalidation
         --distribution-id $CF_DISTRIBUTION_ID
-        --paths "/index.html" "/*.js" "/*.css"
+        --paths "/*"
 
       # Remove files that should not go into the EB artifact
       - find backend -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true

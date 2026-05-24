@@ -47,10 +47,14 @@ export function SectionNav({ sections, activeSectionId, onSelect, responses, ass
             key={s.id}
             onClick={() => onSelect(s.id)}
             className={[
-              'flex items-center gap-2 px-3 py-2 rounded text-sm text-left transition-colors',
+              'flex items-center gap-2 px-3 py-2 rounded text-sm text-left transition-colors border-l-2',
               isActive
-                ? 'bg-scarlet text-white font-semibold'
-                : 'text-neutral-700 hover:bg-neutral-100',
+                ? 'bg-scarlet text-white font-semibold border-scarlet'
+                : complete
+                ? 'text-neutral-700 hover:bg-neutral-100 border-signal-green'
+                : started
+                ? 'text-neutral-700 hover:bg-neutral-100 border-signal-amber'
+                : 'text-neutral-600 hover:bg-neutral-100 border-transparent',
             ].join(' ')}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -59,6 +63,10 @@ export function SectionNav({ sections, activeSectionId, onSelect, responses, ass
                 'inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold shrink-0 border',
                 isActive
                   ? 'border-white/40 text-white'
+                  : complete
+                  ? 'border-signal-green text-signal-green'
+                  : started
+                  ? 'border-signal-amber text-signal-amber'
                   : 'border-neutral-300 text-neutral-400',
               ].join(' ')}
             >
@@ -79,17 +87,13 @@ export function SectionNav({ sections, activeSectionId, onSelect, responses, ass
                 {assignees.length > 2 && (
                   <span className="text-[8px] text-neutral-400">+{assignees.length - 2}</span>
                 )}
-                {total > 0 ? (
+                {total > 0 && (
                   <span
-                    className={`text-[9px] font-mono font-semibold tabular-nums ${complete ? 'text-green-600' : started ? 'text-amber-600' : 'text-neutral-300'}`}
+                    className={`text-[9px] font-mono font-semibold tabular-nums ${complete ? 'text-signal-green' : started ? 'text-signal-amber' : 'text-neutral-300'}`}
                     title={`${answeredCount} of ${total} items answered`}
                   >
                     {answeredCount}/{total}
                   </span>
-                ) : (
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${started ? 'bg-green-500' : 'bg-neutral-200'}`}
-                  />
                 )}
               </div>
             )}
