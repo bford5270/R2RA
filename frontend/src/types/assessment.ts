@@ -21,6 +21,7 @@ export interface Assessment {
   component: string | null
   unique_identifier: string | null
   scenario_ref: string | null
+  exercise_id: string | null
   started_at: string
   certified_at: string | null
 }
@@ -44,6 +45,7 @@ export interface AssessmentCreate {
   component?: string
   unique_identifier?: string
   scenario_ref?: string | null
+  exercise_id?: string | null
 }
 
 export interface ItemResponse {
