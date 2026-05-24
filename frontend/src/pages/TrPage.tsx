@@ -34,24 +34,24 @@ const SCORE_ACTIVE_STYLE: Record<number, React.CSSProperties> = {
 function ScoreButtons({
   value,
   onChange,
-  small = false,
+  size = 'normal',
 }: {
   value: number | null
   onChange: (s: number | null) => void
-  small?: boolean
+  size?: 'small' | 'normal' | 'field'
 }) {
-  const base = small
-    ? 'text-[9px] font-bold w-6 h-6 flex items-center justify-center rounded border-2 transition-all select-none'
-    : 'text-sm font-bold w-11 h-11 flex items-center justify-center rounded border-2 transition-all select-none'
+  const base =
+    size === 'small'  ? 'text-[9px] font-bold w-6 h-6 flex items-center justify-center rounded border-2 transition-all select-none' :
+    size === 'field'  ? 'text-base font-bold w-14 h-14 flex items-center justify-center rounded-lg border-2 transition-all select-none' :
+                        'text-sm font-bold w-11 h-11 flex items-center justify-center rounded border-2 transition-all select-none'
   const inactive = 'border-neutral-400 bg-neutral-100 text-neutral-500 hover:border-neutral-500 hover:text-neutral-700'
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-1">
       {[1, 2, 3, 4, 5].map(n => (
         <button
           key={n}
           type="button"
-          // clicking the active score clears it (toggle off)
           onClick={() => onChange(value === n ? null : n)}
           className={`${base} ${value === n ? 'shadow-sm' : inactive}`}
           style={value === n ? SCORE_ACTIVE_STYLE[n] : undefined}
@@ -84,20 +84,16 @@ function TrScoreControls({
     status: TrResponseStatus,
     note: string | null,
     score: number | null,
-    captureData: { components: (number | null)[] } | null,
+    captureData: { components: (number | null)[]; component_notes?: string[] } | null,
   ) => Promise<void>
 }) {
-  const [showNote, setShowNote] = useState(!!current?.note)
-  const [showComponents, setShowComponents] = useState(false)
   const [note, setNote] = useState(current?.note ?? '')
   const [saveState, setSaveState] = useState<SaveState>('idle')
   const noteTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Derive component scores from current response (backwards-compat: default to nulls)
   const compScores: (number | null)[] = useMemo(() => {
     const raw = current?.capture_data?.components
     if (!Array.isArray(raw)) return Array(components.length).fill(null)
-    // Pad or trim to match current component count
     const result: (number | null)[] = Array(components.length).fill(null)
     raw.forEach((v, i) => {
       if (i < result.length) result[i] = typeof v === 'number' ? v : null
@@ -105,18 +101,21 @@ function TrScoreControls({
     return result
   }, [current, components.length])
 
-  const overallScore = current?.score ?? null
+  const [compNotes, setCompNotes] = useState<string[]>(() => {
+    const raw = (current?.capture_data as Record<string, unknown> | null)?.component_notes
+    if (!Array.isArray(raw)) return Array(components.length).fill('')
+    const result: string[] = Array(components.length).fill('')
+    ;(raw as unknown[]).forEach((v, i) => {
+      if (i < result.length) result[i] = typeof v === 'string' ? v : ''
+    })
+    return result
+  })
 
-  // Auto-derive from component scores via weakest-link (min)
+  const overallScore = current?.score ?? null
   const scoredComponents = compScores.filter((s): s is number => s !== null)
   const autoScore = scoredComponents.length > 0 ? Math.min(...scoredComponents) : null
-
-  // Effective score: explicit override wins; else auto
   const effectiveScore = overallScore ?? autoScore
-
-  // Auto-expose note as corrective action when score indicates deficiency
   const isLowScore = effectiveScore !== null && effectiveScore <= 2
-  const noteVisible = showNote || isLowScore
 
   function deriveStatus(score: number | null): TrResponseStatus {
     if (score === null) return current?.status ?? 'unanswered'
@@ -127,6 +126,7 @@ function TrScoreControls({
     nextOverall: number | null,
     nextComps: (number | null)[],
     nextNote: string | null,
+    nextCompNotes: string[],
   ) {
     const scored2 = nextComps.filter((s): s is number => s !== null)
     const auto2 = scored2.length > 0 ? Math.min(...scored2) : null
@@ -134,7 +134,10 @@ function TrScoreControls({
     const status = deriveStatus(eff2)
     setSaveState('saving')
     try {
-      await onSave(eventCode, status, nextNote, nextOverall, { components: nextComps })
+      await onSave(eventCode, status, nextNote, nextOverall, {
+        components: nextComps,
+        component_notes: nextCompNotes,
+      })
       setSaveState('saved')
       setTimeout(() => setSaveState('idle'), 1200)
     } catch {
@@ -143,132 +146,143 @@ function TrScoreControls({
   }
 
   function handleOverall(s: number | null) {
-    persist(s, compScores, note || null)
+    persist(s, compScores, note || null, compNotes)
   }
 
   function handleComponent(idx: number, s: number | null) {
     const next = [...compScores]
     next[idx] = s
-    persist(overallScore, next, note || null)
+    persist(overallScore, next, note || null, compNotes)
   }
 
-  function handleNoteChange(val: string) {
-    setNote(val)
+  function handleCompNote(idx: number, val: string) {
+    const next = [...compNotes]
+    next[idx] = val
+    setCompNotes(next)
     if (noteTimer.current) clearTimeout(noteTimer.current)
     noteTimer.current = setTimeout(() => {
-      persist(overallScore, compScores, val || null)
+      persist(overallScore, compScores, note || null, next)
     }, 600)
   }
 
-  const statusLabel =
-    effectiveScore === null
-      ? '—'
-      : effectiveScore >= 4
-        ? '✓ GO'
-        : '✗ NO-GO'
-  const statusClass =
-    effectiveScore === null
-      ? 'text-neutral-400'
-      : effectiveScore >= 4
-        ? 'text-green-700 font-semibold'
-        : 'text-red-600 font-semibold'
+  function handleNote(val: string) {
+    setNote(val)
+    if (noteTimer.current) clearTimeout(noteTimer.current)
+    noteTimer.current = setTimeout(() => {
+      persist(overallScore, compScores, val || null, compNotes)
+    }, 600)
+  }
+
+  const statusLabel = effectiveScore === null ? '—' : effectiveScore >= 4 ? '✓ GO' : '✗ NO-GO'
+  const statusStyle: React.CSSProperties =
+    effectiveScore === null ? { color: 'var(--ink-3)' } :
+    effectiveScore >= 4    ? { color: 'var(--signal-green)', fontWeight: 700 } :
+                             { color: 'var(--signal-red)',   fontWeight: 700 }
 
   return (
-    <div className="mt-2 flex flex-col gap-2">
-      {/* Overall score row */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <ScoreButtons value={overallScore} onChange={handleOverall} />
-        <span className={`text-[10px] ${statusClass}`}>{statusLabel}</span>
-        {autoScore !== null && overallScore === null && (
-          <span className="text-[10px] text-neutral-400 italic">
-            auto: {autoScore} from components
+    <div className="mt-3 flex flex-col gap-4">
+
+      {/* Scale legend */}
+      <div className="flex flex-wrap gap-x-4 gap-y-0.5">
+        {Object.entries(SCORE_LABELS).map(([n, label]) => (
+          <span key={n} className="text-[10px] text-neutral-500">
+            <span className="font-bold text-neutral-700">{n}</span> = {label}
           </span>
-        )}
-        <span className="ml-auto text-[10px]">
-          {saveState === 'saving' && <span className="text-neutral-400">saving…</span>}
-          {saveState === 'saved'  && <span className="text-green-600">saved</span>}
-          {saveState === 'error'  && <span className="text-red-500">error</span>}
-        </span>
+        ))}
       </div>
 
-      {/* N/A toggle — always visible, active only when status is na */}
-      <button
-        type="button"
-        onClick={() =>
-          current?.status === 'na'
-            ? onSave(eventCode, 'unanswered', note || null, null, null)
-            : onSave(eventCode, 'na', note || null, null, null)
-        }
-        className={[
-          'self-start text-xs font-semibold px-3 py-1.5 rounded border-2 transition-all',
-          current?.status === 'na'
-            ? 'border-neutral-500 bg-neutral-300 text-neutral-700'
-            : 'border-neutral-400 bg-neutral-100 text-neutral-400 hover:border-neutral-500 hover:text-neutral-600',
-        ].join(' ')}
-      >
-        N/A
-      </button>
-
-      {/* Component scoring (expandable) */}
+      {/* Per-component rows — always visible, form-style */}
       {components.length > 0 && (
-        <>
-          <button
-            type="button"
-            onClick={() => setShowComponents(v => !v)}
-            className="text-[10px] text-neutral-400 hover:text-neutral-600 text-left"
-          >
-            {showComponents ? '▲ hide components' : '▼ score components'}
-            {scoredComponents.length > 0 && (
-              <span className="ml-1 text-neutral-500">
-                ({scoredComponents.length}/{components.length} scored)
-              </span>
-            )}
-          </button>
-
-          {showComponents && (
-            <div className="space-y-2 pl-2 border-l-2 border-neutral-100">
-              {components.map((comp, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <ScoreButtons
-                    value={compScores[i] ?? null}
-                    onChange={s => handleComponent(i, s)}
-                    small
-                  />
-                  <p className="text-[10px] text-neutral-600 leading-snug flex-1">{comp}</p>
-                </div>
-              ))}
+        <div className="flex flex-col divide-y divide-neutral-200 border border-neutral-200 rounded-lg overflow-hidden">
+          {components.map((comp, i) => (
+            <div key={i} className="p-4 bg-white flex flex-col gap-3">
+              <p className="text-sm font-semibold text-neutral-800 leading-snug">{comp}</p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <ScoreButtons
+                  value={compScores[i] ?? null}
+                  onChange={s => handleComponent(i, s)}
+                  size="field"
+                />
+                {compScores[i] !== null && (
+                  <span className="text-xs text-neutral-500 italic">{SCORE_LABELS[compScores[i]!]}</span>
+                )}
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                  Observations
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Record observations…"
+                  value={compNotes[i] ?? ''}
+                  onChange={e => handleCompNote(i, e.target.value)}
+                  className="w-full rounded border border-neutral-300 px-3 py-2 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 resize-none"
+                />
+              </div>
             </div>
-          )}
-        </>
-      )}
-
-      {/* Note — auto-shown on low score as corrective action prompt */}
-      {!isLowScore && (
-        <button
-          type="button"
-          onClick={() => setShowNote(v => !v)}
-          className="self-start text-[10px] text-neutral-400 hover:text-neutral-600"
-        >
-          {noteVisible ? 'hide note' : '+ note'}
-        </button>
-      )}
-      {noteVisible && (
-        <div>
-          {isLowScore && (
-            <p className="text-[9px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'var(--signal-red)' }}>
-              Training gap / corrective action required
-            </p>
-          )}
-          <textarea
-            rows={2}
-            placeholder={isLowScore ? 'Describe training gap or corrective action…' : 'Note…'}
-            value={note}
-            autoFocus={isLowScore && !note}
-            onChange={e => handleNoteChange(e.target.value)}
-            className={`w-full rounded border px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isLowScore ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-400 focus:ring-amber-500/40 focus:border-amber-500'}`}
-          />
+          ))}
         </div>
       )}
+
+      {/* Overall score + N/A + save state */}
+      <div className="flex flex-col gap-2 border-t border-neutral-200 pt-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+              {components.length > 0 ? 'Overall Score (override)' : 'Score'}
+            </span>
+            <div className="flex items-center gap-3">
+              <ScoreButtons value={overallScore} onChange={handleOverall} />
+              <span style={statusStyle} className="text-sm">{statusLabel}</span>
+              {autoScore !== null && overallScore === null && (
+                <span className="text-[10px] text-neutral-400 italic">auto: {autoScore} (weakest component)</span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-end gap-3 ml-auto">
+            <button
+              type="button"
+              onClick={() =>
+                current?.status === 'na'
+                  ? onSave(eventCode, 'unanswered', note || null, null, null)
+                  : onSave(eventCode, 'na', note || null, null, null)
+              }
+              className={[
+                'text-sm font-semibold px-4 py-2 rounded border-2 transition-all',
+                current?.status === 'na'
+                  ? 'border-neutral-500 bg-neutral-300 text-neutral-700'
+                  : 'border-neutral-300 bg-neutral-100 text-neutral-400 hover:border-neutral-500 hover:text-neutral-600',
+              ].join(' ')}
+            >
+              N/A
+            </button>
+            <span className="text-[10px] pb-1">
+              {saveState === 'saving' && <span className="text-neutral-400">saving…</span>}
+              {saveState === 'saved'  && <span className="text-green-600">saved</span>}
+              {saveState === 'error'  && <span className="text-red-500">error</span>}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* General / corrective action note — always visible */}
+      <div>
+        {isLowScore && (
+          <p className="text-[9px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--signal-red)' }}>
+            Training gap / corrective action required
+          </p>
+        )}
+        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+          {isLowScore ? 'Corrective Action' : 'General Observations'}
+        </label>
+        <textarea
+          rows={3}
+          placeholder={isLowScore ? 'Describe training gap or corrective action…' : 'Overall observations…'}
+          value={note}
+          onChange={e => handleNote(e.target.value)}
+          className={`w-full rounded border px-3 py-2 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isLowScore ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-300 focus:ring-amber-500/40 focus:border-amber-500'}`}
+        />
+      </div>
     </div>
   )
 }
@@ -389,7 +403,7 @@ function WicketCard({
     status: TrResponseStatus,
     note: string | null,
     score: number | null,
-    captureData: { components: (number | null)[] } | null,
+    captureData: { components: (number | null)[]; component_notes?: string[] } | null,
   ) => Promise<void>
 }) {
   const [showDetails, setShowDetails] = useState(false)
@@ -576,7 +590,7 @@ export function TrPage() {
     status: TrResponseStatus,
     note: string | null,
     score: number | null,
-    captureData: { components: (number | null)[] } | null,
+    captureData: { components: (number | null)[]; component_notes?: string[] } | null,
   ) => {
     if (!assessmentId) return
     const updated = await api.upsertTrResponse(assessmentId, eventCode, {
