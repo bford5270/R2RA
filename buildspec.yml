@@ -10,7 +10,7 @@ phases:
     runtime-versions:
       nodejs: "20"
     commands:
-      - cd frontend && npm ci && cd ..
+      - cd frontend && npm install && cd ..
 
   build:
     commands:
