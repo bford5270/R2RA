@@ -2,7 +2,7 @@ import type React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
-import type { Assessment } from '../types/assessment'
+import type { Assessment, TrJtsEvidence } from '../types/assessment'
 import type { TrResponse, TrResponseStatus } from '../types/assessment'
 import type { TrFramework, TrWicket } from '../types/tr'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
@@ -113,6 +113,10 @@ function TrScoreControls({
 
   // Effective score: explicit override wins; else auto
   const effectiveScore = overallScore ?? autoScore
+
+  // Auto-expose note as corrective action when score indicates deficiency
+  const isLowScore = effectiveScore !== null && effectiveScore <= 2
+  const noteVisible = showNote || isLowScore
 
   function deriveStatus(score: number | null): TrResponseStatus {
     if (score === null) return current?.status ?? 'unanswered'
@@ -238,22 +242,110 @@ function TrScoreControls({
         </>
       )}
 
-      {/* Note */}
+      {/* Note — auto-shown on low score as corrective action prompt */}
+      {!isLowScore && (
+        <button
+          type="button"
+          onClick={() => setShowNote(v => !v)}
+          className="self-start text-[10px] text-neutral-400 hover:text-neutral-600"
+        >
+          {noteVisible ? 'hide note' : '+ note'}
+        </button>
+      )}
+      {noteVisible && (
+        <div>
+          {isLowScore && (
+            <p className="text-[9px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'var(--signal-red)' }}>
+              Training gap / corrective action required
+            </p>
+          )}
+          <textarea
+            rows={2}
+            placeholder={isLowScore ? 'Describe training gap or corrective action…' : 'Note…'}
+            value={note}
+            autoFocus={isLowScore && !note}
+            onChange={e => handleNoteChange(e.target.value)}
+            className={`w-full rounded border px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isLowScore ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-400 focus:ring-amber-500/40 focus:border-amber-500'}`}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// JTS evidence panel — reverse crosswalk: JTS responses → this wicket
+// ---------------------------------------------------------------------------
+
+function JtsEvidencePanel({ evidence }: { evidence: TrJtsEvidence }) {
+  const [open, setOpen] = useState(false)
+
+  const signalStyle: Record<string, React.CSSProperties> = {
+    go:         { color: 'var(--signal-green)' },
+    no_go:      { color: 'var(--signal-red)' },
+    mixed:      { color: 'var(--signal-amber)' },
+    unanswered: { color: 'var(--ink-3)' },
+  }
+  const signalLabel: Record<string, string> = {
+    go: 'JTS → suggests GO', no_go: 'JTS → suggests NO-GO',
+    mixed: 'JTS → mixed', unanswered: 'JTS — no responses',
+  }
+  const statusStyle = (s: string): React.CSSProperties => ({
+    display: 'inline-block',
+    padding: '1px 5px',
+    borderRadius: 4,
+    fontSize: 9,
+    fontWeight: 700,
+    letterSpacing: '0.05em',
+    textTransform: 'uppercase',
+    background:
+      s === 'yes' ? 'rgba(107,127,79,0.14)' :
+      s === 'no'  ? 'rgba(179,58,58,0.14)'  :
+      s === 'na'  ? 'var(--surface-2)'       : 'transparent',
+    color:
+      s === 'yes' ? 'var(--signal-green)' :
+      s === 'no'  ? 'var(--signal-red)'   :
+      s === 'na'  ? 'var(--ink-3)'        : 'var(--ink-4)',
+  })
+  const confidenceDot = (c: string) =>
+    c === 'high' ? 'bg-green-500' : c === 'medium' ? 'bg-amber-400' : 'bg-neutral-300'
+
+  if (evidence.total_count === 0) return null
+
+  return (
+    <div className="mt-2 border-t border-neutral-100 pt-2">
       <button
         type="button"
-        onClick={() => setShowNote(v => !v)}
-        className="self-start text-[10px] text-neutral-400 hover:text-neutral-600"
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-2 text-[10px] hover:opacity-80 transition-opacity w-full"
       >
-        {showNote ? 'hide note' : 'add note'}
+        <span style={signalStyle[evidence.signal]} className="font-semibold">
+          {signalLabel[evidence.signal]}
+        </span>
+        <span className="text-neutral-400">
+          ({evidence.yes_count} YES · {evidence.no_count} NO · {evidence.answered_count}/{evidence.total_count} answered)
+        </span>
+        <span className="ml-auto text-neutral-400">{open ? '▲' : '▼'} JTS items</span>
       </button>
-      {showNote && (
-        <textarea
-          rows={2}
-          placeholder="Note…"
-          value={note}
-          onChange={e => handleNoteChange(e.target.value)}
-          className="w-full rounded border border-neutral-400 px-2 py-1.5 text-xs text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 resize-none"
-        />
+
+      {open && (
+        <div className="mt-1.5 space-y-1 pl-2 border-l-2 border-neutral-200">
+          {evidence.items.map(item => (
+            <div key={item.item_id} className="flex items-start gap-2">
+              <span
+                className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${confidenceDot(item.confidence)}`}
+                title={`${item.confidence} confidence`}
+              />
+              <span className="font-mono text-[9px] text-neutral-400 shrink-0 w-14">{item.item_id}</span>
+              <span style={statusStyle(item.status)}>{item.status === 'unanswered' ? '—' : item.status.toUpperCase()}</span>
+              {item.rationale && (
+                <span className="text-[9px] text-neutral-400 leading-snug flex-1 truncate" title={item.rationale}>
+                  {item.rationale}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )
@@ -284,11 +376,13 @@ function ScoreChip({ score }: { score: number | null }) {
 function WicketCard({
   wicket,
   response,
+  evidence,
   onSave,
   highlighted = false,
 }: {
   wicket: TrWicket
   response: TrResponse | undefined
+  evidence: TrJtsEvidence | undefined
   highlighted?: boolean
   onSave: (
     eventCode: string,
@@ -381,6 +475,8 @@ function WicketCard({
             onSave={onSave}
           />
 
+          {evidence && <JtsEvidencePanel evidence={evidence} />}
+
           {(wicket.condition || wicket.standard) && (
             <button
               type="button"
@@ -437,6 +533,7 @@ export function TrPage() {
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [tr, setTr] = useState<TrFramework | null>(null)
   const [responses, setResponses] = useState<Map<string, TrResponse>>(new Map())
+  const [jtsEvidence, setJtsEvidence] = useState<Record<string, TrJtsEvidence>>({})
   const [activeChapter, setActiveChapter] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [showMobileNav, setShowMobileNav] = useState(false)
@@ -447,10 +544,12 @@ export function TrPage() {
       api.getAssessment(assessmentId),
       api.getTrFramework(),
       api.listTrResponses(assessmentId),
-    ]).then(([a, framework, rs]) => {
+      api.getTrJtsEvidence(assessmentId),
+    ]).then(([a, framework, rs, evidence]) => {
       setAssessment(a)
       setTr(framework)
       setResponses(new Map(rs.map(r => [r.event_code, r])))
+      setJtsEvidence(evidence)
       if (linkedWicket) {
         const target = framework.wickets.find(w => w.event_code === linkedWicket)
         setActiveChapter(target?.chapter ?? framework.chapters[0]?.number ?? null)
@@ -647,6 +746,7 @@ export function TrPage() {
                   key={w.event_code}
                   wicket={w}
                   response={responses.get(w.event_code)}
+                  evidence={jtsEvidence[w.event_code]}
                   highlighted={linkedWicket === w.event_code}
                   onSave={handleSave}
                 />

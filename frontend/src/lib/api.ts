@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ReadinessSummary, ResponseUpsert, SignatureOut, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ReadinessSummary, ResponseUpsert, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert } from '../types/assessment'
 import type { Exercise, ExerciseCreate } from '../types/exercise'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
@@ -155,6 +155,9 @@ export const api = {
 
   getReadinessSummary: (assessmentId: string) =>
     get<ReadinessSummary>(`/assessments/${assessmentId}/readiness-summary`),
+
+  getTrJtsEvidence: (assessmentId: string) =>
+    get<Record<string, TrJtsEvidence>>(`/assessments/${assessmentId}/tr-jts-evidence`),
 
   // ---- evidence ----
   listEvidence: (assessmentId: string, itemId: string) =>

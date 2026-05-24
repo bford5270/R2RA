@@ -117,6 +117,23 @@ export interface ReadinessSummary {
   jts_forward: Record<string, JtsFeedForward>
 }
 
+export interface TrJtsEvidenceItem {
+  item_id: string
+  confidence: 'high' | 'medium' | 'low'
+  rationale: string
+  status: 'yes' | 'no' | 'na' | 'unanswered'
+  note: string | null
+}
+
+export interface TrJtsEvidence {
+  items: TrJtsEvidenceItem[]
+  signal: 'go' | 'no_go' | 'mixed' | 'unanswered'
+  yes_count: number
+  no_count: number
+  answered_count: number
+  total_count: number
+}
+
 export interface AuditLogEntry {
   id: string
   actor_id: string | null

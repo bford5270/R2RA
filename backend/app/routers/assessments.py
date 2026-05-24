@@ -492,6 +492,77 @@ def get_readiness_summary(
     return {"wickets": wicket_summaries, "chapters": chapter_summaries, "jts_forward": jts_forward}
 
 
+@router.get("/{assessment_id}/tr-jts-evidence")
+def get_tr_jts_evidence(
+    assessment_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """
+    Reverse crosswalk: for each T&R event code, which JTS items map to it
+    and what are their current YES/NO/N/A statuses in this assessment.
+    Used to surface JTS evidence directly on each T&R wicket card.
+    """
+    from app.routers.crosswalk import _load_crosswalk
+
+    _require_assessment(db, assessment_id)
+
+    # All JTS (not T&R) responses for this assessment
+    jts_resps: dict[str, Response] = {
+        r.item_id: r
+        for r in db.query(Response).filter(Response.assessment_id == assessment_id).all()
+    }
+
+    # Build reverse index: event_code → [{item_id, confidence, rationale}]
+    crosswalk = _load_crosswalk()
+    reverse: dict[str, list] = {}
+    for jts_item, entry in crosswalk.items():
+        for w in entry.get("wickets", []):
+            code = w["event_code"]
+            if code not in reverse:
+                reverse[code] = []
+            reverse[code].append({
+                "item_id": jts_item,
+                "confidence": w.get("confidence", "low"),
+                "rationale": w.get("rationale", ""),
+            })
+
+    result: dict[str, dict] = {}
+    for code, items in reverse.items():
+        mapped = []
+        for item in items:
+            resp = jts_resps.get(item["item_id"])
+            mapped.append({
+                "item_id": item["item_id"],
+                "confidence": item["confidence"],
+                "rationale": item["rationale"],
+                "status": resp.status if resp else "unanswered",
+                "note": resp.note if resp else None,
+            })
+
+        yes_count = sum(1 for m in mapped if m["status"] == "yes")
+        no_count  = sum(1 for m in mapped if m["status"] == "no")
+        answered  = sum(1 for m in mapped if m["status"] in ("yes", "no", "na"))
+
+        signal = (
+            "go"         if yes_count > 0 and no_count == 0 else
+            "no_go"      if no_count > 0 and yes_count == 0 else
+            "mixed"      if yes_count > 0 and no_count > 0  else
+            "unanswered"
+        )
+
+        result[code] = {
+            "items": mapped,
+            "signal": signal,
+            "yes_count": yes_count,
+            "no_count": no_count,
+            "answered_count": answered,
+            "total_count": len(mapped),
+        }
+
+    return result
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
