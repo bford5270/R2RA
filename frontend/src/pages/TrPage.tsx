@@ -427,13 +427,24 @@ function WicketCard({
 
   const components = wicket.event_components ?? []
 
+  const cardBorderStyle: React.CSSProperties = !highlighted ? {
+    borderLeftColor:
+      derivedStatus === 'unanswered' ? 'var(--signal-amber)' :
+      derivedStatus === 'go'        ? 'var(--signal-green)' :
+      derivedStatus === 'no_go'     ? 'var(--signal-red)'   :
+      'var(--ink-3)',
+    borderLeftWidth: '4px',
+  } : {}
+
   return (
     <div
+      id={wicket.event_code}
       ref={cardRef}
       className={[
         'border rounded-lg p-4 mb-3 transition-colors',
-        highlighted ? 'border-scarlet ring-1 ring-scarlet/30 bg-scarlet/5' : 'border-neutral-400',
+        highlighted ? 'border-scarlet ring-1 ring-scarlet/30 bg-scarlet/5' : 'border-neutral-300',
       ].join(' ')}
+      style={cardBorderStyle}
     >
       <div className="flex items-start gap-3">
         <span
@@ -537,6 +548,7 @@ export function TrPage() {
   const [activeChapter, setActiveChapter] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [showMobileNav, setShowMobileNav] = useState(false)
+  const mainRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -587,6 +599,9 @@ export function TrPage() {
     tr.wickets.some(w => w.chapter === ch.number)
   )
   const activeWickets = tr.wickets.filter(w => w.chapter === activeChapter)
+  const activeChapterIdx = chaptersWithWickets.findIndex(c => c.number === activeChapter)
+  const nextChapter = chaptersWithWickets[activeChapterIdx + 1] ?? null
+  const nextUnscoredWicket = activeWickets.find(w => !isAnswered(responses.get(w.event_code))) ?? null
 
   function chapterCounts(chNum: number) {
     const wickets = tr!.wickets.filter(w => w.chapter === chNum)
@@ -681,7 +696,7 @@ export function TrPage() {
             return (
               <button
                 key={ch.number}
-                onClick={() => setActiveChapter(ch.number)}
+                onClick={() => { setActiveChapter(ch.number); mainRef.current?.scrollTo({ top: 0 }) }}
                 className={[
                   'flex items-start gap-2 px-3 py-2 rounded text-left transition-colors border-l-2',
                   isActive
@@ -722,7 +737,7 @@ export function TrPage() {
       </aside>
 
       {/* Main pane — wickets */}
-      <main className="flex-1 overflow-y-auto bg-neutral-50 flex flex-col min-w-0">
+      <main ref={mainRef} className="flex-1 overflow-y-auto bg-neutral-50 flex flex-col min-w-0">
         {/* Mobile-only sticky top bar */}
         <div className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-neutral-50 border-b border-neutral-400 shrink-0">
           <button
@@ -753,9 +768,21 @@ export function TrPage() {
                 <h2 className="font-display text-lg font-bold text-neutral-900">
                   {chaptersWithWickets.find(c => c.number === activeChapter)?.title ?? ''}
                 </h2>
-                <p className="text-xs text-neutral-500 mt-0.5">
-                  {chapterCounts(activeChapter).answered} of {chapterCounts(activeChapter).total} scored
-                </p>
+                <div className="flex items-center gap-3 mt-0.5">
+                  <p className="text-xs text-neutral-500">
+                    {chapterCounts(activeChapter).answered} of {chapterCounts(activeChapter).total} scored
+                  </p>
+                  {nextUnscoredWicket && (
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById(nextUnscoredWicket.event_code)?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                      className="text-xs font-semibold px-2 py-0.5 rounded border"
+                      style={{ borderColor: 'var(--signal-amber)', color: 'var(--signal-amber)', background: 'rgba(201,154,46,0.10)' }}
+                    >
+                      ↓ next unscored
+                    </button>
+                  )}
+                </div>
               </div>
               {activeWickets.map(w => (
                 <WicketCard
@@ -767,6 +794,24 @@ export function TrPage() {
                   onSave={handleSave}
                 />
               ))}
+
+              <div className="mt-4 mb-8 flex justify-between items-center border-t border-neutral-200 pt-4">
+                <span className="text-xs text-neutral-400">
+                  {chapterCounts(activeChapter).answered}/{chapterCounts(activeChapter).total} wickets scored in this chapter
+                </span>
+                {nextChapter ? (
+                  <button
+                    type="button"
+                    onClick={() => { setActiveChapter(nextChapter.number); mainRef.current?.scrollTo({ top: 0 }) }}
+                    className="text-sm font-semibold px-4 py-2 rounded border-2 transition-colors"
+                    style={{ borderColor: 'var(--signal-blue)', color: 'var(--signal-blue)', background: 'rgba(91,122,139,0.10)' }}
+                  >
+                    Next: {nextChapter.title} →
+                  </button>
+                ) : (
+                  <span className="text-xs text-neutral-400 italic">Last chapter</span>
+                )}
+              </div>
             </>
           )}
         </div>
