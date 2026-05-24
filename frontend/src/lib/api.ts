@@ -153,6 +153,19 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
+  updateTrMeta: (assessmentId: string, body: {
+    tr_evaluator_name?: string | null
+    tr_evaluator_rank?: string | null
+    tr_evaluator_billet?: string | null
+    tr_aar_narrative?: string | null
+    tr_aar_priorities?: string | null
+  }) =>
+    request<Assessment>(`/assessments/${assessmentId}/tr-meta`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
   getReadinessSummary: (assessmentId: string) =>
     get<ReadinessSummary>(`/assessments/${assessmentId}/readiness-summary`),
 

@@ -22,6 +22,11 @@ export interface Assessment {
   unique_identifier: string | null
   scenario_ref: string | null
   exercise_id: string | null
+  tr_evaluator_name: string | null
+  tr_evaluator_rank: string | null
+  tr_evaluator_billet: string | null
+  tr_aar_narrative: string | null
+  tr_aar_priorities: string | null
   started_at: string
   certified_at: string | null
 }
@@ -70,11 +75,20 @@ export type TrResponseStatus = 'go' | 'no_go' | 'na' | 'unanswered'
 export interface TrResponse {
   event_code: string
   status: TrResponseStatus
-  // 1–5 Likert for the overall wicket (null = not yet scored)
   score: number | null
-  // {"components": [4, 5, null, 3]} — per-component scores, index-matched to event_components
-  capture_data: { components?: (number | null)[] } | null
+  capture_data: {
+    components?: (number | null)[]
+    component_notes?: string[]
+    sustains?: string
+    improves?: string
+    corrective_action?: string
+    corrective_action_suspense?: string
+    corrective_action_owner?: string
+  } | null
   note: string | null
+  conducted_on: string | null
+  conditions_met: boolean | null
+  headcount: number | null
   authored_by: string
   last_modified_by: string
   version: number
@@ -85,7 +99,10 @@ export interface TrResponseUpsert {
   status?: TrResponseStatus
   score?: number | null
   note?: string | null
-  capture_data?: { components: (number | null)[] } | null
+  capture_data?: Record<string, unknown> | null
+  conducted_on?: string | null
+  conditions_met?: boolean | null
+  headcount?: number | null
 }
 
 // Readiness summary returned by GET /assessments/{id}/readiness-summary

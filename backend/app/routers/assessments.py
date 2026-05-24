@@ -19,6 +19,7 @@ from app.models.signature import Signature
 from app.schemas.assessment import (
     AssessmentCreate,
     AssessmentOut,
+    AssessmentTrUpdate,
     AssignmentOut,
     AssignmentUpsert,
     AuditLogOut,
@@ -73,6 +74,11 @@ def _assessment_out(assessment: Assessment, unit: Unit) -> AssessmentOut:
         unique_identifier=assessment.unique_identifier,
         scenario_ref=assessment.scenario_ref,
         exercise_id=assessment.exercise_id,
+        tr_evaluator_name=assessment.tr_evaluator_name,
+        tr_evaluator_rank=assessment.tr_evaluator_rank,
+        tr_evaluator_billet=assessment.tr_evaluator_billet,
+        tr_aar_narrative=assessment.tr_aar_narrative,
+        tr_aar_priorities=assessment.tr_aar_priorities,
         started_at=assessment.started_at,
     )
 
@@ -179,6 +185,34 @@ def update_scenario(
         raise HTTPException(status_code=404, detail="Assessment not found")
     assessment, unit = row
     assessment.scenario_ref = body.scenario_ref
+    db.commit()
+    db.refresh(assessment)
+    return _assessment_out(assessment, unit)
+
+
+@router.patch("/{assessment_id}/tr-meta", response_model=AssessmentOut)
+def update_tr_meta(
+    assessment_id: str,
+    body: AssessmentTrUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    row = (
+        db.query(Assessment, Unit)
+        .join(Unit, Assessment.unit_id == Unit.id)
+        .filter(Assessment.id == assessment_id)
+        .first()
+    )
+    if not row:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+    assessment, unit = row
+    for field in ("tr_evaluator_name", "tr_evaluator_rank", "tr_evaluator_billet",
+                  "tr_aar_narrative", "tr_aar_priorities"):
+        val = getattr(body, field, None)
+        if val is not None:
+            setattr(assessment, field, val)
+        elif val is None and field in body.model_fields_set:
+            setattr(assessment, field, None)
     db.commit()
     db.refresh(assessment)
     return _assessment_out(assessment, unit)
@@ -364,6 +398,9 @@ def upsert_tr_response(
     tr.score = body.score
     tr.capture_data = body.capture_data
     tr.note = body.note
+    tr.conducted_on = body.conducted_on
+    tr.conditions_met = body.conditions_met
+    tr.headcount = body.headcount
     tr.updated_at = datetime.now(timezone.utc)
 
     append_entry(

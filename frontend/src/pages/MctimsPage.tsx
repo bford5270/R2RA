@@ -143,7 +143,24 @@ export function MctimsPage() {
   // Build text blocks
   // ---------------------------------------------------------------------------
 
+  // T-level computation
+  const readinessCoded = trFramework.wickets.filter(w => w.readiness_coded)
+  const rcGoCount = readinessCoded.filter(w => {
+    const r = trResponses.get(w.event_code)
+    if (!r) return false
+    const eff = effectiveTrScore(r)
+    return eff !== null ? eff >= 4 : r.status === 'go'
+  }).length
+  const tLevel: string | null = readinessCoded.length === 0 ? null : (() => {
+    const pct = rcGoCount / readinessCoded.length
+    if (pct >= 0.9) return 'T1'
+    if (pct >= 0.7) return 'T2'
+    if (pct >= 0.5) return 'T3'
+    return 'T4'
+  })()
+
   // 1. Header block
+  const evStr = [assessment.tr_evaluator_rank, assessment.tr_evaluator_name].filter(Boolean).join(' ')
   const headerText = [
     `UNIT: ${assessment.unit_name} (${assessment.unit_uic})`,
     `MISSION TYPE: ${MISSION_TYPE_LABELS[assessment.mission_type]}`,
@@ -151,6 +168,8 @@ export function MctimsPage() {
     `ASSESSMENT STARTED: ${assessmentDate}`,
     certDate ? `CERTIFIED: ${certDate}` : `STATUS: ${assessment.status.replace('_', ' ').toUpperCase()}`,
     `T&R FRAMEWORK: NAVMC 3500.84B (HSS T&R Manual)`,
+    tLevel ? `T-LEVEL DETERMINATION: ${tLevel} (${rcGoCount}/${readinessCoded.length} readiness-coded events GO)` : '',
+    evStr ? `T&R EVALUATOR: ${evStr}${assessment.tr_evaluator_billet ? `, ${assessment.tr_evaluator_billet}` : ''}` : '',
     signatures.length > 0
       ? `ASSESSOR(S): ${signatures.map(s => `${s.print_name ?? 'Unknown'} (${SIGNER_ROLE_LABELS[s.role] ?? s.role})`).join('; ')}`
       : '',
@@ -188,13 +207,46 @@ export function MctimsPage() {
       const sc = effectiveTrScore(r)
       const statusStr = st === 'go' ? 'GO' : st === 'no_go' ? 'NO-GO' : 'N/A'
       const scoreStr = sc !== null ? ` (${sc}/5)` : ''
-      trLines.push(`${w.event_code} | ${statusStr}${scoreStr}`)
+      const condStr = r.conditions_met ? ' ★' : ''
+      trLines.push(`${w.event_code} | ${statusStr}${scoreStr}${condStr}`)
       trLines.push(`  ${w.title}`)
-      if (r.note) trLines.push(`  Assessor note: ${r.note}`)
+      if (r.conducted_on) trLines.push(`  Date: ${r.conducted_on}${r.headcount ? ` | Personnel: ${r.headcount}` : ''}`)
+      const cd = r.capture_data
+      if (cd?.sustains) trLines.push(`  Sustains: ${cd.sustains}`)
+      if (cd?.improves) trLines.push(`  Improves: ${cd.improves}`)
+      if (r.note) trLines.push(`  Note: ${r.note}`)
     }
   }
+  trLines.push('')
+  trLines.push('★ = conducted under specified condition')
 
   const trText = anyTrAnswered ? trLines.join('\n') : 'No T&R wickets have been scored yet.'
+
+  // 2b. Corrective Action Register — NO-GO events only
+  const noGoWickets = trFramework.wickets.filter(w => {
+    const r = trResponses.get(w.event_code)
+    return r && effectiveTrStatus(r) === 'no_go'
+  })
+  const corrLines: string[] = ['CORRECTIVE ACTION REGISTER', '='.repeat(60), '']
+  if (noGoWickets.length === 0) {
+    corrLines.push('No NO-GO events recorded.')
+  } else {
+    corrLines.push(`Event Code | Score | Deficiency | Corrective Action | Suspense | Owner`)
+    corrLines.push('-'.repeat(90))
+    for (const w of noGoWickets) {
+      const r = trResponses.get(w.event_code)!
+      const sc = effectiveTrScore(r)
+      const cd = r.capture_data
+      corrLines.push(`${w.event_code} (${w.title})`)
+      corrLines.push(`  Score: ${sc ?? '—'}/5`)
+      corrLines.push(`  Deficiency: ${cd?.improves ?? '—'}`)
+      corrLines.push(`  Corrective Action: ${cd?.corrective_action ?? '—'}`)
+      corrLines.push(`  Suspense: ${cd?.corrective_action_suspense ?? '—'}`)
+      corrLines.push(`  Owner: ${cd?.corrective_action_owner ?? '—'}`)
+      corrLines.push('')
+    }
+  }
+  const corrText = corrLines.join('\n')
 
   // 3. JTS block — per visible section, answered items only
   const jtsLines: string[] = ['JTS ROLE 2 READINESS ASSESSMENT RESULTS', '='.repeat(48)]
@@ -255,7 +307,7 @@ export function MctimsPage() {
   const findingsText = findingLines.join('\n')
 
   // 5. Full document for "Copy All"
-  const fullDoc = [headerText, '', trText, '', jtsText, '', findingsText].join('\n')
+  const fullDoc = [headerText, '', trText, '', corrText, '', jtsText, '', findingsText].join('\n')
 
   function handleCopyAll() {
     navigator.clipboard.writeText(fullDoc).then(() => {
@@ -312,10 +364,18 @@ export function MctimsPage() {
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="border border-neutral-400 rounded-lg p-3">
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">T&R Results</p>
-            <div className="flex gap-4 text-sm">
+            <div className="flex gap-4 text-sm flex-wrap">
               <span><span className="font-bold text-neutral-700">{trAnswered}</span> <span className="text-neutral-400">scored</span></span>
               <span><span className="font-bold text-green-700">{trGo}</span> <span className="text-neutral-400">GO</span></span>
               <span><span className="font-bold text-red-700">{trNoGo}</span> <span className="text-neutral-400">NO-GO</span></span>
+              {tLevel && (
+                <span className={[
+                  'font-black px-1.5 py-0.5 rounded border text-sm',
+                  tLevel === 'T1' || tLevel === 'T2' ? 'text-green-700 bg-green-50 border-green-400' :
+                  tLevel === 'T3' ? 'text-amber-700 bg-amber-50 border-amber-400' :
+                  'text-red-700 bg-red-50 border-red-400',
+                ].join(' ')}>{tLevel}</span>
+              )}
             </div>
           </div>
           <div className="border border-neutral-400 rounded-lg p-3">
@@ -331,6 +391,7 @@ export function MctimsPage() {
         {/* Copy blocks */}
         <CopyBlock label="Unit Information" text={headerText} />
         <CopyBlock label="T&R Assessment Results (NAVMC 3500.84B)" text={trText} />
+        <CopyBlock label="Corrective Action Register" text={corrText} />
         <CopyBlock label="JTS Role 2 Assessment Results" text={jtsText} />
         <CopyBlock label="Assessor Findings — Compiled Notes" text={findingsText} />
 

@@ -11,6 +11,7 @@ import { AssessmentPage } from './pages/AssessmentPage'
 import { PrintPage } from './pages/PrintPage'
 import { TrPage } from './pages/TrPage'
 import { TrPrintPage } from './pages/TrPrintPage'
+import { AarPage } from './pages/AarPage'
 import { AdminUsersPage } from './pages/AdminUsersPage'
 import { AuditPage } from './pages/AuditPage'
 import { ReadinessPage } from './pages/ReadinessPage'
@@ -108,6 +109,16 @@ export default function App() {
             <ProtectedRoute>
               <ExerciseGate>
                 <TrPrintPage />
+              </ExerciseGate>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId/tr/aar"
+          element={
+            <ProtectedRoute>
+              <ExerciseGate>
+                <AarPage />
               </ExerciseGate>
             </ProtectedRoute>
           }

@@ -84,10 +84,21 @@ function TrScoreControls({
     status: TrResponseStatus,
     note: string | null,
     score: number | null,
-    captureData: { components: (number | null)[]; component_notes?: string[] } | null,
+    captureData: Record<string, unknown> | null,
+    conductedOn: string | null,
+    conditionsMet: boolean | null,
+    headcount: number | null,
   ) => Promise<void>
 }) {
   const [note, setNote] = useState(current?.note ?? '')
+  const [conductedOn, setConductedOn] = useState(current?.conducted_on ?? '')
+  const [conditionsMet, setConditionsMet] = useState(current?.conditions_met ?? false)
+  const [headcount, setHeadcount] = useState(current?.headcount?.toString() ?? '')
+  const [sustains, setSustains] = useState(current?.capture_data?.sustains ?? '')
+  const [improves, setImproves] = useState(current?.capture_data?.improves ?? '')
+  const [corrAction, setCorrAction] = useState(current?.capture_data?.corrective_action ?? '')
+  const [corrSuspense, setCorrSuspense] = useState(current?.capture_data?.corrective_action_suspense ?? '')
+  const [corrOwner, setCorrOwner] = useState(current?.capture_data?.corrective_action_owner ?? '')
   const [saveState, setSaveState] = useState<SaveState>('idle')
   const noteTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -115,11 +126,31 @@ function TrScoreControls({
   const scoredComponents = compScores.filter((s): s is number => s !== null)
   const autoScore = scoredComponents.length > 0 ? Math.min(...scoredComponents) : null
   const effectiveScore = overallScore ?? autoScore
-  const isLowScore = effectiveScore !== null && effectiveScore <= 2
+  const isNoGo = effectiveScore !== null && effectiveScore < 4 && current?.status !== 'na'
 
   function deriveStatus(score: number | null): TrResponseStatus {
     if (score === null) return current?.status ?? 'unanswered'
     return score >= 4 ? 'go' : 'no_go'
+  }
+
+  function buildCaptureData(
+    nextComps: (number | null)[],
+    nextCompNotes: string[],
+    nextSustains: string,
+    nextImproves: string,
+    nextCorrAction: string,
+    nextCorrSuspense: string,
+    nextCorrOwner: string,
+  ): Record<string, unknown> {
+    return {
+      components: nextComps,
+      component_notes: nextCompNotes,
+      sustains: nextSustains || null,
+      improves: nextImproves || null,
+      corrective_action: nextCorrAction || null,
+      corrective_action_suspense: nextCorrSuspense || null,
+      corrective_action_owner: nextCorrOwner || null,
+    }
   }
 
   async function persist(
@@ -127,6 +158,14 @@ function TrScoreControls({
     nextComps: (number | null)[],
     nextNote: string | null,
     nextCompNotes: string[],
+    nextSustains: string,
+    nextImproves: string,
+    nextCorrAction: string,
+    nextCorrSuspense: string,
+    nextCorrOwner: string,
+    nextConductedOn: string,
+    nextConditionsMet: boolean,
+    nextHeadcount: string,
   ) {
     const scored2 = nextComps.filter((s): s is number => s !== null)
     const auto2 = scored2.length > 0 ? Math.min(...scored2) : null
@@ -134,10 +173,13 @@ function TrScoreControls({
     const status = deriveStatus(eff2)
     setSaveState('saving')
     try {
-      await onSave(eventCode, status, nextNote, nextOverall, {
-        components: nextComps,
-        component_notes: nextCompNotes,
-      })
+      await onSave(
+        eventCode, status, nextNote, nextOverall,
+        buildCaptureData(nextComps, nextCompNotes, nextSustains, nextImproves, nextCorrAction, nextCorrSuspense, nextCorrOwner),
+        nextConductedOn || null,
+        nextConditionsMet,
+        nextHeadcount ? parseInt(nextHeadcount, 10) : null,
+      )
       setSaveState('saved')
       setTimeout(() => setSaveState('idle'), 1200)
     } catch {
@@ -145,32 +187,27 @@ function TrScoreControls({
     }
   }
 
+  function snap() {
+    persist(overallScore, compScores, note || null, compNotes, sustains, improves, corrAction, corrSuspense, corrOwner, conductedOn, conditionsMet, headcount)
+  }
+
   function handleOverall(s: number | null) {
-    persist(s, compScores, note || null, compNotes)
+    persist(s, compScores, note || null, compNotes, sustains, improves, corrAction, corrSuspense, corrOwner, conductedOn, conditionsMet, headcount)
   }
 
   function handleComponent(idx: number, s: number | null) {
-    const next = [...compScores]
-    next[idx] = s
-    persist(overallScore, next, note || null, compNotes)
+    const next = [...compScores]; next[idx] = s
+    persist(overallScore, next, note || null, compNotes, sustains, improves, corrAction, corrSuspense, corrOwner, conductedOn, conditionsMet, headcount)
+  }
+
+  function debounced(fn: () => void) {
+    if (noteTimer.current) clearTimeout(noteTimer.current)
+    noteTimer.current = setTimeout(fn, 600)
   }
 
   function handleCompNote(idx: number, val: string) {
-    const next = [...compNotes]
-    next[idx] = val
-    setCompNotes(next)
-    if (noteTimer.current) clearTimeout(noteTimer.current)
-    noteTimer.current = setTimeout(() => {
-      persist(overallScore, compScores, note || null, next)
-    }, 600)
-  }
-
-  function handleNote(val: string) {
-    setNote(val)
-    if (noteTimer.current) clearTimeout(noteTimer.current)
-    noteTimer.current = setTimeout(() => {
-      persist(overallScore, compScores, val || null, compNotes)
-    }, 600)
+    const next = [...compNotes]; next[idx] = val; setCompNotes(next)
+    debounced(() => persist(overallScore, compScores, note || null, next, sustains, improves, corrAction, corrSuspense, corrOwner, conductedOn, conditionsMet, headcount))
   }
 
   const statusLabel = effectiveScore === null ? '—' : effectiveScore >= 4 ? '✓ GO' : '✗ NO-GO'
@@ -178,6 +215,8 @@ function TrScoreControls({
     effectiveScore === null ? { color: 'var(--ink-3)' } :
     effectiveScore >= 4    ? { color: 'var(--signal-green)', fontWeight: 700 } :
                              { color: 'var(--signal-red)',   fontWeight: 700 }
+
+  const textareaBase = 'w-full rounded border px-3 py-2 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none border-neutral-300 focus:ring-amber-500/40 focus:border-amber-500'
 
   return (
     <div className="mt-3 flex flex-col gap-4">
@@ -198,34 +237,22 @@ function TrScoreControls({
             <div key={i} className="p-4 bg-white flex flex-col gap-3">
               <p className="text-sm font-semibold text-neutral-800 leading-snug">{comp}</p>
               <div className="flex items-center gap-3 flex-wrap">
-                <ScoreButtons
-                  value={compScores[i] ?? null}
-                  onChange={s => handleComponent(i, s)}
-                  size="field"
-                />
+                <ScoreButtons value={compScores[i] ?? null} onChange={s => handleComponent(i, s)} size="field" />
                 {compScores[i] !== null && (
                   <span className="text-xs text-neutral-500 italic">{SCORE_LABELS[compScores[i]!]}</span>
                 )}
               </div>
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
-                  Observations
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Record observations…"
-                  value={compNotes[i] ?? ''}
-                  onChange={e => handleCompNote(i, e.target.value)}
-                  className="w-full rounded border border-neutral-300 px-3 py-2 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-500/40 focus:border-amber-500 resize-none"
-                />
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Observations</label>
+                <textarea rows={2} placeholder="Record observations…" value={compNotes[i] ?? ''} onChange={e => handleCompNote(i, e.target.value)} className={textareaBase} />
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Overall score + N/A + save state */}
-      <div className="flex flex-col gap-2 border-t border-neutral-200 pt-3">
+      {/* Overall score + N/A + evaluation metadata */}
+      <div className="flex flex-col gap-3 border-t border-neutral-200 pt-3">
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
@@ -244,18 +271,13 @@ function TrScoreControls({
               type="button"
               onClick={() =>
                 current?.status === 'na'
-                  ? onSave(eventCode, 'unanswered', note || null, null, null)
-                  : onSave(eventCode, 'na', note || null, null, null)
+                  ? onSave(eventCode, 'unanswered', note || null, null, null, conductedOn || null, conditionsMet, headcount ? parseInt(headcount, 10) : null)
+                  : onSave(eventCode, 'na', note || null, null, null, conductedOn || null, conditionsMet, headcount ? parseInt(headcount, 10) : null)
               }
-              className={[
-                'text-sm font-semibold px-4 py-2 rounded border-2 transition-all',
-                current?.status === 'na'
-                  ? 'border-neutral-500 bg-neutral-300 text-neutral-700'
-                  : 'border-neutral-300 bg-neutral-100 text-neutral-400 hover:border-neutral-500 hover:text-neutral-600',
+              className={['text-sm font-semibold px-4 py-2 rounded border-2 transition-all',
+                current?.status === 'na' ? 'border-neutral-500 bg-neutral-300 text-neutral-700' : 'border-neutral-300 bg-neutral-100 text-neutral-400 hover:border-neutral-500 hover:text-neutral-600',
               ].join(' ')}
-            >
-              N/A
-            </button>
+            >N/A</button>
             <span className="text-[10px] pb-1">
               {saveState === 'saving' && <span className="text-neutral-400">saving…</span>}
               {saveState === 'saved'  && <span className="text-green-600">saved</span>}
@@ -263,25 +285,101 @@ function TrScoreControls({
             </span>
           </div>
         </div>
+
+        {/* Evaluation metadata */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Date Conducted</label>
+            <input
+              type="date"
+              value={conductedOn}
+              onChange={e => { setConductedOn(e.target.value); debounced(snap) }}
+              className="w-full rounded border border-neutral-300 px-2 py-1.5 text-sm text-neutral-700 focus:outline-none focus:ring-1 focus:ring-amber-500/40"
+            />
+          </div>
+          <div>
+            <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Personnel Assessed</label>
+            <input
+              type="number"
+              min={0}
+              value={headcount}
+              onChange={e => { setHeadcount(e.target.value); debounced(snap) }}
+              placeholder="0"
+              className="w-full rounded border border-neutral-300 px-2 py-1.5 text-sm text-neutral-700 focus:outline-none focus:ring-1 focus:ring-amber-500/40"
+            />
+          </div>
+          <div className="flex items-end pb-1.5">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={conditionsMet}
+                onChange={e => {
+                  setConditionsMet(e.target.checked)
+                  persist(overallScore, compScores, note || null, compNotes, sustains, improves, corrAction, corrSuspense, corrOwner, conductedOn, e.target.checked, headcount)
+                }}
+                className="w-4 h-4 accent-green-600"
+              />
+              <span className="text-xs text-neutral-600 leading-snug">Conducted under<br/>specified condition</span>
+            </label>
+          </div>
+        </div>
       </div>
 
-      {/* General / corrective action note — always visible */}
-      <div>
-        {isLowScore && (
-          <p className="text-[9px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--signal-red)' }}>
-            Training gap / corrective action required
-          </p>
+      {/* AAR fields — Sustains / Improves / Corrective Action */}
+      <div className="flex flex-col gap-3 border-t border-neutral-200 pt-3">
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--signal-green)' }}>
+            Sustains — What the unit did well / must reinforce
+          </label>
+          <textarea rows={2} placeholder="Record strengths observed…" value={sustains}
+            onChange={e => { setSustains(e.target.value); debounced(snap) }}
+            className={textareaBase} />
+        </div>
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'var(--signal-amber)' }}>
+            Improves — Training gaps / what must change
+          </label>
+          <textarea rows={2} placeholder="Record deficiencies observed…" value={improves}
+            onChange={e => { setImproves(e.target.value); debounced(snap) }}
+            className={textareaBase} />
+        </div>
+
+        {/* Corrective action — shown for NO-GO or when any text is present */}
+        {(isNoGo || corrAction || corrSuspense || corrOwner) && (
+          <div className="rounded-lg border p-3 flex flex-col gap-2" style={{ borderColor: 'var(--signal-red)', background: 'rgba(179,58,58,0.04)' }}>
+            <p className="text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--signal-red)' }}>
+              Corrective Action Plan (NO-GO)
+            </p>
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Corrective Action</label>
+              <textarea rows={2} placeholder="Specific remediation plan…" value={corrAction}
+                onChange={e => { setCorrAction(e.target.value); debounced(snap) }}
+                className="w-full rounded border border-red-200 px-3 py-2 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-red-300 resize-none" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Suspense Date</label>
+                <input type="date" value={corrSuspense}
+                  onChange={e => { setCorrSuspense(e.target.value); debounced(snap) }}
+                  className="w-full rounded border border-red-200 px-2 py-1.5 text-sm text-neutral-700 focus:outline-none focus:ring-1 focus:ring-red-300" />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Responsible Party</label>
+                <input type="text" value={corrOwner} placeholder="HMCS Smith / S3"
+                  onChange={e => { setCorrOwner(e.target.value); debounced(snap) }}
+                  className="w-full rounded border border-red-200 px-2 py-1.5 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-red-300" />
+              </div>
+            </div>
+          </div>
         )}
-        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
-          {isLowScore ? 'Corrective Action' : 'General Observations'}
-        </label>
-        <textarea
-          rows={3}
-          placeholder={isLowScore ? 'Describe training gap or corrective action…' : 'Overall observations…'}
-          value={note}
-          onChange={e => handleNote(e.target.value)}
-          className={`w-full rounded border px-3 py-2 text-sm text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 resize-none ${isLowScore ? 'border-red-200 focus:ring-red-300 focus:border-red-300' : 'border-neutral-300 focus:ring-amber-500/40 focus:border-amber-500'}`}
-        />
+
+        {/* General note (for legacy data / non-NO-GO additional notes) */}
+        <div>
+          <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">Additional Notes</label>
+          <textarea rows={2} placeholder="Any other evaluator notes…" value={note}
+            onChange={e => { setNote(e.target.value); debounced(snap) }}
+            className={textareaBase} />
+        </div>
       </div>
     </div>
   )
@@ -403,7 +501,10 @@ function WicketCard({
     status: TrResponseStatus,
     note: string | null,
     score: number | null,
-    captureData: { components: (number | null)[]; component_notes?: string[] } | null,
+    captureData: Record<string, unknown> | null,
+    conductedOn: string | null,
+    conditionsMet: boolean | null,
+    headcount: number | null,
   ) => Promise<void>
 }) {
   const [showDetails, setShowDetails] = useState(false)
@@ -563,6 +664,10 @@ export function TrPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [showMobileNav, setShowMobileNav] = useState(false)
   const mainRef = useRef<HTMLElement | null>(null)
+  const [evaluatorName, setEvaluatorName] = useState('')
+  const [evaluatorRank, setEvaluatorRank] = useState('')
+  const [evaluatorBillet, setEvaluatorBillet] = useState('')
+  const evalTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!assessmentId) return
@@ -573,6 +678,9 @@ export function TrPage() {
       api.getTrJtsEvidence(assessmentId),
     ]).then(([a, framework, rs, evidence]) => {
       setAssessment(a)
+      setEvaluatorName(a.tr_evaluator_name ?? '')
+      setEvaluatorRank(a.tr_evaluator_rank ?? '')
+      setEvaluatorBillet(a.tr_evaluator_billet ?? '')
       setTr(framework)
       setResponses(new Map(rs.map(r => [r.event_code, r])))
       setJtsEvidence(evidence)
@@ -590,7 +698,10 @@ export function TrPage() {
     status: TrResponseStatus,
     note: string | null,
     score: number | null,
-    captureData: { components: (number | null)[]; component_notes?: string[] } | null,
+    captureData: Record<string, unknown> | null,
+    conductedOn: string | null,
+    conditionsMet: boolean | null,
+    headcount: number | null,
   ) => {
     if (!assessmentId) return
     const updated = await api.upsertTrResponse(assessmentId, eventCode, {
@@ -598,9 +709,24 @@ export function TrPage() {
       note,
       score,
       capture_data: captureData,
+      conducted_on: conductedOn,
+      conditions_met: conditionsMet,
+      headcount,
     })
     setResponses(prev => new Map(prev).set(eventCode, updated))
   }, [assessmentId])
+
+  function saveEvalMeta(name: string, rank: string, billet: string) {
+    if (!assessmentId) return
+    if (evalTimer.current) clearTimeout(evalTimer.current)
+    evalTimer.current = setTimeout(() => {
+      api.updateTrMeta(assessmentId, {
+        tr_evaluator_name: name || null,
+        tr_evaluator_rank: rank || null,
+        tr_evaluator_billet: billet || null,
+      })
+    }, 600)
+  }
 
   if (loadError) {
     return <div className="flex items-center justify-center min-h-screen text-sm text-red-600">{loadError}</div>
@@ -613,6 +739,31 @@ export function TrPage() {
     tr.wickets.some(w => w.chapter === ch.number)
   )
   const activeWickets = tr.wickets.filter(w => w.chapter === activeChapter)
+
+  // T-level: count readiness-coded wickets scored GO
+  const readinessCoded = tr.wickets.filter(w => w.readiness_coded)
+  const readinessGoCount = readinessCoded.filter(w => {
+    const r = responses.get(w.event_code)
+    if (!r) return false
+    const comps = r.capture_data?.components
+    const scored = Array.isArray(comps) ? comps.filter((s): s is number => s !== null) : []
+    const auto = scored.length > 0 ? Math.min(...scored) : null
+    const eff = r.score ?? auto
+    return eff !== null ? eff >= 4 : r.status === 'go'
+  }).length
+  const tLevel: 'T1' | 'T2' | 'T3' | 'T4' | null = readinessCoded.length === 0 ? null : (() => {
+    const pct = readinessGoCount / readinessCoded.length
+    if (pct >= 0.9) return 'T1'
+    if (pct >= 0.7) return 'T2'
+    if (pct >= 0.5) return 'T3'
+    return 'T4'
+  })()
+  const tLevelStyle: React.CSSProperties | undefined = tLevel === null ? undefined :
+    tLevel === 'T1' || tLevel === 'T2'
+      ? { background: 'rgba(107,127,79,0.18)', color: 'var(--signal-green)', border: '2px solid var(--signal-green)' }
+      : tLevel === 'T3'
+      ? { background: 'rgba(201,154,46,0.18)', color: 'var(--signal-amber)', border: '2px solid var(--signal-amber)' }
+      : { background: 'rgba(179,58,58,0.18)', color: 'var(--signal-red)', border: '2px solid var(--signal-red)' }
   const activeChapterIdx = chaptersWithWickets.findIndex(c => c.number === activeChapter)
   const nextChapter = chaptersWithWickets[activeChapterIdx + 1] ?? null
   const nextUnscoredWicket = activeWickets.find(w => !isAnswered(responses.get(w.event_code))) ?? null
@@ -688,13 +839,61 @@ export function TrPage() {
               <span className="text-red-600 font-semibold">{noGoCount} NO-GO</span>
             </p>
             <p className="text-neutral-300 text-[9px]">1=non-performant · 4=meets std · 5=exceeds</p>
+            {tLevel !== null && (
+              <div className="flex items-center gap-2 pt-1">
+                <span
+                  className="text-sm font-black px-2 py-0.5 rounded"
+                  style={tLevelStyle}
+                >
+                  {tLevel}
+                </span>
+                <span className="text-[9px] text-neutral-400">
+                  {readinessGoCount}/{readinessCoded.length} readiness events GO
+                </span>
+              </div>
+            )}
           </div>
-          <Link
-            to={`/assessments/${assessmentId}/tr/print`}
-            className="block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1 mt-1"
-          >
-            Print / Export PDF →
-          </Link>
+
+          {/* Evaluator of record */}
+          <div className="pt-2 space-y-1.5 border-t border-neutral-300 mt-2">
+            <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Evaluator of Record</p>
+            <input
+              type="text"
+              value={evaluatorRank}
+              onChange={e => { setEvaluatorRank(e.target.value); saveEvalMeta(evaluatorName, e.target.value, evaluatorBillet) }}
+              placeholder="Rank"
+              className="w-full rounded border border-neutral-300 px-2 py-1 text-[11px] text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-400/40"
+            />
+            <input
+              type="text"
+              value={evaluatorName}
+              onChange={e => { setEvaluatorName(e.target.value); saveEvalMeta(e.target.value, evaluatorRank, evaluatorBillet) }}
+              placeholder="Name"
+              className="w-full rounded border border-neutral-300 px-2 py-1 text-[11px] text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-400/40"
+            />
+            <input
+              type="text"
+              value={evaluatorBillet}
+              onChange={e => { setEvaluatorBillet(e.target.value); saveEvalMeta(evaluatorName, evaluatorRank, e.target.value) }}
+              placeholder="Billet / Title"
+              className="w-full rounded border border-neutral-300 px-2 py-1 text-[11px] text-neutral-700 placeholder:text-neutral-300 focus:outline-none focus:ring-1 focus:ring-amber-400/40"
+            />
+          </div>
+
+          <div className="flex gap-2 mt-2">
+            <Link
+              to={`/assessments/${assessmentId}/tr/print`}
+              className="flex-1 block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
+            >
+              Print / Export PDF →
+            </Link>
+            <Link
+              to={`/assessments/${assessmentId}/tr/aar`}
+              className="flex-1 block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
+            >
+              AAR →
+            </Link>
+          </div>
         </div>
 
         <div className="px-2 pt-2 pb-1 border-b border-neutral-100">

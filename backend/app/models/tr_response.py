@@ -1,7 +1,7 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text, func
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, JSON, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
@@ -21,6 +21,10 @@ class TrResponse(Base):
     # {"components": [4, 5, null, 3, ...]} — per-component scores, index-matched to event_components
     capture_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Evaluation metadata
+    conducted_on: Mapped[date | None] = mapped_column(Date, nullable=True)
+    conditions_met: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    headcount: Mapped[int | None] = mapped_column(Integer, nullable=True)
     authored_by: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"))
     last_modified_by: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"))
     version: Mapped[int] = mapped_column(Integer, default=1)

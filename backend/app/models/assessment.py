@@ -22,6 +22,13 @@ class Assessment(Base):
     unique_identifier: Mapped[str | None] = mapped_column(String(100), nullable=True)
     exercise_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("exercises.id"), nullable=True, index=True)
     scenario_ref: Mapped[str | None] = mapped_column(String(300), nullable=True)
+    # T&R evaluator of record
+    tr_evaluator_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    tr_evaluator_rank: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    tr_evaluator_billet: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    # AAR narrative fields
+    tr_aar_narrative: Mapped[str | None] = mapped_column(Text, nullable=True)
+    tr_aar_priorities: Mapped[str | None] = mapped_column(Text, nullable=True)
     service: Mapped[str | None] = mapped_column(String(20), nullable=True)
     component: Mapped[str | None] = mapped_column(String(20), nullable=True)
     started_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

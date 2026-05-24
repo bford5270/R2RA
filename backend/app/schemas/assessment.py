@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, field_validator
 
@@ -40,6 +40,11 @@ class AssessmentOut(BaseModel):
     unique_identifier: str | None
     scenario_ref: str | None = None
     exercise_id: str | None = None
+    tr_evaluator_name: str | None = None
+    tr_evaluator_rank: str | None = None
+    tr_evaluator_billet: str | None = None
+    tr_aar_narrative: str | None = None
+    tr_aar_priorities: str | None = None
     started_at: datetime
     certified_at: datetime | None = None
 
@@ -90,11 +95,22 @@ class ResponseOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class AssessmentTrUpdate(BaseModel):
+    tr_evaluator_name: str | None = None
+    tr_evaluator_rank: str | None = None
+    tr_evaluator_billet: str | None = None
+    tr_aar_narrative: str | None = None
+    tr_aar_priorities: str | None = None
+
+
 class TrResponseUpsert(BaseModel):
     status: str | None = None     # optional when score is supplied; derived automatically
     score: int | None = None      # 1–5 Likert; drives status when provided
     note: str | None = None
-    capture_data: dict | None = None  # {"components": [4, 5, null, 3, ...]}
+    capture_data: dict | None = None  # {"components": [...], "component_notes": [...], "sustains": ..., etc.}
+    conducted_on: date | None = None
+    conditions_met: bool | None = None
+    headcount: int | None = None
 
     def model_post_init(self, _context: object) -> None:
         if self.score is not None:
@@ -115,6 +131,9 @@ class TrResponseOut(BaseModel):
     score: int | None
     capture_data: dict | None
     note: str | None
+    conducted_on: date | None = None
+    conditions_met: bool | None = None
+    headcount: int | None = None
     authored_by: str
     last_modified_by: str
     version: int
