@@ -196,6 +196,35 @@ with live AWS calls:
 - DEPLOY.md §Debrief AI pipeline updated with an enablement-status
   note; DEVLOG header unblocked.
 
+**Session 23 continued — COST.md applied to the live account** (user
+request; root AWS keys in env):
+
+- `r2ra-prod`: LoadBalanced (classic ELB!) → **SingleInstance +
+  t4g.micro** in one update. ~3 min Red during instance swap, back to
+  Green. Classic ELB deleted; CNAME re-pointed automatically; CloudFront
+  origin (the EB CNAME) verified unchanged and resolving to the new
+  instance.
+- `role2-builder-prod`: already single-instance → **t4g.micro** (arm64
+  Docker build succeeded; EIP re-attached). Green.
+- RDS `r2ra-postgres`: **db.t3.micro/gp2 → db.t4g.micro/gp3**,
+  apply-immediately. Operational (storage-optimization background phase
+  is normal).
+- **Orphan found: t3.small `i-02d4f9ed565eef469`** (launched 4/28,
+  key r2ra-key, sg r2ra-sg, untagged, nothing in DNS → the pre-EB
+  manual pilot box, ~$19/mo). **Stopped, not terminated** — terminate +
+  delete its 20 GB volume after confirming it holds nothing needed.
+- S3 lifecycle rules (artifacts 90d, frontend noncurrent 30d), EB app
+  version caps (10) both apps, AWS Budget $40/mo → bford1@gmail.com.
+- Already clean: no NAT gateways, no idle EIPs, pipelines already V2,
+  enhanced monitoring off.
+- Est. bill ~$34/mo (was ~$55–75 incl. orphan). User target is
+  $10–15/mo — COST.md gained a "Path to $10–15" section (RIs → ~$27;
+  consolidate role2-builder → ~$18; Aurora Serverless v2 scale-to-zero
+  → ~$12–15 with ~15 s cold resume). RIs not bought (GovCloud gate).
+- Branch merged to `main` per user instruction (docs-only diff);
+  pipeline redeploy re-validates CI/CD on the new arm64 single-instance
+  env.
+
 ---
 
 ### 2026-07-25 — Session 22: installable mobile app (PWA completion)

@@ -1,5 +1,32 @@
 # R2RA — AWS Cost Optimization Runbook
 
+> **Status: APPLIED 2026-07-25** (via AWS API from a Claude Code session).
+> What was done, verified against the live account:
+>
+> - **`r2ra-prod` → single-instance** (classic ELB deleted) **+ t4g.micro**
+>   (arm64). Env Green; CNAME re-pointed to the new instance; CloudFront
+>   origin unchanged.
+> - **`role2-builder-prod` → t4g.micro** (was already single-instance;
+>   EIP re-attached). Env Green.
+> - **RDS `r2ra-postgres` → db.t4g.micro + gp3** (was db.t3.micro/gp2).
+>   Fully operational; background storage-optimization phase is normal.
+> - **Found & STOPPED an orphaned `t3.small`** (`i-02d4f9ed565eef469`,
+>   launched 2026-04-28, key `r2ra-key`, no tags, nothing in DNS points
+>   at it — the pre-EB manual pilot box, ~$19/mo). Stopped, not
+>   terminated: **terminate it + delete its 20 GB volume** once confirmed
+>   nothing on it is needed.
+> - **S3 lifecycle**: artifacts bucket 90-day expiry; frontend bucket
+>   30-day noncurrent-version expiry; EB app versions capped at 10 for
+>   both applications.
+> - **AWS Budget** `r2ra-monthly`: $40/mo, email alerts at 80% actual /
+>   100% forecast.
+> - Verified already-clean: **no NAT gateways**, no idle EIPs, both
+>   CodePipelines **already V2**, RDS Enhanced Monitoring off.
+> - Not done (needs owner decision): RDS/EC2 reserved instances
+>   (see Change 3 — gated on the GovCloud question).
+>
+> Estimated bill after: **~$34/mo** (was ~$55–75 including the orphan).
+
 Companion to `docs/DEPLOY.md`. Goal: cut the monthly AWS bill roughly in
 half **without reducing capability** — same app, same URL, same CI/CD,
 same database, same CUI posture. Every change below is capability-neutral
@@ -203,6 +230,25 @@ buildspec changes needed.
 - **Don't consolidate R2RA and role2-builder onto one instance.** A
   t4g.micro per app is ~$6/mo; coupling two apps' deploy and failure
   domains isn't worth $6.
+
+---
+
+## Path to a $10–15/mo target
+
+Owner's stated goal (2026-07-25): ~$10–15/mo with capability retained.
+After the applied changes the floor of the *current architecture* is
+about $34/mo. The remaining levers, in order of pain:
+
+| Step | New est. total | Tradeoff |
+|---|---|---|
+| 1-yr no-upfront commitments: 2× EC2 t4g.micro (~$3.80 ea) + RDS db.t4g.micro (~$7.70) | **~$27** | Lock-in only — zero capability change. Don't buy if GovCloud move is <1 yr out. |
+| + retire the second AWS instance: role2-builder API joins the r2ra box or moves to a free-tier host (its frontend is already on Vercel) | **~$18–19** | Coupled deploy/failure domain, or a second hosting posture. r2ra itself untouched. |
+| + replace RDS with Aurora Serverless v2 (min 0 ACU — pauses when idle, ~$2 storage + ACU-hours only while in use) | **~$12–15** | First request after an idle period waits ~15 s for DB resume. For an exercise-driven tool that's idle most days, this is the only way to $10–15. |
+
+Structural floor that can't be removed while keeping the current
+capability set: 2 public IPv4s (~$7.30 — CloudFront origins need them)
+and 2 Route 53 zones ($1). A true $10–15 requires all three steps above;
+$27 requires only signing 1-year commitments.
 
 ---
 
