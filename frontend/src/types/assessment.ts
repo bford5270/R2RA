@@ -163,3 +163,42 @@ export interface AuditLogEntry {
   after: Record<string, unknown> | null
   ts: string
 }
+
+// ---- T&R evaluator taskings (S3T assigns PECLs/METs to evaluators) ----
+
+export type TrTaskingStatus = 'assigned' | 'returned'
+
+export interface TrTasking {
+  id: string
+  assessment_id: string
+  user_id: string
+  display_name: string
+  email: string
+  event_codes: string[]
+  mets: string[]
+  note: string | null
+  status: TrTaskingStatus
+  assigned_at: string
+  returned_at: string | null
+}
+
+export interface MyTrTasking {
+  id: string
+  assessment_id: string
+  unit_name: string
+  unit_uic: string
+  exercise_name: string | null
+  event_codes: string[]
+  mets: string[]
+  note: string | null
+  status: TrTaskingStatus
+  assigned_at: string
+  returned_at: string | null
+  scored_count: number
+}
+
+export interface TrTaskingUpsert {
+  event_codes: string[]
+  mets: string[]
+  note: string | null
+}

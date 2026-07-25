@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
-import type { Assessment } from '../types/assessment'
+import type { Assessment, MyTrTasking } from '../types/assessment'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 import { useAuth } from '../lib/auth'
 import { useExercise } from '../lib/exercise'
@@ -13,6 +13,7 @@ export function HomePage() {
   const { logout, user } = useAuth()
   const { exercise, clearExercise } = useExercise()
   const [assessments, setAssessments] = useState<Assessment[]>([])
+  const [taskings, setTaskings] = useState<MyTrTasking[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -29,6 +30,7 @@ export function HomePage() {
       .then(setAssessments)
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load'))
       .finally(() => setLoading(false))
+    api.myTrTaskings().then(setTaskings).catch(() => {/* non-blocking */})
   }, [isPending])
 
   const visibleAssessments = isAdmin
@@ -147,6 +149,60 @@ export function HomePage() {
 
       {!isPending && (
       <>
+      {/* Your tasking — evaluator fast path to their assigned PECLs/METs */}
+      {taskings.length > 0 && (
+        <div className="mb-6 space-y-2">
+          <h2 className="font-display text-sm font-semibold text-neutral-700 uppercase tracking-widest">Your Tasking</h2>
+          {taskings.map(t => {
+            const total = t.event_codes.length
+            const done = t.status === 'returned'
+            return (
+              <Link
+                key={t.id}
+                to={`/assessments/${t.assessment_id}/tr`}
+                className="block rounded-lg border p-4 transition-colors hover:shadow-1"
+                style={
+                  done
+                    ? { background: 'rgba(107,127,79,0.10)', borderColor: 'rgba(107,127,79,0.40)' }
+                    : { background: 'rgba(91,122,139,0.10)', borderColor: 'rgba(91,122,139,0.40)' }
+                }
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-neutral-900 truncate">
+                      {t.unit_name}
+                      {t.exercise_name && <span className="font-normal text-neutral-500"> · {t.exercise_name}</span>}
+                    </p>
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--ink-2)' }}>
+                      {done
+                        ? `✓ Returned to S3T ${t.returned_at ? new Date(t.returned_at).toLocaleDateString() : ''}`
+                        : `${t.scored_count} of ${total} wickets scored${t.mets.length ? ` · ${t.mets.join(', ')}` : ''}`}
+                    </p>
+                  </div>
+                  <span
+                    className="shrink-0 text-xs font-bold"
+                    style={{ color: done ? 'var(--signal-green)' : 'var(--signal-blue)' }}
+                  >
+                    {done ? 'View →' : 'Continue →'}
+                  </span>
+                </div>
+                {!done && (
+                  <div className="mt-2.5 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.08)' }}>
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${total ? Math.round((t.scored_count / total) * 100) : 0}%`,
+                        background: t.scored_count >= total ? 'var(--signal-green)' : 'var(--signal-blue)',
+                      }}
+                    />
+                  </div>
+                )}
+              </Link>
+            )
+          })}
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-sm font-semibold text-neutral-700 uppercase tracking-widest">Assessments</h2>
         <button

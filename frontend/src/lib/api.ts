@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, ReadinessSummary, ResponseUpsert, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, MyTrTasking, ReadinessSummary, ResponseUpsert, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
 import type { Exercise, ExerciseCreate } from '../types/exercise'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
@@ -219,6 +219,29 @@ export const api = {
 
   deleteAssignment: (assessmentId: string, assignmentId: string) =>
     del<void>(`/assessments/${assessmentId}/assignments/${assignmentId}`),
+
+  // ---- T&R evaluator taskings ----
+  listTrTaskings: (assessmentId: string) =>
+    get<TrTasking[]>(`/assessments/${assessmentId}/tr-taskings`),
+
+  upsertTrTasking: (assessmentId: string, userId: string, body: TrTaskingUpsert) =>
+    request<TrTasking>(`/assessments/${assessmentId}/tr-taskings/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
+  deleteTrTasking: (assessmentId: string, taskingId: string) =>
+    del<void>(`/assessments/${assessmentId}/tr-taskings/${taskingId}`),
+
+  returnTrTasking: (taskingId: string) =>
+    post<TrTasking>(`/tr-taskings/${taskingId}/return`, {}),
+
+  reopenTrTasking: (taskingId: string) =>
+    post<TrTasking>(`/tr-taskings/${taskingId}/reopen`, {}),
+
+  myTrTaskings: () =>
+    get<MyTrTasking[]>('/tr-taskings/mine'),
 
   // ---- exercises ----
   listExercises: () =>

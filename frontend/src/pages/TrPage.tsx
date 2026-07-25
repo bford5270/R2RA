@@ -2,10 +2,12 @@ import type React from 'react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
-import type { Assessment, TrJtsEvidence } from '../types/assessment'
+import { useAuth } from '../lib/auth'
+import type { Assessment, TrJtsEvidence, TrTasking } from '../types/assessment'
 import type { TrResponse, TrResponseStatus } from '../types/assessment'
 import type { TrFramework, TrWicket } from '../types/tr'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
+import { MyTaskingBanner, TrTaskingPanel } from '../components/TrTaskingPanel'
 
 // ---------------------------------------------------------------------------
 // Scale constants
@@ -653,13 +655,18 @@ function isAnswered(r: TrResponse | undefined): boolean {
 
 export function TrPage() {
   const { assessmentId } = useParams<{ assessmentId: string }>()
+  const { user } = useAuth()
   const [searchParams] = useSearchParams()
   const linkedWicket = searchParams.get('wicket')
+  // Note: evaluators with a tasking default into their filtered view on load;
+  // the home-screen tasking card links straight here.
 
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [tr, setTr] = useState<TrFramework | null>(null)
   const [responses, setResponses] = useState<Map<string, TrResponse>>(new Map())
   const [jtsEvidence, setJtsEvidence] = useState<Record<string, TrJtsEvidence>>({})
+  const [taskings, setTaskings] = useState<TrTasking[]>([])
+  const [showMineOnly, setShowMineOnly] = useState(false)
   const [activeChapter, setActiveChapter] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [showMobileNav, setShowMobileNav] = useState(false)
@@ -676,7 +683,8 @@ export function TrPage() {
       api.getTrFramework(),
       api.listTrResponses(assessmentId),
       api.getTrJtsEvidence(assessmentId),
-    ]).then(([a, framework, rs, evidence]) => {
+      api.listTrTaskings(assessmentId).catch(() => [] as TrTasking[]),
+    ]).then(([a, framework, rs, evidence, ts]) => {
       setAssessment(a)
       setEvaluatorName(a.tr_evaluator_name ?? '')
       setEvaluatorRank(a.tr_evaluator_rank ?? '')
@@ -684,6 +692,10 @@ export function TrPage() {
       setTr(framework)
       setResponses(new Map(rs.map(r => [r.event_code, r])))
       setJtsEvidence(evidence)
+      setTaskings(ts)
+      // Default an evaluator with a tasking into their filtered view
+      const mine = ts.find(t => t.user_id === user?.id)
+      if (mine) setShowMineOnly(true)
       if (linkedWicket) {
         const target = framework.wickets.find(w => w.event_code === linkedWicket)
         setActiveChapter(target?.chapter ?? framework.chapters[0]?.number ?? null)
@@ -739,6 +751,15 @@ export function TrPage() {
     tr.wickets.some(w => w.chapter === ch.number)
   )
   const activeWickets = tr.wickets.filter(w => w.chapter === activeChapter)
+
+  // Evaluator tasking context
+  const myTasking = taskings.find(t => t.user_id === user?.id) ?? null
+  const myCodes = new Set(myTasking?.event_codes ?? [])
+  const myScored = myTasking
+    ? myTasking.event_codes.filter(c => isAnswered(responses.get(c))).length
+    : 0
+  const isS3T = assessment.lead_id === user?.id || user?.global_role === 'admin'
+  const mineMode = showMineOnly && myTasking !== null
 
   // T-level: count readiness-coded wickets scored GO
   const readinessCoded = tr.wickets.filter(w => w.readiness_coded)
@@ -894,6 +915,31 @@ export function TrPage() {
               AAR →
             </Link>
           </div>
+
+          {/* Evaluator's tasking toggle */}
+          {myTasking && (
+            <button
+              onClick={() => setShowMineOnly(v => !v)}
+              className="w-full mt-2 text-[10px] font-bold rounded px-2 py-1.5 border-2 transition-colors"
+              style={
+                mineMode
+                  ? { borderColor: 'var(--signal-blue)', color: 'var(--signal-blue)', background: 'rgba(91,122,139,0.15)' }
+                  : { borderColor: 'var(--border-1)', color: 'var(--ink-2)' }
+              }
+            >
+              {mineMode ? 'Showing: my tasking only' : `My tasking (${myScored}/${myTasking.event_codes.length}) →`}
+            </button>
+          )}
+
+          {/* S3T tasking management */}
+          {isS3T && assessmentId && (
+            <TrTaskingPanel
+              assessmentId={assessmentId}
+              framework={tr}
+              taskings={taskings}
+              onChanged={setTaskings}
+            />
+          )}
         </div>
 
         <div className="px-2 pt-2 pb-1 border-b border-neutral-100">
@@ -909,7 +955,7 @@ export function TrPage() {
             return (
               <button
                 key={ch.number}
-                onClick={() => { setActiveChapter(ch.number); mainRef.current?.scrollTo({ top: 0 }) }}
+                onClick={() => { setActiveChapter(ch.number); setShowMineOnly(false); mainRef.current?.scrollTo({ top: 0 }) }}
                 className={[
                   'flex items-start gap-2 px-3 py-2 rounded text-left transition-colors border-l-2',
                   isActive
@@ -972,7 +1018,51 @@ export function TrPage() {
         </div>
 
         <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-6">
-          {activeChapter !== null && (
+          {mineMode && myTasking && (
+            <>
+              <MyTaskingBanner
+                tasking={myTasking}
+                scoredCount={myScored}
+                onReturned={t => setTaskings(prev => prev.map(x => (x.id === t.id ? t : x)))}
+              />
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-lg font-bold text-neutral-900">My Assigned Wickets</h2>
+                <button
+                  onClick={() => setShowMineOnly(false)}
+                  className="text-xs text-neutral-400 hover:text-neutral-600 underline"
+                >
+                  Show all wickets
+                </button>
+              </div>
+              {chaptersWithWickets.map(ch => {
+                const myWickets = tr.wickets.filter(
+                  w => w.chapter === ch.number && myCodes.has(w.event_code)
+                )
+                if (myWickets.length === 0) return null
+                return (
+                  <div key={ch.number} className="mb-6">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">
+                      Ch. {ch.number} — {ch.title}
+                    </p>
+                    <div className={myTasking.status === 'returned' ? 'pointer-events-none opacity-60' : ''}>
+                      {myWickets.map(w => (
+                        <WicketCard
+                          key={w.event_code}
+                          wicket={w}
+                          response={responses.get(w.event_code)}
+                          evidence={jtsEvidence[w.event_code]}
+                          highlighted={linkedWicket === w.event_code}
+                          onSave={handleSave}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </>
+          )}
+
+          {!mineMode && activeChapter !== null && (
             <>
               <div className="mb-5">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-0.5">
