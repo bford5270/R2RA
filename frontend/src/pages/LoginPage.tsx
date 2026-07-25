@@ -187,6 +187,10 @@ export function LoginPage() {
           Need an account?{' '}
           <Link to="/register" className="text-scarlet hover:underline font-semibold">Request access</Link>
         </p>
+        <p className="mt-2 text-center text-xs text-neutral-500">
+          New evaluator?{' '}
+          <Link to="/go-by" className="text-scarlet hover:underline font-semibold">Read the go-by</Link>
+        </p>
 
         <p className="mt-6 text-center text-[10px] text-neutral-400 leading-relaxed">
           Unofficial — not endorsed by USMC, Navy, DHA, or JTS

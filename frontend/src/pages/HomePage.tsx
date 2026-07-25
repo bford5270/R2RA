@@ -90,6 +90,12 @@ export function HomePage() {
           >
             Form preview
           </Link>
+          <Link
+            to="/go-by"
+            className="text-xs text-neutral-500 hover:text-neutral-700"
+          >
+            Go-by
+          </Link>
           {user?.global_role === 'admin' && (
             <>
               <Link

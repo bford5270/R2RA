@@ -4,6 +4,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { ExerciseGate } from './components/ExerciseGate'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { GoByPage } from './pages/GoByPage'
 import { ExerciseSelectPage } from './pages/ExerciseSelectPage'
 import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
@@ -40,6 +41,8 @@ export default function App() {
           path="/register"
           element={isAuthenticated ? <Navigate to="/" replace /> : <RegisterPage />}
         />
+        {/* Public — instructions only, no assessment data */}
+        <Route path="/go-by" element={<GoByPage />} />
         <Route
           path="/exercise-select"
           element={
