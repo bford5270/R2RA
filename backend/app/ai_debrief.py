@@ -153,9 +153,13 @@ def distill_transcript(transcript: str, wicket_context: str) -> dict:
     next-time actions using Claude on Amazon Bedrock (Mantle client, uses the
     instance's AWS credential chain).
     """
-    from anthropic import AnthropicBedrockMantle  # lazy — prod-only dependency
+    # AnthropicBedrock (bedrock-runtime InvokeModel), not AnthropicBedrockMantle:
+    # the Mantle endpoint is account-gated on this AWS account (403 "not
+    # available for this account" for every model), while bedrock-runtime
+    # serves us.anthropic.* inference profiles normally.
+    from anthropic import AnthropicBedrock  # lazy — prod-only dependency
 
-    client = AnthropicBedrockMantle(aws_region=settings.aws_region)
+    client = AnthropicBedrock(aws_region=settings.aws_region)
     response = client.messages.create(
         model=settings.bedrock_model_id,
         max_tokens=8000,

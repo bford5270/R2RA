@@ -166,14 +166,22 @@ account 885232248320 / us-east-1. Kept for reference and re-runs.
      --model-id anthropic.claude-opus-5 --offer-token "$TOKEN"
    ```
 
-   Access is enabled for `anthropic.claude-opus-5` (the app default),
-   plus `anthropic.claude-sonnet-5` and
-   `anthropic.claude-haiku-4-5-20251001-v1:0` so the model can be
-   swapped by env var alone (see cost section below). Activation is
+   Agreements were accepted for `anthropic.claude-opus-5`,
+   `anthropic.claude-sonnet-5`, and
+   `anthropic.claude-haiku-4-5-20251001-v1:0`. Activation is
    asynchronous (`agreementAvailability: PENDING` for a few minutes).
-   The app talks to Bedrock through the Anthropic Mantle client, which
-   accepts the plain `anthropic.…` model IDs; no inference-profile ID is
-   needed in `BEDROCK_MODEL_ID`.
+
+   **Account-gating discovered during verification:** despite accepted
+   agreements, this AWS account cannot invoke the Claude 5 family
+   (Opus 5, Sonnet 5) or any Opus-tier model (4.7/4.8) — every attempt
+   returns 403 *"not available for this account … contact AWS Sales"*.
+   The Anthropic **Mantle** endpoint is gated entirely (no model works
+   on it). What does work, verified by live invoke: **Sonnet 4.6** and
+   **Haiku 4.5** through the classic `bedrock-runtime` path using
+   `us.anthropic.*` inference-profile IDs. The app was switched
+   accordingly (`AnthropicBedrock` client,
+   `BEDROCK_MODEL_ID=us.anthropic.claude-sonnet-4-6`). If AWS Sales
+   later enables the newer models, upgrading is an env-var change.
 2. **IAM** — inline policy `r2ra-debrief-ai` attached to role
    `r2ra-eb-ec2-role` (the role inside `r2ra-eb-ec2-profile`). Note two
    corrections to the original runbook: the role had **no** pre-existing
@@ -221,7 +229,9 @@ account 885232248320 / us-east-1. Kept for reference and re-runs.
    `debriefs/_transcripts/` and the app deletes it after reading.
 3. **Env vars** — `S3_EVIDENCE_BUCKET` was a literal placeholder string;
    it is now set to `r2ra-evidence-pilot` (the bucket already existed in
-   us-east-1). Optional overrides: `BEDROCK_MODEL_ID`,
+   us-east-1). `BEDROCK_MODEL_ID` is set to
+   `us.anthropic.claude-sonnet-4-6` (see gating note above). Optional
+   overrides: `BEDROCK_MODEL_ID`,
    `TRANSCRIBE_LANGUAGE` (default `en-US`), `TRANSCRIBE_TIMEOUT_SEC`,
    `MAX_AUDIO_UPLOAD_BYTES`.
 4. **Retention**: raw debrief audio is deleted automatically once
@@ -236,23 +246,20 @@ Per-debrief cost has two parts. Numbers below assume a 60-minute debrief
 | Component | Driver | Cost |
 |---|---|---|
 | Amazon Transcribe (batch) | $0.024/min of audio | **$1.44/hr — the dominant cost** |
-| Bedrock Claude Opus 5 (default) | $5 in / $25 out per 1M tokens | ≈ $0.10/debrief |
-| Bedrock Claude Sonnet 5 | $3 in / $15 out per 1M tokens (intro $2/$10 through 2026-08-31) | ≈ $0.04–0.06/debrief |
-| Bedrock Claude Haiku 4.5 | $1 in / $5 per 1M tokens | ≈ $0.02/debrief |
+| Bedrock Claude Sonnet 4.6 (current model) | $3 in / $15 out per 1M tokens | ≈ $0.06/debrief |
+| Bedrock Claude Haiku 4.5 | $1 in / $5 out per 1M tokens | ≈ $0.02/debrief |
 
 Recommended levers, in order of impact — none reduce what the feature
 can do:
 
-1. **Switch the distillation model to Sonnet 5** — set
-   `BEDROCK_MODEL_ID=anthropic.claude-sonnet-5` in the EB console
-   (access already enabled). Distillation is structured
-   summarization/extraction, well within Sonnet's capability; output
-   quality on this task is equivalent while inference cost drops
-   ~60% (~75% at intro pricing). Haiku 4.5
-   (`anthropic.claude-haiku-4-5-20251001-v1:0`) is a further step down
-   at ~80% savings if trials confirm quality holds. Because the AI cost
-   is a few cents either way, this matters only at volume — but it is
-   free to take.
+1. **The model choice is already cost-optimal for what this account can
+   invoke.** Sonnet 4.6 is the most capable model available (Opus tier
+   and the Claude 5 family are AWS-account-gated), and distillation is
+   structured summarization/extraction well within its capability. If
+   the ~$0.06/debrief ever matters at volume, Haiku 4.5
+   (`BEDROCK_MODEL_ID=us.anthropic.claude-haiku-4-5-20251001-v1:0`,
+   verified working) is a ~65% further cut — trial a few debriefs first
+   to confirm distillation quality holds.
 2. **Transcribe is the real bill — control audio minutes, not the API.**
    Transcribe bills per minute of *audio*, regardless of bitrate or
    codec. The only levers are shorter recordings (trim dead air before

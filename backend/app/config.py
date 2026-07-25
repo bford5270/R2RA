@@ -30,7 +30,10 @@ class Settings(BaseSettings):
     # Debrief AI pipeline (Amazon Transcribe + Claude on Bedrock).
     # Requires S3 + IAM (transcribe:*TranscriptionJob, bedrock:InvokeModel)
     # + Bedrock model access enabled in the AWS console.
-    bedrock_model_id: str = "anthropic.claude-opus-5"
+    # us.anthropic.* inference-profile ID for the bedrock-runtime path.
+    # Claude 5-family and Opus-tier models are AWS-account-gated here
+    # (need AWS Sales enablement); Sonnet 4.6 is the best available.
+    bedrock_model_id: str = "us.anthropic.claude-sonnet-4-6"
     transcribe_language: str = "en-US"
     transcribe_timeout_sec: int = 1800  # 30 min ceiling for long debriefs
     max_audio_upload_bytes: int = 200 * 1024 * 1024  # ~2h of opus audio

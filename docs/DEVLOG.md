@@ -141,14 +141,24 @@ recommendations that keep full capability. Session ran with live AWS
 credentials for account 885232248320, so the enablement was *performed*,
 not just documented.
 
-**Out** (AWS-side, us-east-1 — no code changes):
+**Out** (AWS-side, us-east-1):
 
 - **Bedrock model access enabled via the agreement API** (`create-foundation-model-agreement`)
-  for `anthropic.claude-opus-5` (app default), `anthropic.claude-sonnet-5`,
-  and `anthropic.claude-haiku-4-5-20251001-v1:0`. Agreements show
-  `AVAILABLE`; end-to-end `AnthropicBedrockMantle` invoke (the exact
-  client `ai_debrief.py` uses) pending Marketplace propagation at
-  session close — re-verify with a small invoke if debriefs 403.
+  for `anthropic.claude-opus-5`, `anthropic.claude-sonnet-5`, and
+  `anthropic.claude-haiku-4-5-20251001-v1:0`.
+- **Account gating discovered**: despite accepted agreements, this AWS
+  account cannot invoke Claude 5-family or Opus-tier models, and the
+  Mantle endpoint 403s for *every* model ("not available for this
+  account … contact AWS Sales"). Verified working by live invoke:
+  **Sonnet 4.6** and **Haiku 4.5** via `bedrock-runtime` with
+  `us.anthropic.*` inference-profile IDs — including the exact distill
+  call shape (system + `json_schema` structured output).
+- **Code fix (this branch)**: `ai_debrief.py` switched
+  `AnthropicBedrockMantle` → `AnthropicBedrock`; `config.py` default
+  model → `us.anthropic.claude-sonnet-4-6`. Deploys when merged to
+  `main`; EB env already carries
+  `BEDROCK_MODEL_ID=us.anthropic.claude-sonnet-4-6` so the deployed
+  default is correct either way.
 - **IAM inline policy `r2ra-debrief-ai`** on `r2ra-eb-ec2-role`:
   Transcribe start/get, `bedrock:InvokeModel(+WithResponseStream)` on
   Anthropic foundation-model + inference-profile ARNs, and S3 RW on
@@ -165,12 +175,13 @@ as-performed state (marked ENABLED, corrected IAM JSON, agreement-API
 commands) + new cost subsection; this DEVLOG entry.
 
 **Cost guidance** (full detail in DEPLOY.md): Transcribe dominates at
-$1.44/hr of audio; Claude inference is ~$0.10/debrief on Opus 5. Levers
-that lose nothing: set `BEDROCK_MODEL_ID=anthropic.claude-sonnet-5`
-(~60% inference savings, access pre-enabled, env-var-only change);
-control recorded minutes (Transcribe bills audio duration, nothing
-else); keep on-demand (no provisioned throughput); the manual
-paste-a-transcript path zeroes the Transcribe cost entirely.
+$1.44/hr of audio; Claude inference is ~$0.06/debrief on Sonnet 4.6,
+which is already the cost-optimal capable model this account can run.
+Levers that lose nothing: control recorded minutes (Transcribe bills
+audio duration, nothing else); keep on-demand (no provisioned
+throughput); the manual paste-a-transcript path zeroes the Transcribe
+cost entirely; Haiku 4.5 is a further ~65% inference cut by env var if
+trials confirm quality.
 
 ### 2026-07-25 — Session 22: installable mobile app (PWA completion)
 
