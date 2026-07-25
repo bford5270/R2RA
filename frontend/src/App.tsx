@@ -5,6 +5,7 @@ import { ExerciseGate } from './components/ExerciseGate'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { GoByPage } from './pages/GoByPage'
+import { DebriefPage } from './pages/DebriefPage'
 import { ExerciseSelectPage } from './pages/ExerciseSelectPage'
 import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
@@ -117,6 +118,16 @@ export default function App() {
             <ProtectedRoute>
               <ExerciseGate>
                 <TrPrintPage />
+              </ExerciseGate>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assessments/:assessmentId/debrief"
+          element={
+            <ProtectedRoute>
+              <ExerciseGate>
+                <DebriefPage />
               </ExerciseGate>
             </ProtectedRoute>
           }

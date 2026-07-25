@@ -930,6 +930,12 @@ export function TrPage() {
             >
               AAR →
             </Link>
+            <Link
+              to={`/assessments/${assessmentId}/debrief`}
+              className="flex-1 block text-center text-[10px] text-neutral-400 hover:text-neutral-600 border border-neutral-400 rounded px-2 py-1"
+            >
+              Debrief →
+            </Link>
           </div>
 
           {/* Evaluator's tasking toggle */}

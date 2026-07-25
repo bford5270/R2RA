@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, LoFeedback, LoFeedbackUpsert, MyTrTasking, ReadinessSummary, ResponseUpsert, ScenarioCase, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, Debrief, DebriefDistilled, ItemResponse, LoFeedback, LoFeedbackUpsert, MyTrTasking, ReadinessSummary, ResponseUpsert, ScenarioCase, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
 import type { Exercise, ExerciseCreate } from '../types/exercise'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
@@ -270,6 +270,44 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     }),
+
+  // ---- debriefs ----
+  listDebriefs: (assessmentId: string) =>
+    get<Debrief[]>(`/assessments/${assessmentId}/debriefs`),
+
+  uploadDebrief: (assessmentId: string, audio: Blob, filename: string, title: string, durationSec: number | null) => {
+    const fd = new FormData()
+    fd.append('file', audio, filename)
+    fd.append('title', title)
+    if (durationSec !== null) fd.append('duration_sec', String(durationSec))
+    return postForm<Debrief>(`/assessments/${assessmentId}/debriefs`, fd)
+  },
+
+  createManualDebrief: (assessmentId: string, title: string, transcript: string) => {
+    const fd = new FormData()
+    fd.append('title', title)
+    fd.append('transcript', transcript)
+    return postForm<Debrief>(`/assessments/${assessmentId}/debriefs/manual`, fd)
+  },
+
+  processDebrief: (debriefId: string) =>
+    post<Debrief>(`/debriefs/${debriefId}/process`, {}),
+
+  getDebrief: (debriefId: string) =>
+    get<Debrief>(`/debriefs/${debriefId}`),
+
+  updateDebrief: (debriefId: string, body: { title?: string; transcript?: string; distilled?: DebriefDistilled }) =>
+    request<Debrief>(`/debriefs/${debriefId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
+
+  commitDebrief: (debriefId: string) =>
+    post<Debrief>(`/debriefs/${debriefId}/commit`, {}),
+
+  deleteDebrief: (debriefId: string) =>
+    del<void>(`/debriefs/${debriefId}`),
 
   // ---- exercises ----
   listExercises: () =>

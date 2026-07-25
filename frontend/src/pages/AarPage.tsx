@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../lib/api'
-import type { Assessment, LoFeedback, ScenarioCase, TrResponse } from '../types/assessment'
+import type { Assessment, Debrief, LoFeedback, ScenarioCase, TrResponse } from '../types/assessment'
 import type { TrFramework, TrWicket } from '../types/tr'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 
@@ -156,6 +156,7 @@ export function AarPage() {
   const [priorities, setPriorities] = useState('')
   const [loFeedback, setLoFeedback] = useState<LoFeedback[]>([])
   const [cases, setCases] = useState<ScenarioCase[]>([])
+  const [debriefs, setDebriefs] = useState<Debrief[]>([])
   const [copied, setCopied] = useState(false)
   const metaTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -167,7 +168,8 @@ export function AarPage() {
       api.listTrResponses(assessmentId),
       api.listLoFeedback(assessmentId).catch(() => [] as LoFeedback[]),
       api.listCases(assessmentId).catch(() => [] as ScenarioCase[]),
-    ]).then(([a, framework, rs, fb, cs]) => {
+      api.listDebriefs(assessmentId).catch(() => [] as Debrief[]),
+    ]).then(([a, framework, rs, fb, cs, ds]) => {
       setAssessment(a)
       setNarrative(a.tr_aar_narrative ?? '')
       setPriorities(a.tr_aar_priorities ?? '')
@@ -175,6 +177,7 @@ export function AarPage() {
       setResponses(new Map(rs.map(r => [r.event_code, r])))
       setLoFeedback(fb)
       setCases(cs)
+      setDebriefs(ds.filter(d => d.status === 'committed'))
     }).catch(err => setLoadError(err instanceof Error ? err.message : 'Failed to load'))
   }, [assessmentId])
 
@@ -444,6 +447,50 @@ export function AarPage() {
                 )
               })}
             </div>
+          </section>
+        )}
+
+        {/* Committed team debriefs — AI-distilled, lead-reviewed */}
+        {debriefs.length > 0 && (
+          <section>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-neutral-700 mb-2">
+              Team Debrief{debriefs.length > 1 ? 's' : ''}
+            </h2>
+            {debriefs.map(d => (
+              <div key={d.id} className="border border-neutral-300 rounded p-3 bg-white mb-2 break-inside-avoid-page">
+                <p className="text-xs font-semibold text-neutral-700">
+                  {d.title}
+                  <span className="font-normal text-neutral-400"> · {new Date(d.created_at).toLocaleDateString()}</span>
+                </p>
+                {d.distilled?.summary && (
+                  <p className="text-xs italic text-neutral-600 mt-1">{d.distilled.summary}</p>
+                )}
+                {([
+                  ['Sustains', d.distilled?.sustains, 'var(--signal-green)'],
+                  ['Opportunities for growth', d.distilled?.improves, 'var(--signal-amber)'],
+                  ['For next time', d.distilled?.next_time, 'var(--signal-blue)'],
+                ] as const).map(([label, items, color]) =>
+                  items && items.length > 0 ? (
+                    <div key={label} className="mt-2">
+                      <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color }}>{label}</p>
+                      <ul className="mt-0.5 space-y-0.5">
+                        {items.map((it, i) => (
+                          <li key={i} className="text-xs text-neutral-600 flex gap-1.5">
+                            <span style={{ color }}>•</span>
+                            <span>
+                              {it.text}
+                              {it.event_codes.length > 0 && (
+                                <span className="font-mono text-[10px] text-neutral-400"> [{it.event_codes.join(', ')}]</span>
+                              )}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            ))}
           </section>
         )}
 

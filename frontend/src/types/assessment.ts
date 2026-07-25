@@ -237,3 +237,42 @@ export interface LoFeedbackUpsert {
   comment: string | null
   case_id: string | null
 }
+
+// ---- debriefs (recorded, AI-distilled) ----
+
+export interface DistilledItem {
+  text: string
+  event_codes: string[]
+}
+
+export interface DebriefDistilled {
+  sustains: DistilledItem[]
+  improves: DistilledItem[]
+  next_time: DistilledItem[]
+  summary?: string
+}
+
+export type DebriefStatus =
+  | 'uploaded'
+  | 'transcribing'
+  | 'distilling'
+  | 'ready'
+  | 'committed'
+  | 'failed'
+
+export interface Debrief {
+  id: string
+  assessment_id: string
+  title: string
+  status: DebriefStatus
+  has_audio: boolean
+  duration_sec: number | null
+  transcript: string | null
+  distilled: DebriefDistilled | null
+  error: string | null
+  created_by: string
+  created_at: string
+  updated_at: string
+  committed_at: string | null
+  transcription_available: boolean
+}
