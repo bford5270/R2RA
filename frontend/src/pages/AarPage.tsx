@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../lib/api'
-import type { Assessment, TrResponse } from '../types/assessment'
+import type { Assessment, LoFeedback, ScenarioCase, TrResponse } from '../types/assessment'
 import type { TrFramework, TrWicket } from '../types/tr'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 
@@ -154,6 +154,8 @@ export function AarPage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [narrative, setNarrative] = useState('')
   const [priorities, setPriorities] = useState('')
+  const [loFeedback, setLoFeedback] = useState<LoFeedback[]>([])
+  const [cases, setCases] = useState<ScenarioCase[]>([])
   const [copied, setCopied] = useState(false)
   const metaTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -163,12 +165,16 @@ export function AarPage() {
       api.getAssessment(assessmentId),
       api.getTrFramework(),
       api.listTrResponses(assessmentId),
-    ]).then(([a, framework, rs]) => {
+      api.listLoFeedback(assessmentId).catch(() => [] as LoFeedback[]),
+      api.listCases(assessmentId).catch(() => [] as ScenarioCase[]),
+    ]).then(([a, framework, rs, fb, cs]) => {
       setAssessment(a)
       setNarrative(a.tr_aar_narrative ?? '')
       setPriorities(a.tr_aar_priorities ?? '')
       setTr(framework)
       setResponses(new Map(rs.map(r => [r.event_code, r])))
+      setLoFeedback(fb)
+      setCases(cs)
     }).catch(err => setLoadError(err instanceof Error ? err.message : 'Failed to load'))
   }, [assessmentId])
 
@@ -383,6 +389,63 @@ export function AarPage() {
             })}
           </div>
         </section>
+
+        {/* Learning objective feedback — rolled up from evaluators */}
+        {loFeedback.length > 0 && (
+          <section>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-neutral-700 mb-2">
+              Learning Objective Feedback
+            </h2>
+            {cases.length > 0 && (
+              <p className="text-[11px] text-neutral-500 mb-2">
+                Scenario case{cases.length === 1 ? '' : 's'}: {cases.map(c => c.label).join(' · ')}
+              </p>
+            )}
+            <div className="space-y-2">
+              {[...new Set(loFeedback.map(f => f.event_code))].sort().map(code => {
+                const wicket = tr.wickets.find(w => w.event_code === code)
+                const entries = loFeedback.filter(f => f.event_code === code)
+                return (
+                  <div key={code} className="border border-neutral-300 rounded p-3 bg-white break-inside-avoid-page">
+                    <p className="text-xs font-mono font-bold text-neutral-700">
+                      {code}
+                      {wicket && <span className="font-sans font-normal text-neutral-500"> — {wicket.title}</span>}
+                    </p>
+                    {entries.map(f => {
+                      const linkedCase = f.case_id ? cases.find(c => c.id === f.case_id) : null
+                      return (
+                        <div key={f.id} className="mt-1.5 text-xs text-neutral-600">
+                          <span className="font-semibold">{f.author_name}</span>
+                          {f.rating !== null && <> · LO support {f.rating}/5</>}
+                          {f.recommendation && (
+                            <>
+                              {' · '}
+                              <span
+                                className="font-bold uppercase"
+                                style={{
+                                  color:
+                                    f.recommendation === 'keep'
+                                      ? 'var(--signal-green)'
+                                      : f.recommendation === 'change'
+                                      ? 'var(--signal-amber)'
+                                      : 'var(--signal-red)',
+                                }}
+                              >
+                                {f.recommendation}
+                              </span>
+                            </>
+                          )}
+                          {linkedCase && <> · case: {linkedCase.label}</>}
+                          {f.comment && <p className="italic mt-0.5">“{f.comment}”</p>}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Commander's Assessment — editable */}
         <section>

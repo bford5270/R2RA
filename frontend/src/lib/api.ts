@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, MyTrTasking, ReadinessSummary, ResponseUpsert, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, ItemResponse, LoFeedback, LoFeedbackUpsert, MyTrTasking, ReadinessSummary, ResponseUpsert, ScenarioCase, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
 import type { Exercise, ExerciseCreate } from '../types/exercise'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
@@ -242,6 +242,34 @@ export const api = {
 
   myTrTaskings: () =>
     get<MyTrTasking[]>('/tr-taskings/mine'),
+
+  // ---- scenario cases + LO feedback ----
+  listCases: (assessmentId: string) =>
+    get<ScenarioCase[]>(`/assessments/${assessmentId}/cases`),
+
+  uploadCase: (assessmentId: string, file: File, label: string, sourceRef: string, eventCodes: string[]) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('label', label)
+    if (sourceRef) fd.append('source_ref', sourceRef)
+    if (eventCodes.length) fd.append('event_codes', JSON.stringify(eventCodes))
+    return postForm<ScenarioCase>(`/assessments/${assessmentId}/cases`, fd)
+  },
+
+  deleteCase: (assessmentId: string, caseId: string) =>
+    del<void>(`/assessments/${assessmentId}/cases/${caseId}`),
+
+  caseFileUrl: (caseId: string) => `/api/cases/${caseId}/file`,
+
+  listLoFeedback: (assessmentId: string) =>
+    get<LoFeedback[]>(`/assessments/${assessmentId}/lo-feedback`),
+
+  upsertLoFeedback: (assessmentId: string, eventCode: string, body: LoFeedbackUpsert) =>
+    request<LoFeedback>(`/assessments/${assessmentId}/lo-feedback/${encodeURIComponent(eventCode)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
 
   // ---- exercises ----
   listExercises: () =>

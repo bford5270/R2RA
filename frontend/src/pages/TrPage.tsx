@@ -3,11 +3,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../lib/api'
 import { useAuth } from '../lib/auth'
-import type { Assessment, TrJtsEvidence, TrTasking } from '../types/assessment'
+import type { Assessment, LoFeedback, LoFeedbackUpsert, ScenarioCase, TrJtsEvidence, TrTasking } from '../types/assessment'
 import type { TrResponse, TrResponseStatus } from '../types/assessment'
 import type { TrFramework, TrWicket } from '../types/tr'
 import { MISSION_TYPE_LABELS } from '../types/assessment'
 import { MyTaskingBanner, TrTaskingPanel } from '../components/TrTaskingPanel'
+import { LoFeedbackRow, ScenarioCasePanel } from '../components/ScenarioCasePanel'
 
 // ---------------------------------------------------------------------------
 // Scale constants
@@ -666,6 +667,8 @@ export function TrPage() {
   const [responses, setResponses] = useState<Map<string, TrResponse>>(new Map())
   const [jtsEvidence, setJtsEvidence] = useState<Record<string, TrJtsEvidence>>({})
   const [taskings, setTaskings] = useState<TrTasking[]>([])
+  const [cases, setCases] = useState<ScenarioCase[]>([])
+  const [loFeedback, setLoFeedback] = useState<LoFeedback[]>([])
   const [showMineOnly, setShowMineOnly] = useState(false)
   const [activeChapter, setActiveChapter] = useState<number | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -684,7 +687,9 @@ export function TrPage() {
       api.listTrResponses(assessmentId),
       api.getTrJtsEvidence(assessmentId),
       api.listTrTaskings(assessmentId).catch(() => [] as TrTasking[]),
-    ]).then(([a, framework, rs, evidence, ts]) => {
+      api.listCases(assessmentId).catch(() => [] as ScenarioCase[]),
+      api.listLoFeedback(assessmentId).catch(() => [] as LoFeedback[]),
+    ]).then(([a, framework, rs, evidence, ts, cs, fb]) => {
       setAssessment(a)
       setEvaluatorName(a.tr_evaluator_name ?? '')
       setEvaluatorRank(a.tr_evaluator_rank ?? '')
@@ -693,6 +698,8 @@ export function TrPage() {
       setResponses(new Map(rs.map(r => [r.event_code, r])))
       setJtsEvidence(evidence)
       setTaskings(ts)
+      setCases(cs)
+      setLoFeedback(fb)
       // Default an evaluator with a tasking into their filtered view
       const mine = ts.find(t => t.user_id === user?.id)
       if (mine) setShowMineOnly(true)
@@ -726,6 +733,15 @@ export function TrPage() {
       headcount,
     })
     setResponses(prev => new Map(prev).set(eventCode, updated))
+  }, [assessmentId])
+
+  const handleSaveLoFeedback = useCallback(async (eventCode: string, body: LoFeedbackUpsert) => {
+    if (!assessmentId) return
+    const updated = await api.upsertLoFeedback(assessmentId, eventCode, body)
+    setLoFeedback(prev => {
+      const rest = prev.filter(f => !(f.event_code === eventCode && f.created_by === updated.created_by))
+      return [...rest, updated]
+    })
   }, [assessmentId])
 
   function saveEvalMeta(name: string, rank: string, billet: string) {
@@ -940,6 +956,15 @@ export function TrPage() {
               onChanged={setTaskings}
             />
           )}
+
+          {/* Scenario cases (role2builder) */}
+          {assessmentId && (
+            <ScenarioCasePanel
+              assessmentId={assessmentId}
+              cases={cases}
+              onChanged={setCases}
+            />
+          )}
         </div>
 
         <div className="px-2 pt-2 pb-1 border-b border-neutral-100">
@@ -1046,14 +1071,22 @@ export function TrPage() {
                     </p>
                     <div className={myTasking.status === 'returned' ? 'pointer-events-none opacity-60' : ''}>
                       {myWickets.map(w => (
-                        <WicketCard
-                          key={w.event_code}
-                          wicket={w}
-                          response={responses.get(w.event_code)}
-                          evidence={jtsEvidence[w.event_code]}
-                          highlighted={linkedWicket === w.event_code}
-                          onSave={handleSave}
-                        />
+                        <div key={w.event_code}>
+                          <WicketCard
+                            wicket={w}
+                            response={responses.get(w.event_code)}
+                            evidence={jtsEvidence[w.event_code]}
+                            highlighted={linkedWicket === w.event_code}
+                            onSave={handleSave}
+                          />
+                          <LoFeedbackRow
+                            eventCode={w.event_code}
+                            mine={loFeedback.find(f => f.event_code === w.event_code && f.created_by === user?.id)}
+                            others={loFeedback.filter(f => f.event_code === w.event_code && f.created_by !== user?.id)}
+                            cases={cases}
+                            onSave={handleSaveLoFeedback}
+                          />
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -1088,14 +1121,22 @@ export function TrPage() {
                 </div>
               </div>
               {activeWickets.map(w => (
-                <WicketCard
-                  key={w.event_code}
-                  wicket={w}
-                  response={responses.get(w.event_code)}
-                  evidence={jtsEvidence[w.event_code]}
-                  highlighted={linkedWicket === w.event_code}
-                  onSave={handleSave}
-                />
+                <div key={w.event_code}>
+                  <WicketCard
+                    wicket={w}
+                    response={responses.get(w.event_code)}
+                    evidence={jtsEvidence[w.event_code]}
+                    highlighted={linkedWicket === w.event_code}
+                    onSave={handleSave}
+                  />
+                  <LoFeedbackRow
+                    eventCode={w.event_code}
+                    mine={loFeedback.find(f => f.event_code === w.event_code && f.created_by === user?.id)}
+                    others={loFeedback.filter(f => f.event_code === w.event_code && f.created_by !== user?.id)}
+                    cases={cases}
+                    onSave={handleSaveLoFeedback}
+                  />
+                </div>
               ))}
 
               <div className="mt-4 mb-8 flex justify-between items-center border-t border-neutral-200 pt-4">

@@ -202,3 +202,38 @@ export interface TrTaskingUpsert {
   mets: string[]
   note: string | null
 }
+
+// ---- scenario cases (role2builder) + learning-objective feedback ----
+
+export interface ScenarioCase {
+  id: string
+  assessment_id: string
+  label: string
+  source_ref: string | null
+  event_codes: string[]
+  filename: string
+  content_type: string
+  hash: string
+  uploaded_by: string
+  uploaded_at: string
+}
+
+export interface LoFeedback {
+  id: string
+  assessment_id: string
+  event_code: string
+  case_id: string | null
+  rating: number | null
+  recommendation: 'keep' | 'change' | 'drop' | null
+  comment: string | null
+  created_by: string
+  author_name: string
+  updated_at: string
+}
+
+export interface LoFeedbackUpsert {
+  rating: number | null
+  recommendation: 'keep' | 'change' | 'drop' | null
+  comment: string | null
+  case_id: string | null
+}
