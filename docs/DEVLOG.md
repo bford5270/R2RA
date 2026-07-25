@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-07-25 (Session 22)
+- **Last session**: 2026-07-25 (Session 23)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
-- **Branch**: `claude/mobile-app-conversion-1bcxvh` (installable-PWA work; merge to `main` to deploy)
-- **Last commit**: Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on branch (ready to merge)
+- **Branch**: `claude/debrief-ai-enablement-costs-tosqvj` (docs-only; AWS-side enablement already live)
+- **Last commit**: Session 23 — debrief AI enablement performed in AWS (Bedrock model access, IAM, S3 wiring) + cost guidance in DEPLOY.md
 - **Open PR**: none
-- **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); AWS enablement for debrief AI (Bedrock model access + IAM — see docs/DEPLOY.md §Debrief AI pipeline); role2-builder DATABASE_URL (optional)
+- **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (optional)
 
 ---
 
@@ -133,6 +133,44 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-07-25 — Session 23: debrief AI enablement executed in AWS + cost guidance
+
+**In**: "Do the debrief AI enablement from DEPLOY.md" plus cost-reduction
+recommendations that keep full capability. Session ran with live AWS
+credentials for account 885232248320, so the enablement was *performed*,
+not just documented.
+
+**Out** (AWS-side, us-east-1 — no code changes):
+
+- **Bedrock model access enabled via the agreement API** (`create-foundation-model-agreement`)
+  for `anthropic.claude-opus-5` (app default), `anthropic.claude-sonnet-5`,
+  and `anthropic.claude-haiku-4-5-20251001-v1:0`. Agreements show
+  `AVAILABLE`; end-to-end `AnthropicBedrockMantle` invoke (the exact
+  client `ai_debrief.py` uses) pending Marketplace propagation at
+  session close — re-verify with a small invoke if debriefs 403.
+- **IAM inline policy `r2ra-debrief-ai`** on `r2ra-eb-ec2-role`:
+  Transcribe start/get, `bedrock:InvokeModel(+WithResponseStream)` on
+  Anthropic foundation-model + inference-profile ARNs, and S3 RW on
+  `r2ra-evidence-pilot`. Two runbook corrections discovered: the role had
+  **no** pre-existing S3 grant, and this region routes Anthropic models
+  through inference profiles.
+- **EB env fix**: `S3_EVIDENCE_BUCKET` was the literal string
+  "placeholder — set in EB console"; now `r2ra-evidence-pilot` (bucket
+  already existed in us-east-1). Environment updated and green — S3
+  evidence storage and debrief transcription are both unblocked by this.
+
+**Out** (repo, this branch): DEPLOY.md §Debrief AI rewritten to
+as-performed state (marked ENABLED, corrected IAM JSON, agreement-API
+commands) + new cost subsection; this DEVLOG entry.
+
+**Cost guidance** (full detail in DEPLOY.md): Transcribe dominates at
+$1.44/hr of audio; Claude inference is ~$0.10/debrief on Opus 5. Levers
+that lose nothing: set `BEDROCK_MODEL_ID=anthropic.claude-sonnet-5`
+(~60% inference savings, access pre-enabled, env-var-only change);
+control recorded minutes (Transcribe bills audio duration, nothing
+else); keep on-demand (no provisioned throughput); the manual
+paste-a-transcript path zeroes the Transcribe cost entirely.
 
 ### 2026-07-25 — Session 22: installable mobile app (PWA completion)
 

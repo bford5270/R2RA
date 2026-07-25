@@ -153,41 +153,119 @@ with Amazon Transcribe and distills them with Claude on Amazon Bedrock.
 Everything stays inside this AWS account — no outside AI APIs. One-time
 enablement:
 
-1. **Bedrock model access** — AWS console → Bedrock → Model access →
-   enable the Anthropic Claude model matching `BEDROCK_MODEL_ID`
-   (default `anthropic.claude-opus-5`). If your account/region exposes it
-   only as an inference profile (e.g. `us.anthropic....`), set
-   `BEDROCK_MODEL_ID` to that ID in the EB environment.
-2. **IAM** — attach to the EB instance profile (`r2ra-eb-ec2-profile`):
+**Status: ENABLED (2026-07-25).** All steps below were performed against
+account 885232248320 / us-east-1. Kept for reference and re-runs.
+
+1. **Bedrock model access** — enabled via the agreement API (no console
+   visit needed):
+
+   ```bash
+   TOKEN=$(aws bedrock list-foundation-model-agreement-offers \
+     --model-id anthropic.claude-opus-5 --query 'offers[0].offerToken' --output text)
+   aws bedrock create-foundation-model-agreement \
+     --model-id anthropic.claude-opus-5 --offer-token "$TOKEN"
+   ```
+
+   Access is enabled for `anthropic.claude-opus-5` (the app default),
+   plus `anthropic.claude-sonnet-5` and
+   `anthropic.claude-haiku-4-5-20251001-v1:0` so the model can be
+   swapped by env var alone (see cost section below). Activation is
+   asynchronous (`agreementAvailability: PENDING` for a few minutes).
+   The app talks to Bedrock through the Anthropic Mantle client, which
+   accepts the plain `anthropic.…` model IDs; no inference-profile ID is
+   needed in `BEDROCK_MODEL_ID`.
+2. **IAM** — inline policy `r2ra-debrief-ai` attached to role
+   `r2ra-eb-ec2-role` (the role inside `r2ra-eb-ec2-profile`). Note two
+   corrections to the original runbook: the role had **no** pre-existing
+   S3 grant (the EB managed policies only cover `elasticbeanstalk-*`
+   buckets), and Bedrock inference-profile ARNs are included because
+   Anthropic models in this region are profile-routed:
 
    ```json
    {
      "Version": "2012-10-17",
      "Statement": [
        {
+         "Sid": "Transcribe",
          "Effect": "Allow",
          "Action": ["transcribe:StartTranscriptionJob", "transcribe:GetTranscriptionJob"],
          "Resource": "*"
        },
        {
+         "Sid": "BedrockInvokeClaude",
          "Effect": "Allow",
-         "Action": ["bedrock:InvokeModel"],
-         "Resource": "arn:aws:bedrock:*::foundation-model/anthropic.*"
+         "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+         "Resource": [
+           "arn:aws:bedrock:*::foundation-model/anthropic.*",
+           "arn:aws:bedrock:*:885232248320:inference-profile/us.anthropic.*",
+           "arn:aws:bedrock:*:885232248320:inference-profile/global.anthropic.*"
+         ]
+       },
+       {
+         "Sid": "EvidenceBucketRW",
+         "Effect": "Allow",
+         "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+         "Resource": "arn:aws:s3:::r2ra-evidence-pilot/*"
+       },
+       {
+         "Sid": "EvidenceBucketList",
+         "Effect": "Allow",
+         "Action": ["s3:ListBucket"],
+         "Resource": "arn:aws:s3:::r2ra-evidence-pilot"
        }
      ]
    }
    ```
 
-   (S3 read/write on the app bucket is already granted for evidence
-   storage; Transcribe stages its output in the same bucket under
-   `debriefs/_transcripts/` and the app deletes it after reading.)
-3. **Env vars** (EB console, all optional): `BEDROCK_MODEL_ID`,
+   Transcribe stages its output in the evidence bucket under
+   `debriefs/_transcripts/` and the app deletes it after reading.
+3. **Env vars** — `S3_EVIDENCE_BUCKET` was a literal placeholder string;
+   it is now set to `r2ra-evidence-pilot` (the bucket already existed in
+   us-east-1). Optional overrides: `BEDROCK_MODEL_ID`,
    `TRANSCRIBE_LANGUAGE` (default `en-US`), `TRANSCRIBE_TIMEOUT_SEC`,
    `MAX_AUDIO_UPLOAD_BYTES`.
 4. **Retention**: raw debrief audio is deleted automatically once
    distillation succeeds; transcripts and the distilled output remain in
-   Postgres. Cost ≈ $1.44/hr of audio (Transcribe $0.024/min) plus a few
-   cents of Bedrock inference per debrief.
+   Postgres.
+
+#### Debrief AI cost — levers that keep full capability
+
+Per-debrief cost has two parts. Numbers below assume a 60-minute debrief
+(≈ 10K transcript tokens in, ≈ 2K distilled tokens out):
+
+| Component | Driver | Cost |
+|---|---|---|
+| Amazon Transcribe (batch) | $0.024/min of audio | **$1.44/hr — the dominant cost** |
+| Bedrock Claude Opus 5 (default) | $5 in / $25 out per 1M tokens | ≈ $0.10/debrief |
+| Bedrock Claude Sonnet 5 | $3 in / $15 out per 1M tokens (intro $2/$10 through 2026-08-31) | ≈ $0.04–0.06/debrief |
+| Bedrock Claude Haiku 4.5 | $1 in / $5 per 1M tokens | ≈ $0.02/debrief |
+
+Recommended levers, in order of impact — none reduce what the feature
+can do:
+
+1. **Switch the distillation model to Sonnet 5** — set
+   `BEDROCK_MODEL_ID=anthropic.claude-sonnet-5` in the EB console
+   (access already enabled). Distillation is structured
+   summarization/extraction, well within Sonnet's capability; output
+   quality on this task is equivalent while inference cost drops
+   ~60% (~75% at intro pricing). Haiku 4.5
+   (`anthropic.claude-haiku-4-5-20251001-v1:0`) is a further step down
+   at ~80% savings if trials confirm quality holds. Because the AI cost
+   is a few cents either way, this matters only at volume — but it is
+   free to take.
+2. **Transcribe is the real bill — control audio minutes, not the API.**
+   Transcribe bills per minute of *audio*, regardless of bitrate or
+   codec. The only levers are shorter recordings (trim dead air before
+   the debrief starts; the recorder's pause button costs nothing) and
+   not re-processing (the app already caches the transcript in Postgres
+   — re-distillation reuses it and never re-runs Transcribe).
+3. **Zero idle cost by design — nothing to turn off.** Both Transcribe
+   and Bedrock are on-demand, pay-per-use. Do not buy Bedrock
+   Provisioned Throughput for this workload; at a handful of debriefs
+   per exercise, on-demand is orders of magnitude cheaper.
+4. **The manual paste-a-transcript path skips Transcribe entirely** —
+   $0.024/min → $0. If a unit types or already has minutes/notes,
+   pasting them costs only the few cents of Bedrock inference.
 
 Without S3 or these permissions the app degrades gracefully: recording
 upload still works but processing returns 503 with a hint to use the
