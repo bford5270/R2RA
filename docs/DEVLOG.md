@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-07-25 (Session 22)
+- **Last session**: 2026-07-25 (Session 23 — AWS cost optimization runbook)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
-- **Branch**: `claude/mobile-app-conversion-1bcxvh` (installable-PWA work; merge to `main` to deploy)
-- **Last commit**: Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on branch (ready to merge)
+- **Branch**: `claude/website-setup-cost-optimization-1u6066` (docs/COST.md runbook); Session 22 evaluator work still on `claude/mobile-app-conversion-1bcxvh`
+- **Last commit**: Session 23 — `docs/COST.md` AWS cost-optimization runbook (this branch); Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on `claude/mobile-app-conversion-1bcxvh` (ready to merge)
 - **Open PR**: none
-- **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); AWS enablement for debrief AI (Bedrock model access + IAM — see docs/DEPLOY.md §Debrief AI pipeline); role2-builder DATABASE_URL (optional)
+- **Blocked on**: user to apply docs/COST.md changes in AWS console (no AWS creds in session); Phase 3 stakeholder input (enclave, sponsor, SME review); AWS enablement for debrief AI (Bedrock model access + IAM — see docs/DEPLOY.md §Debrief AI pipeline); role2-builder DATABASE_URL (optional)
 
 ---
 
@@ -133,6 +133,47 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-07-25 — Session 23: AWS cost optimization runbook
+
+**In**: User asked to save money on the website setup without reducing
+capability. Session had no AWS credentials (CCR env keys are proxy
+placeholders), so the deliverable is a runbook the user applies in the
+console, not applied infra changes.
+
+**Out** (branch `claude/website-setup-cost-optimization-1u6066`):
+
+- **`docs/COST.md`** — cost-optimization runbook with console + CLI
+  steps and before/after bill estimates (~$60–85 → ~$33–37/mo):
+  1. **Single-instance EB** (biggest win, ~$20–45/mo): the ALB on
+     `r2ra-prod` costs more than the t3.micro it fronts and buys nothing
+     at 1 instance — CloudFront is the public entry and its `/api/*`
+     origin is the EB CNAME, which EB re-points automatically. Same fix
+     for role2-builder's EB env if load balanced.
+  2. **Graviton** t4g.micro (EB) + db.t4g.micro (RDS), ~$3–4/mo; stack
+     is arch-clean (multi-arch base image, aarch64 wheels).
+  3. **RDS reserved instance** ~$4/mo — explicitly gated on the Phase 3
+     GovCloud decision (region-locked; don't buy if migrating).
+  4. **S3 lifecycle rules**: artifacts bucket 90-day expiry, frontend
+     bucket noncurrent-version 30-day expiry, EB app-version cap at 10.
+  5. **CodePipeline V1 → V2** (~$1/mo, in-place upgrade).
+  6. Cheap checks: NAT gateway hunt, idle EIPs, gp2→gp3, backup
+     retention, Enhanced Monitoring off, budget alarm, Bedrock model
+     choice for debriefs.
+  - "What NOT to do" section: no SQLite-on-instance, no scheduled
+    stop/start, no off-AWS API host (CUI posture), no app consolidation.
+
+**Key decisions**:
+- Capability-neutral framing throughout; the one real tradeoff
+  (single-instance EB = 1–3 min API blip during deploys) is called out,
+  and the SPA stays up via S3/CloudFront during it.
+- RI purchase deferred to the hosting-enclave decision rather than
+  recommended unconditionally.
+
+**Commits**: docs/COST.md + this DEVLOG entry — pushed to
+`claude/website-setup-cost-optimization-1u6066`.
+
+---
 
 ### 2026-07-25 — Session 22: installable mobile app (PWA completion)
 
