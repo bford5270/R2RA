@@ -37,13 +37,24 @@ phases:
       - find backend -name "*.pyc" -delete 2>/dev/null || true
       - rm -f backend/*.db backend/.env
 
+      # --- role2-builder co-tenant ---
+      # Pull the latest bundle its own pipeline published (Dockerfile,
+      # backend/, requirements.txt) and stage it as a second compose
+      # service. See deploy/docker-compose.eb.yml.
+      - aws s3 cp s3://r2ra-artifacts-885232248320/role2-builder/latest.zip rb.zip
+      - mkdir -p role2builder && unzip -o -q rb.zip -d role2builder/
+      - cp deploy/docker-compose.eb.yml docker-compose.yml
+
 artifacts:
   # CodePipeline wraps these into a zip and hands it directly to EB.
-  # EB unzips and looks for Dockerfile at the root — so list files here,
-  # do NOT create a nested deploy.zip.
+  # docker-compose.yml at the root switches EB to Compose mode (no EB
+  # nginx; compose maps 80→r2ra, 8080→role2builder). Do NOT create a
+  # nested deploy.zip.
   files:
+    - docker-compose.yml
     - Dockerfile
     - start.sh
     - backend/**/*
     - content/**/*
+    - role2builder/**/*
     - .ebextensions/**/*
