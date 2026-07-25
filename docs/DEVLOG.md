@@ -12,7 +12,7 @@ next session can resume cleanly.
 - **Branch**: `claude/website-setup-cost-optimization-1u6066` (docs/COST.md runbook); Session 22 evaluator work still on `claude/mobile-app-conversion-1bcxvh`
 - **Last commit**: Session 23 — `docs/COST.md` AWS cost-optimization runbook (this branch); Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on `claude/mobile-app-conversion-1bcxvh` (ready to merge)
 - **Open PR**: none
-- **Blocked on**: user to apply docs/COST.md changes in AWS console (no AWS creds in session); Phase 3 stakeholder input (enclave, sponsor, SME review); AWS enablement for debrief AI (Bedrock model access + IAM — see docs/DEPLOY.md §Debrief AI pipeline); role2-builder DATABASE_URL (optional)
+- **Blocked on**: user to apply docs/COST.md changes in AWS console; Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (optional). ~~Debrief AI enablement~~ — **done & verified 2026-07-25** (see DEPLOY.md §Debrief AI pipeline status note)
 
 ---
 
@@ -172,6 +172,29 @@ console, not applied infra changes.
 
 **Commits**: docs/COST.md + this DEVLOG entry — pushed to
 `claude/website-setup-cost-optimization-1u6066`.
+
+**Session 23 continued — debrief AI enablement (done & verified)**: user
+added real AWS keys to the CCR environment (note: they are **root
+account** keys — recommend replacing with a scoped IAM user). Verified
+with live AWS calls:
+
+- IAM: `r2ra-eb-ec2-role` already carried inline policy
+  `r2ra-debrief-ai` — Transcribe start/get, Bedrock
+  InvokeModel(+Stream) on `anthropic.*` foundation models and
+  `us.`/`global.` inference profiles, S3 RW+List on
+  `r2ra-evidence-pilot`. Nothing to add.
+- EB env: `BEDROCK_MODEL_ID=us.anthropic.claude-sonnet-4-6`,
+  `S3_EVIDENCE_BUCKET=r2ra-evidence-pilot` (matches policy),
+  `AWS_DEFAULT_REGION=us-east-1`.
+- Bedrock: live test invoke of `us.anthropic.claude-sonnet-4-6`
+  succeeded ("OK", 4 output tokens). `anthropic.claude-opus-5` is
+  gated for this account (invoke → "not available for this account");
+  a self-service agreement offer exists if ever needed. Kept Sonnet —
+  cheaper, working, sufficient for distillation.
+- Transcribe API reachable; evidence bucket exists, AES256 default
+  encryption.
+- DEPLOY.md §Debrief AI pipeline updated with an enablement-status
+  note; DEVLOG header unblocked.
 
 ---
 

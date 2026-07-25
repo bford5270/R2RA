@@ -148,6 +148,19 @@ postgresql://r2ra:<password>@r2ra-prod.xxxx.us-east-1.rds.amazonaws.com:5432/r2r
 
 ### Debrief AI pipeline (Amazon Transcribe + Claude on Bedrock)
 
+> **Status: ENABLED and verified (2026-07-25).** The EB instance role
+> `r2ra-eb-ec2-role` carries inline policy `r2ra-debrief-ai` (Transcribe +
+> Bedrock invoke incl. `us.`/`global.` inference profiles + S3 RW on
+> `r2ra-evidence-pilot`). `BEDROCK_MODEL_ID` is set in the EB console to
+> `us.anthropic.claude-sonnet-4-6` — verified with a live invoke.
+> Note: `anthropic.claude-opus-5` (the code default) is **gated for this
+> account** ("not available for this account") — a self-service agreement
+> offer exists (`aws bedrock list-foundation-model-agreement-offers
+> --model-id anthropic.claude-opus-5` → `create-foundation-model-agreement`)
+> if it's ever wanted; Sonnet-class is cheaper and sufficient for
+> transcript distillation. The steps below remain as the from-scratch
+> runbook.
+
 The debrief recorder (M4, session 22) transcribes recorded team debriefs
 with Amazon Transcribe and distills them with Claude on Amazon Bedrock.
 Everything stays inside this AWS account — no outside AI APIs. One-time
