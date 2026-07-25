@@ -225,6 +225,27 @@ request; root AWS keys in env):
   pipeline redeploy re-validates CI/CD on the new arm64 single-instance
   env.
 
+**Session 23 continued — CI/CD was silently dead; fixed + main deployed**:
+
+- **Found**: the `r2ra` pipeline had not executed since **2026-05-25**
+  despite pushes to `main` (incl. today's session-22 evaluator merge
+  `9e6b691`) — the site was running two-month-old code, which is why it
+  appeared broken. GitHub `main` was current; CodeStar connection
+  AVAILABLE; pipelines are V2 with `triggers: null` — push detection
+  simply wasn't firing (likely casualty of a V1→V2 conversion).
+- **Fixed**: added explicit V2 push triggers
+  (`CodeStarSourceConnection` GitPushFilter, branch `main`) to **both**
+  `r2ra` and `role2-builder` pipelines.
+- **Deployed**: manual `start-pipeline-execution` ran Source → Build →
+  Deploy to **Succeeded** on `c75c338` (today's merge). EB Ready/Green
+  on the new t4g single-instance env; clean container boot = the four
+  M1–M4 migrations applied. Frontend synced to S3, CloudFront
+  invalidated.
+- Lesson: pipeline state can show stale "Succeeded" stages from months
+  ago — check `list-pipeline-executions` timestamps, not stage colors.
+- Note: `update-pipeline` supersedes in-flight executions (first manual
+  run was cancelled at Build by the trigger update; re-ran after).
+
 ---
 
 ### 2026-07-25 — Session 22: installable mobile app (PWA completion)
