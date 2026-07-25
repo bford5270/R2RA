@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config import settings
-from app.routers import assessments, auth, content, crosswalk, crosswalk_editor, evidence, exercises, health, reports, scenario_cases, tr_taskings, unit_library, users
+from app.routers import assessments, auth, content, crosswalk, crosswalk_editor, debriefs, evidence, exercises, health, reports, scenario_cases, tr_taskings, unit_library, users
 
 _INSECURE_DEFAULTS = {"change-me-in-production", "change-me-use-openssl-rand-hex-32", "replace-with-a-random-secret-in-production", "secret"}
 if not settings.debug and settings.secret_key.lower() in _INSECURE_DEFAULTS:
@@ -62,3 +62,4 @@ app.include_router(reports.router)
 app.include_router(unit_library.router)
 app.include_router(tr_taskings.router)
 app.include_router(scenario_cases.router)
+app.include_router(debriefs.router)

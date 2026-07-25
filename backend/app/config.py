@@ -27,6 +27,14 @@ class Settings(BaseSettings):
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
 
+    # Debrief AI pipeline (Amazon Transcribe + Claude on Bedrock).
+    # Requires S3 + IAM (transcribe:*TranscriptionJob, bedrock:InvokeModel)
+    # + Bedrock model access enabled in the AWS console.
+    bedrock_model_id: str = "anthropic.claude-opus-5"
+    transcribe_language: str = "en-US"
+    transcribe_timeout_sec: int = 1800  # 30 min ceiling for long debriefs
+    max_audio_upload_bytes: int = 200 * 1024 * 1024  # ~2h of opus audio
+
     # Classification banner text — CUI Basic
     cui_banner: str = "CONTROLLED UNCLASSIFIED INFORMATION // BASIC"
 

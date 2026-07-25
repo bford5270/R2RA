@@ -251,6 +251,29 @@ class LoFeedbackUpsert(BaseModel):
     case_id: str | None = None
 
 
+class DebriefOut(BaseModel):
+    id: str
+    assessment_id: str
+    title: str
+    status: str
+    has_audio: bool
+    duration_sec: int | None
+    transcript: str | None
+    distilled: dict | None
+    error: str | None
+    created_by: str
+    created_at: datetime
+    updated_at: datetime
+    committed_at: datetime | None
+    transcription_available: bool
+
+
+class DebriefUpdate(BaseModel):
+    title: str | None = None
+    transcript: str | None = None
+    distilled: dict | None = None
+
+
 class SignatureOut(BaseModel):
     id: str
     assessment_id: str
