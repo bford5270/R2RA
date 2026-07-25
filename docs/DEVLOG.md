@@ -10,9 +10,9 @@ next session can resume cleanly.
 - **Last session**: 2026-07-25 (Session 22)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
 - **Branch**: `claude/mobile-app-conversion-1bcxvh` (installable-PWA work; merge to `main` to deploy)
-- **Last commit**: Session 22 — installable PWA (merged to `main`, `dc6a2f9`) + account request/approval flow (`188364a`, on branch)
+- **Last commit**: Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on branch (ready to merge)
 - **Open PR**: none
-- **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
+- **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); AWS enablement for debrief AI (Bedrock model access + IAM — see docs/DEPLOY.md §Debrief AI pipeline); role2-builder DATABASE_URL (optional)
 
 ---
 
@@ -200,6 +200,43 @@ request/approval flow** (`188364a`):
   → pending gating → approve → access; audit chain).
 - Approval assigns the *global* role; per-assessment roles are still
   assigned via TeamPanel by the assessment lead (existing flow).
+
+**Session 22 continued — evaluator workflow M1–M4** (user-approved plan:
+S3T taskings → go-by → cases/LO feedback → debrief AI; all on branch):
+
+- **M1 — S3T evaluator taskings** (`e2e7e7f`, frontend commit after):
+  `tr_taskings` table (assessment × evaluator × PECL event codes + METs,
+  assigned/returned lifecycle). Lead/admin assign via TrPage sidebar modal
+  (MET quick-select chips auto-check covered wickets; chapter select-all;
+  filter). Evaluators land in a filtered "my tasking" view, get a progress
+  bar + Return-to-S3T button (soft-locks; lead reopens), and a "Your
+  Tasking" card on the home screen. upsert_tr_response enforces scope +
+  returned-lock for non-lead evaluators server-side.
+- **M2 — interactive go-by** (`/go-by`, public): 5 steps — install (live
+  beforeinstallprompt / iOS Share walkthrough), request account, find
+  tasking (mock card), practice on a sandboxed demo wicket (component 1–5,
+  lowest-component rule), return to S3T. Printable; localStorage check-off.
+- **M3 — scenario cases + LO feedback**: `scenario_cases` (role2builder
+  exports; JSON added to upload allowlist) + `lo_feedback` (per-evaluator
+  per-wicket rating 1–5, keep/change/drop, comment, case link). TrPage
+  cases panel + LoFeedbackRow under every wicket; AAR rollup section.
+  Also fixed a **production storage bug**: storage.py read
+  `settings.aws_s3_bucket` which config had renamed — all uploads/downloads
+  were crashing; Settings now accepts both env names.
+- **M4 — debrief recorder + AI distillation**: `debriefs` table; MediaRecorder
+  capture in the PWA (recording banner, iOS mp4 fallback) → S3 → Amazon
+  Transcribe → Claude on Bedrock (AnthropicBedrockMantle, structured output,
+  BEDROCK_MODEL_ID default `anthropic.claude-opus-5`) → editable sustains /
+  improves / next-time draft → lead commits → AAR "Team Debrief" section.
+  Raw audio deleted after successful distillation (user decision). Manual
+  paste-a-transcript path for no-AWS environments. Daemon-thread pipeline
+  (uvicorn workers=1). docs/DEPLOY.md §Debrief AI pipeline documents the
+  IAM policy + Bedrock model-access enablement the user must click through.
+- **Verification**: four TestClient suites (auth 17, tasking 15, cases 10,
+  debrief 13 checks) all green; frontend tsc+vite build clean.
+- **Migrations added**: `j0k1l2m3n4o5` (tr_taskings), `k1l2m3n4o5p6`
+  (scenario_cases + lo_feedback), `l2m3n4o5p6q7` (debriefs) — run
+  `alembic upgrade head` on deploy (EB start.sh already does).
 
 ---
 

@@ -146,6 +146,53 @@ postgresql://r2ra:<password>@r2ra-prod.xxxx.us-east-1.rds.amazonaws.com:5432/r2r
 2. Add cert to CloudFront → Alternate domain names
 3. Point DNS CNAME at the CloudFront domain
 
+### Debrief AI pipeline (Amazon Transcribe + Claude on Bedrock)
+
+The debrief recorder (M4, session 22) transcribes recorded team debriefs
+with Amazon Transcribe and distills them with Claude on Amazon Bedrock.
+Everything stays inside this AWS account — no outside AI APIs. One-time
+enablement:
+
+1. **Bedrock model access** — AWS console → Bedrock → Model access →
+   enable the Anthropic Claude model matching `BEDROCK_MODEL_ID`
+   (default `anthropic.claude-opus-5`). If your account/region exposes it
+   only as an inference profile (e.g. `us.anthropic....`), set
+   `BEDROCK_MODEL_ID` to that ID in the EB environment.
+2. **IAM** — attach to the EB instance profile (`r2ra-eb-ec2-profile`):
+
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Effect": "Allow",
+         "Action": ["transcribe:StartTranscriptionJob", "transcribe:GetTranscriptionJob"],
+         "Resource": "*"
+       },
+       {
+         "Effect": "Allow",
+         "Action": ["bedrock:InvokeModel"],
+         "Resource": "arn:aws:bedrock:*::foundation-model/anthropic.*"
+       }
+     ]
+   }
+   ```
+
+   (S3 read/write on the app bucket is already granted for evidence
+   storage; Transcribe stages its output in the same bucket under
+   `debriefs/_transcripts/` and the app deletes it after reading.)
+3. **Env vars** (EB console, all optional): `BEDROCK_MODEL_ID`,
+   `TRANSCRIBE_LANGUAGE` (default `en-US`), `TRANSCRIBE_TIMEOUT_SEC`,
+   `MAX_AUDIO_UPLOAD_BYTES`.
+4. **Retention**: raw debrief audio is deleted automatically once
+   distillation succeeds; transcripts and the distilled output remain in
+   Postgres. Cost ≈ $1.44/hr of audio (Transcribe $0.024/min) plus a few
+   cents of Bedrock inference per debrief.
+
+Without S3 or these permissions the app degrades gracefully: recording
+upload still works but processing returns 503 with a hint to use the
+manual paste-a-transcript path, which only needs Bedrock.
+
 ---
 
 ## Path B — GovCloud EC2 pilot
