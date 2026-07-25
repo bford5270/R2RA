@@ -17,13 +17,19 @@ export function HomePage() {
   const [error, setError] = useState<string | null>(null)
 
   const isAdmin = user?.global_role === 'admin'
+  const isPending = user?.global_role === 'pending'
 
   useEffect(() => {
+    if (isPending) {
+      // Unapproved accounts can't read assessments — don't hit the API.
+      setLoading(false)
+      return
+    }
     api.listAssessments()
       .then(setAssessments)
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [isPending])
 
   const visibleAssessments = isAdmin
     ? assessments
@@ -68,12 +74,14 @@ export function HomePage() {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            to="/reports/readiness"
-            className="text-xs text-neutral-500 hover:text-neutral-700"
-          >
-            Readiness
-          </Link>
+          {!isPending && (
+            <Link
+              to="/reports/readiness"
+              className="text-xs text-neutral-500 hover:text-neutral-700"
+            >
+              Readiness
+            </Link>
+          )}
           <Link
             to="/preview"
             className="text-xs text-neutral-500 hover:text-neutral-700"
@@ -113,6 +121,32 @@ export function HomePage() {
 
       <InstallPrompt />
 
+      {isPending && (
+        <div
+          className="mb-6 rounded-lg border p-5"
+          style={{ background: 'rgba(201,154,46,0.12)', borderColor: 'rgba(201,154,46,0.35)' }}
+        >
+          <p className="text-sm font-semibold" style={{ color: 'var(--signal-amber)' }}>
+            Account pending approval
+          </p>
+          <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'var(--ink-2)' }}>
+            Welcome, {user?.display_name}. Your account request has been received.
+            An administrator must approve you and assign a role before you can
+            participate in assessments. In the meantime you can explore the
+            assessment framework:
+          </p>
+          <Link
+            to="/preview"
+            className="mt-3 inline-block rounded px-4 py-2 text-xs font-bold"
+            style={{ background: 'var(--accent)', color: 'var(--accent-on)' }}
+          >
+            Browse the JTS Role 2 form →
+          </Link>
+        </div>
+      )}
+
+      {!isPending && (
+      <>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-sm font-semibold text-neutral-700 uppercase tracking-widest">Assessments</h2>
         <button
@@ -162,6 +196,8 @@ export function HomePage() {
             </Link>
           ))}
         </div>
+      )}
+      </>
       )}
     </main>
   )

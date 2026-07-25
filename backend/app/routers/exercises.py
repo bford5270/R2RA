@@ -3,13 +3,13 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.exercise import Exercise
 from app.models.user import User
 from app.schemas.exercise import ExerciseCreate, ExerciseOut, ExerciseStatusUpdate
 
-router = APIRouter(prefix="/api/exercises", tags=["exercises"])
+router = APIRouter(prefix="/api/exercises", tags=["exercises"], dependencies=[Depends(require_approved)])
 
 
 @router.post("", response_model=ExerciseOut, status_code=status.HTTP_201_CREATED)

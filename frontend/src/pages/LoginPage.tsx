@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { api, setToken } from '../lib/api'
 import { useAuth } from '../lib/auth'
 
@@ -183,7 +183,12 @@ export function LoginPage() {
           )}
         </div>
 
-        <p className="mt-8 text-center text-[10px] text-neutral-400 leading-relaxed">
+        <p className="mt-6 text-center text-xs text-neutral-500">
+          Need an account?{' '}
+          <Link to="/register" className="text-scarlet hover:underline font-semibold">Request access</Link>
+        </p>
+
+        <p className="mt-6 text-center text-[10px] text-neutral-400 leading-relaxed">
           Unofficial — not endorsed by USMC, Navy, DHA, or JTS
         </p>
       </div>

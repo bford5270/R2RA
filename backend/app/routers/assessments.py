@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.assessment import Assessment, AssessmentAssignment
 from app.models.response import Response
@@ -32,7 +32,7 @@ from app.schemas.assessment import (
     TrResponseUpsert,
 )
 
-router = APIRouter(prefix="/api/assessments", tags=["assessments"])
+router = APIRouter(prefix="/api/assessments", tags=["assessments"], dependencies=[Depends(require_approved)])
 
 
 def _snapshot_hash(db: Session, assessment_id: str) -> str:

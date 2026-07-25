@@ -6,8 +6,10 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from jose import JWTError
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.audit import append_entry
 from app.auth.deps import get_current_user, require_admin
 from app.auth.security import (
     create_access_token,
@@ -72,7 +74,11 @@ def _check_login_rate(ip: str) -> None:
 @router.post("/login", response_model=LoginResponse)
 def login(body: LoginRequest, request: Request, db: Session = Depends(get_db)):
     _check_login_rate(request.client.host if request.client else "unknown")
-    user: User | None = db.query(User).filter(User.email == body.email).first()
+    email = body.email.strip()
+    # Case-insensitive lookup — mobile keyboards autocapitalize email fields.
+    user: User | None = (
+        db.query(User).filter(func.lower(User.email) == email.lower()).first()
+    )
     if not user or not user.is_active or not verify_password(body.password, user.hashed_password):
         raise _INVALID
 
@@ -190,35 +196,60 @@ def totp_unenroll(
 
 
 # ---------------------------------------------------------------------------
-# User registration (bootstrap + admin-only)
+# User registration (bootstrap + open self-registration → pending approval)
 # ---------------------------------------------------------------------------
 
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def register(body: RegisterRequest, db: Session = Depends(get_db)):
+def register(body: RegisterRequest, request: Request, db: Session = Depends(get_db)):
     """
-    Bootstrap endpoint: open only when no users exist yet (first-run admin seed).
-    After that, only an admin can create accounts via /admin/users (future).
-    Returns 409 if a user already exists and the caller is unauthenticated.
-    """
-    existing_count: int = db.query(User).count()
-    if existing_count > 0:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Registration is closed; contact your administrator",
-        )
+    Account request endpoint.
 
-    if body.global_role not in {"admin", "assessor", "observer"}:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid role")
+    - First run (0 users): bootstrap — creates the account with the requested
+      role (normally admin) so the instance can be set up.
+    - After that: open self-registration. The account is created with
+      global_role="pending": the user can sign in and browse the read-only
+      framework content, but an administrator must approve the account
+      (assign assessor/observer/admin) before they can touch assessment data.
+    """
+    _check_login_rate(request.client.host if request.client else "unknown")
+
+    display_name = body.display_name.strip()
+    email = body.email.lower().strip()
+    if not display_name or not email:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Name and email are required")
+    if len(body.password) < 8:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Password must be at least 8 characters")
+
+    if db.query(User).filter(func.lower(User.email) == email).first():
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already in use")
+
+    is_bootstrap = db.query(User).count() == 0
+
+    if is_bootstrap:
+        if body.global_role not in {"admin", "assessor", "observer"}:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid role")
+        role = body.global_role
+    else:
+        # Requested role is ignored for self-registration — approval assigns it.
+        role = "pending"
 
     user = User(
         id=str(uuid.uuid4()),
-        display_name=body.display_name,
-        email=body.email,
+        display_name=display_name,
+        email=email,
         hashed_password=hash_password(body.password),
-        global_role=body.global_role,
+        global_role=role,
     )
     db.add(user)
+    append_entry(
+        db,
+        actor_id=user.id,
+        action="user.register",
+        entity_type="user",
+        entity_id=user.id,
+        after={"display_name": display_name, "email": email, "global_role": role},
+    )
     db.commit()
     db.refresh(user)
     return UserOut(

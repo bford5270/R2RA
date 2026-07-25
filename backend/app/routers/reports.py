@@ -4,14 +4,14 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.assessment import Assessment
 from app.models.response import Response
 from app.models.unit import Unit
 from app.models.user import User
 
-router = APIRouter(prefix="/api/reports", tags=["reports"])
+router = APIRouter(prefix="/api/reports", tags=["reports"], dependencies=[Depends(require_approved)])
 
 
 class SectionStats(BaseModel):

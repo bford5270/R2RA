@@ -3,13 +3,14 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.auth.deps import get_current_user
+from app.audit import append_entry
+from app.auth.deps import get_current_user, require_approved
 from app.auth.security import hash_password
 from app.database import get_db
 from app.models.user import User
 from app.schemas.assessment import UserCreate, UserOut, UserUpdate
 
-router = APIRouter(prefix="/api/users", tags=["users"])
+router = APIRouter(prefix="/api/users", tags=["users"], dependencies=[Depends(require_approved)])
 
 VALID_ROLES = {"admin", "assessor", "observer"}
 
@@ -68,12 +69,29 @@ def update_user(
         raise HTTPException(status_code=404, detail="User not found")
     if user.id == current_user.id:
         raise HTTPException(status_code=400, detail="Cannot modify your own account here")
+    before = {"is_active": user.is_active, "global_role": user.global_role}
     if body.is_active is not None:
         user.is_active = body.is_active
     if body.global_role is not None:
         if body.global_role not in VALID_ROLES:
             raise HTTPException(status_code=422, detail=f"global_role must be one of {VALID_ROLES}")
         user.global_role = body.global_role
+    after = {"is_active": user.is_active, "global_role": user.global_role}
+    if after != before:
+        action = (
+            "user.approve"
+            if before["global_role"] == "pending" and after["global_role"] != "pending"
+            else "user.update"
+        )
+        append_entry(
+            db,
+            actor_id=current_user.id,
+            action=action,
+            entity_type="user",
+            entity_id=user.id,
+            before=before,
+            after=after,
+        )
     db.commit()
     db.refresh(user)
     return user

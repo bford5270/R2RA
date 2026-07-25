@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 
 from app import storage
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_approved
 from app.config import settings
 from app.database import get_db
 from app.models.evidence import Evidence
@@ -20,7 +20,7 @@ from app.models.user import User
 from app.routers.assessments import _require_assessment
 from app.upload_validation import validate_upload
 
-router = APIRouter(tags=["evidence"])
+router = APIRouter(tags=["evidence"], dependencies=[Depends(require_approved)])
 
 
 # ---------------------------------------------------------------------------

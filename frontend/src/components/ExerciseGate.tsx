@@ -7,7 +7,12 @@ export function ExerciseGate({ children }: { children: ReactNode }) {
   const { user } = useAuth()
   const { exercise } = useExercise()
 
-  if (user?.global_role !== 'admin' && !exercise) {
+  // Admins browse freely. Pending (unapproved) users skip the gate too —
+  // they can't access exercises or assessments at all, so forcing them
+  // through exercise selection would dead-end (the exercises API 403s).
+  const exempt = user?.global_role === 'admin' || user?.global_role === 'pending'
+
+  if (!exempt && !exercise) {
     return <Navigate to="/exercise-select" replace />
   }
 

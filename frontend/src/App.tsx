@@ -3,6 +3,7 @@ import { useAuth } from './lib/auth'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ExerciseGate } from './components/ExerciseGate'
 import { LoginPage } from './pages/LoginPage'
+import { RegisterPage } from './pages/RegisterPage'
 import { ExerciseSelectPage } from './pages/ExerciseSelectPage'
 import { HomePage } from './pages/HomePage'
 import { PreviewPage } from './pages/PreviewPage'
@@ -34,6 +35,10 @@ export default function App() {
         <Route
           path="/login"
           element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+        />
+        <Route
+          path="/register"
+          element={isAuthenticated ? <Navigate to="/" replace /> : <RegisterPage />}
         />
         <Route
           path="/exercise-select"

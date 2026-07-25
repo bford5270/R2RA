@@ -43,3 +43,20 @@ def require_admin(current_user: User = Depends(get_current_user)) -> User:
     if current_user.global_role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin required")
     return current_user
+
+
+def require_approved(current_user: User = Depends(get_current_user)) -> User:
+    """
+    Block accounts still awaiting administrator approval.
+
+    Self-registered users get global_role="pending": they can authenticate
+    and browse the read-only framework content (JTS form preview, crosswalk),
+    but everything involving assessment data requires an admin to approve
+    the account first (assign assessor/observer/admin).
+    """
+    if current_user.global_role == "pending":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account pending administrator approval",
+        )
+    return current_user

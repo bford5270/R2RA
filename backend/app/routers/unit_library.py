@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app import storage
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_approved
 from app.config import settings
 from app.database import get_db
 from app.models.unit import Unit
@@ -20,7 +20,7 @@ from app.models.unit_evidence import UnitEvidence
 from app.models.user import User
 from app.upload_validation import validate_upload
 
-router = APIRouter(prefix="/api/units", tags=["unit-library"])
+router = APIRouter(prefix="/api/units", tags=["unit-library"], dependencies=[Depends(require_approved)])
 
 VALID_CATEGORIES = {"roster", "cert", "sop", "equipment", "eval", "other"}
 

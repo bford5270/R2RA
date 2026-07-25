@@ -91,6 +91,11 @@ export const api = {
   register: (display_name: string, email: string, password: string, global_role = 'admin') =>
     post<AuthUser>('/auth/register', { display_name, email, password, global_role }),
 
+  // Open self-registration — server assigns global_role='pending' until an
+  // admin approves the account (bootstrap first-run is the only exception).
+  requestAccount: (display_name: string, email: string, password: string) =>
+    post<AuthUser>('/auth/register', { display_name, email, password }),
+
   // ---- assessments ----
   createAssessment: (body: AssessmentCreate) =>
     post<Assessment>('/assessments', body),

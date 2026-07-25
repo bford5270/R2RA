@@ -12,13 +12,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 
-from app.auth.deps import get_current_user
+from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.crosswalk_override import CrosswalkMeta, CrosswalkOverride
 from app.models.user import User
 from app.routers.crosswalk import _load_crosswalk
 
-router = APIRouter(prefix="/api/crosswalk-editor", tags=["crosswalk-editor"])
+router = APIRouter(prefix="/api/crosswalk-editor", tags=["crosswalk-editor"], dependencies=[Depends(require_approved)])
 
 VALID_STATUSES = {"draft-needs-sme-review", "approved"}
 VALID_CONFIDENCE = {"high", "medium", "low"}

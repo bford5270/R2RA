@@ -8,12 +8,14 @@ const ROLE_LABELS: Record<string, string> = {
   admin:    'Admin',
   assessor: 'Assessor',
   observer: 'Observer',
+  pending:  'Pending',
 }
 
 const ROLE_COLOR: Record<string, string> = {
   admin:    'bg-scarlet/10 text-scarlet',
   assessor: 'bg-blue-50 text-blue-700',
   observer: 'bg-neutral-100 text-neutral-500',
+  pending:  'bg-amber-100 text-amber-700',
 }
 
 export function AdminUsersPage() {
@@ -104,7 +106,8 @@ export function AdminUsersPage() {
     return <div className="flex items-center justify-center min-h-screen text-sm text-red-600">{error}</div>
   }
 
-  const active   = users.filter(u => u.is_active)
+  const pending  = users.filter(u => u.is_active && u.global_role === 'pending')
+  const active   = users.filter(u => u.is_active && u.global_role !== 'pending')
   const inactive = users.filter(u => !u.is_active)
 
   return (
@@ -120,7 +123,12 @@ export function AdminUsersPage() {
               ← Home
             </button>
             <h1 className="text-lg font-bold text-neutral-900">User Management</h1>
-            <p className="text-sm text-neutral-500 mt-0.5">{active.length} active · {inactive.length} inactive</p>
+            <p className="text-sm text-neutral-500 mt-0.5">
+              {active.length} active · {inactive.length} inactive
+              {pending.length > 0 && (
+                <span className="text-amber-700 font-semibold"> · {pending.length} awaiting approval</span>
+              )}
+            </p>
           </div>
           <button
             onClick={() => setShowCreate(v => !v)}
@@ -203,6 +211,30 @@ export function AdminUsersPage() {
           </form>
         )}
 
+        {/* Pending approval queue */}
+        {pending.length > 0 && (
+          <div
+            className="border rounded-lg overflow-hidden mb-4"
+            style={{ background: 'rgba(201,154,46,0.10)', borderColor: 'rgba(201,154,46,0.40)' }}
+          >
+            <div className="px-4 py-2.5 border-b flex items-center justify-between" style={{ borderColor: 'rgba(201,154,46,0.30)' }}>
+              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--signal-amber)' }}>
+                Awaiting Approval
+              </p>
+              <p className="text-[10px]" style={{ color: 'var(--signal-amber)' }}>{pending.length}</p>
+            </div>
+            {pending.map(u => (
+              <PendingRow
+                key={u.id}
+                user={u}
+                saving={!!saving[u.id]}
+                onApprove={role => handleRoleChange(u, role)}
+                onDeny={() => handleToggleActive(u)}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Active users */}
         <div className="bg-neutral-100 border border-neutral-400 rounded-lg overflow-hidden mb-4">
           <div className="px-4 py-2.5 border-b border-neutral-100 flex items-center justify-between">
@@ -246,6 +278,59 @@ export function AdminUsersPage() {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+function PendingRow({
+  user,
+  saving,
+  onApprove,
+  onDeny,
+}: {
+  user: UserOut
+  saving: boolean
+  onApprove: (role: string) => void
+  onDeny: () => void
+}) {
+  const [role, setRole] = useState('assessor')
+  const requested = new Date(user.created_at).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  })
+
+  return (
+    <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b last:border-0" style={{ borderColor: 'rgba(201,154,46,0.20)' }}>
+      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-[11px] font-bold text-amber-700 shrink-0">
+        {user.display_name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('')}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-neutral-800 truncate">{user.display_name}</p>
+        <p className="text-[10px] text-neutral-500 truncate">{user.email} · Requested {requested}</p>
+      </div>
+      <select
+        value={role}
+        onChange={e => setRole(e.target.value)}
+        disabled={saving}
+        className="text-[10px] font-semibold rounded px-2 py-1.5 border border-neutral-400 bg-neutral-50 focus:outline-none focus:ring-1 focus:ring-amber-500/40 disabled:opacity-60"
+      >
+        <option value="assessor">Assessor</option>
+        <option value="observer">Observer</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button
+        onClick={() => onApprove(role)}
+        disabled={saving}
+        className="text-[10px] font-bold px-3 py-1.5 rounded bg-green-100 text-green-800 border border-green-600 hover:bg-green-200 transition-colors disabled:opacity-50"
+      >
+        {saving ? '…' : 'Approve'}
+      </button>
+      <button
+        onClick={onDeny}
+        disabled={saving}
+        className="text-[10px] font-semibold px-2.5 py-1.5 rounded border border-neutral-400 text-neutral-500 hover:border-red-300 hover:text-red-600 transition-colors disabled:opacity-50"
+      >
+        Deny
+      </button>
     </div>
   )
 }
