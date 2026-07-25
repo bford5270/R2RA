@@ -25,12 +25,20 @@ from app.database import get_db
 from app.models.scenario_case import LoFeedback, ScenarioCase
 from app.models.user import User
 from app.routers.assessments import _require_assessment
-from app.schemas.assessment import LoFeedbackOut, LoFeedbackUpsert, ScenarioCaseOut
+from app.schemas.assessment import (
+    LoFeedbackOut,
+    LoFeedbackUpsert,
+    ScenarioCaseOut,
+    ScenarioCaseUpdate,
+)
 from app.upload_validation import validate_upload
 
 router = APIRouter(tags=["scenario-cases"], dependencies=[Depends(require_approved)])
 
 _RECOMMENDATIONS = {"keep", "change", "drop"}
+
+# Continuum-of-care phases a case can move through
+_PHASES = {"poi", "triage", "trauma_bay", "or", "postop", "evac", "other"}
 
 
 def _case_out(c: ScenarioCase) -> ScenarioCaseOut:
@@ -40,6 +48,8 @@ def _case_out(c: ScenarioCase) -> ScenarioCaseOut:
         label=c.label,
         source_ref=c.source_ref,
         event_codes=c.event_codes or [],
+        journey=c.journey or [],
+        personnel=c.personnel or [],
         filename=c.filename,
         content_type=c.content_type,
         hash=c.hash,
@@ -122,6 +132,65 @@ def upload_case(
         db, current_user.id, "case.upload", "scenario_case",
         f"{assessment_id}/{case_id}", None,
         {"label": case.label, "filename": safe_name, "source_ref": case.source_ref},
+    )
+    db.commit()
+    db.refresh(case)
+    return _case_out(case)
+
+
+@router.put("/api/assessments/{assessment_id}/cases/{case_id}", response_model=ScenarioCaseOut)
+def update_case(
+    assessment_id: str,
+    case_id: str,
+    body: ScenarioCaseUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Update case metadata — including the optional continuum-of-care journey
+    (phase entries with time, notes, and personnel) and the case-level
+    personnel roster (bed team, surg tech, etc.). Any approved participant
+    can log movement; every change is audited.
+    """
+    _require_assessment(db, assessment_id)
+    case = db.get(ScenarioCase, case_id)
+    if not case or case.assessment_id != assessment_id:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if body.journey is not None:
+        for entry in body.journey:
+            if entry.phase not in _PHASES:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"journey phase must be one of {sorted(_PHASES)}",
+                )
+
+    before = {
+        "label": case.label,
+        "journey_len": len(case.journey or []),
+        "personnel_len": len(case.personnel or []),
+    }
+    if body.label is not None:
+        if not body.label.strip():
+            raise HTTPException(status_code=422, detail="Label cannot be empty")
+        case.label = body.label.strip()
+    if body.source_ref is not None:
+        case.source_ref = body.source_ref.strip() or None
+    if body.event_codes is not None:
+        case.event_codes = body.event_codes
+    if body.journey is not None:
+        case.journey = [e.model_dump() for e in body.journey]
+    if body.personnel is not None:
+        case.personnel = [p.model_dump() for p in body.personnel]
+
+    append_entry(
+        db, current_user.id, "case.update", "scenario_case",
+        f"{assessment_id}/{case_id}", before,
+        {
+            "label": case.label,
+            "journey_len": len(case.journey or []),
+            "personnel_len": len(case.personnel or []),
+        },
     )
     db.commit()
     db.refresh(case)

@@ -205,12 +205,29 @@ export interface TrTaskingUpsert {
 
 // ---- scenario cases (role2builder) + learning-objective feedback ----
 
+export interface CasePersonnel {
+  name: string
+  role: string
+}
+
+export type CasePhase = 'poi' | 'triage' | 'trauma_bay' | 'or' | 'postop' | 'evac' | 'other'
+
+export interface CaseJourneyEntry {
+  phase: CasePhase
+  phase_label: string | null
+  time: string | null
+  notes: string | null
+  personnel: CasePersonnel[]
+}
+
 export interface ScenarioCase {
   id: string
   assessment_id: string
   label: string
   source_ref: string | null
   event_codes: string[]
+  journey: CaseJourneyEntry[]
+  personnel: CasePersonnel[]
   filename: string
   content_type: string
   hash: string

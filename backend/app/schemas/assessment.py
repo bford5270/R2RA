@@ -218,17 +218,41 @@ class MyTrTaskingOut(BaseModel):
     scored_count: int
 
 
+class CasePersonnel(BaseModel):
+    name: str
+    role: str
+
+
+class CaseJourneyEntry(BaseModel):
+    # poi | triage | trauma_bay | or | postop | evac | other
+    phase: str
+    phase_label: str | None = None
+    time: str | None = None
+    notes: str | None = None
+    personnel: list[CasePersonnel] = []
+
+
 class ScenarioCaseOut(BaseModel):
     id: str
     assessment_id: str
     label: str
     source_ref: str | None
     event_codes: list[str]
+    journey: list[CaseJourneyEntry]
+    personnel: list[CasePersonnel]
     filename: str
     content_type: str
     hash: str
     uploaded_by: str
     uploaded_at: datetime
+
+
+class ScenarioCaseUpdate(BaseModel):
+    label: str | None = None
+    source_ref: str | None = None
+    event_codes: list[str] | None = None
+    journey: list[CaseJourneyEntry] | None = None
+    personnel: list[CasePersonnel] | None = None
 
 
 class LoFeedbackOut(BaseModel):

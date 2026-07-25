@@ -23,6 +23,14 @@ class ScenarioCase(Base):
     source_ref: Mapped[str | None] = mapped_column(String(300), nullable=True)
     # wickets this case exercised (JSON array of event codes)
     event_codes: Mapped[list] = mapped_column(JSON, default=list)
+    # Optional continuum-of-care journey: ordered phase entries, each
+    # {"phase": poi|triage|trauma_bay|or|postop|evac|other,
+    #  "phase_label": str|None (for other), "time": str|None,
+    #  "notes": str|None, "personnel": [{"name": str, "role": str}]}
+    journey: Mapped[list] = mapped_column(JSON, default=list)
+    # Optional case-level personnel roster: [{"name": str, "role": str}]
+    # (e.g. bed team, surg tech, provider) — independent of phase entries.
+    personnel: Mapped[list] = mapped_column(JSON, default=list)
     blob_ref: Mapped[str] = mapped_column(String(500))
     hash: Mapped[str] = mapped_column(String(64))
     filename: Mapped[str] = mapped_column(String(300))

@@ -393,6 +393,58 @@ export function AarPage() {
           </div>
         </section>
 
+        {/* Scenario case journeys — continuum of care + personnel */}
+        {cases.some(c => c.journey.length > 0 || c.personnel.length > 0) && (
+          <section>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-neutral-700 mb-2">
+              Scenario Case Journeys
+            </h2>
+            <div className="space-y-2">
+              {cases
+                .filter(c => c.journey.length > 0 || c.personnel.length > 0)
+                .map(c => (
+                  <div key={c.id} className="border border-neutral-300 rounded p-3 bg-white break-inside-avoid-page">
+                    <p className="text-xs font-semibold text-neutral-700">
+                      {c.label}
+                      {c.source_ref && <span className="font-mono font-normal text-neutral-400"> · {c.source_ref}</span>}
+                    </p>
+                    {c.journey.length > 0 && (
+                      <div className="mt-1.5 space-y-1">
+                        {c.journey.map((e, i) => (
+                          <div key={i} className="text-xs text-neutral-600 flex gap-1.5">
+                            <span className="shrink-0" style={{ color: 'var(--signal-blue)' }}>
+                              {i + 1}.
+                            </span>
+                            <span>
+                              <span className="font-semibold">
+                                {e.phase === 'other' && e.phase_label
+                                  ? e.phase_label
+                                  : { poi: 'POI / Arrival', triage: 'Triage', trauma_bay: 'Trauma Bay', or: 'OR', postop: 'Post-op / Holding', evac: 'Evacuation', other: 'Other' }[e.phase]}
+                              </span>
+                              {e.time && <span className="font-mono text-[10px] text-neutral-400"> {e.time}</span>}
+                              {e.notes && <> — {e.notes}</>}
+                              {e.personnel.length > 0 && (
+                                <span className="block text-[10px] text-neutral-500">
+                                  {e.personnel.map(p => [p.name, p.role].filter(Boolean).join(' — ')).join(' · ')}
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {c.personnel.length > 0 && (
+                      <p className="mt-1.5 text-[10px] text-neutral-500">
+                        <span className="font-bold uppercase tracking-wide">Case personnel:</span>{' '}
+                        {c.personnel.map(p => [p.name, p.role].filter(Boolean).join(' — ')).join(' · ')}
+                      </p>
+                    )}
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+
         {/* Learning objective feedback — rolled up from evaluators */}
         {loFeedback.length > 0 && (
           <section>

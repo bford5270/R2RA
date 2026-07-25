@@ -1,5 +1,5 @@
 import type { AuthUser, LoginResponse } from '../types/auth'
-import type { Assessment, AssessmentCreate, AuditLogEntry, Debrief, DebriefDistilled, ItemResponse, LoFeedback, LoFeedbackUpsert, MyTrTasking, ReadinessSummary, ResponseUpsert, ScenarioCase, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
+import type { Assessment, AssessmentCreate, AuditLogEntry, CaseJourneyEntry, CasePersonnel, Debrief, DebriefDistilled, ItemResponse, LoFeedback, LoFeedbackUpsert, MyTrTasking, ReadinessSummary, ResponseUpsert, ScenarioCase, SignatureOut, TrJtsEvidence, TrResponse, TrResponseUpsert, TrTasking, TrTaskingUpsert } from '../types/assessment'
 import type { Exercise, ExerciseCreate } from '../types/exercise'
 import type { ReadinessRow } from '../types/reports'
 import type { LibraryItem } from '../types/library'
@@ -255,6 +255,13 @@ export const api = {
     if (eventCodes.length) fd.append('event_codes', JSON.stringify(eventCodes))
     return postForm<ScenarioCase>(`/assessments/${assessmentId}/cases`, fd)
   },
+
+  updateCase: (assessmentId: string, caseId: string, body: { label?: string; source_ref?: string; event_codes?: string[]; journey?: CaseJourneyEntry[]; personnel?: CasePersonnel[] }) =>
+    request<ScenarioCase>(`/assessments/${assessmentId}/cases/${caseId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }),
 
   deleteCase: (assessmentId: string, caseId: string) =>
     del<void>(`/assessments/${assessmentId}/cases/${caseId}`),

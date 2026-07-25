@@ -232,11 +232,28 @@ S3T taskings → go-by → cases/LO feedback → debrief AI; all on branch):
   paste-a-transcript path for no-AWS environments. Daemon-thread pipeline
   (uvicorn workers=1). docs/DEPLOY.md §Debrief AI pipeline documents the
   IAM policy + Bedrock model-access enablement the user must click through.
-- **Verification**: four TestClient suites (auth 17, tasking 15, cases 10,
-  debrief 13 checks) all green; frontend tsc+vite build clean.
+- **M3 addendum — case continuum-of-care granularity** (user request):
+  `scenario_cases` gains `journey` (ordered phase entries: POI/Arrival →
+  Triage → Trauma Bay → OR → Post-op/Holding → Evac → Other, each with
+  optional time, notes, and per-phase personnel) and `personnel`
+  (case-level roster — bed team, surg tech, provider, …). All optional.
+  PUT /cases/{id} endpoint (any approved participant, audited as
+  case.update; invalid phases 422). UI: "Track case" opens a journey
+  modal from the Scenario Cases panel — phase chips to add entries,
+  reorder/remove, per-phase and case-level personnel editors with role
+  suggestions (datalist). Case rows show the phase chain; AAR gains a
+  "Scenario Case Journeys" section. Migration `m3n4o5p6q7r8`.
+- **AWS access check** (user asked me to enable Bedrock/IAM myself): the
+  CCR environment's AWS_ACCESS_KEY_ID is a proxy placeholder (`prox…`),
+  rejected by STS — no real AWS access from the session. User can add
+  real keys to the environment settings to delegate that work.
+- **Verification**: five TestClient suites (auth 17, tasking 15, cases 10,
+  case-journey 6, debrief 13 checks) all green; frontend tsc+vite build
+  clean.
 - **Migrations added**: `j0k1l2m3n4o5` (tr_taskings), `k1l2m3n4o5p6`
-  (scenario_cases + lo_feedback), `l2m3n4o5p6q7` (debriefs) — run
-  `alembic upgrade head` on deploy (EB start.sh already does).
+  (scenario_cases + lo_feedback), `l2m3n4o5p6q7` (debriefs),
+  `m3n4o5p6q7r8` (case journey/personnel) — run `alembic upgrade head`
+  on deploy (EB start.sh already does).
 
 ---
 
