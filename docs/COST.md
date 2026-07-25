@@ -233,22 +233,47 @@ buildspec changes needed.
 
 ---
 
-## Path to a $10–15/mo target
+## Path to a $10–15/mo target — **EXECUTED 2026-07-25**
 
-Owner's stated goal (2026-07-25): ~$10–15/mo with capability retained.
-After the applied changes the floor of the *current architecture* is
-about $34/mo. The remaining levers, in order of pain:
+All three steps were applied the same day (user approved):
 
-| Step | New est. total | Tradeoff |
-|---|---|---|
-| 1-yr no-upfront commitments: 2× EC2 t4g.micro (~$3.80 ea) + RDS db.t4g.micro (~$7.70) | **~$27** | Lock-in only — zero capability change. Don't buy if GovCloud move is <1 yr out. |
-| + retire the second AWS instance: role2-builder API joins the r2ra box or moves to a free-tier host (its frontend is already on Vercel) | **~$18–19** | Coupled deploy/failure domain, or a second hosting posture. r2ra itself untouched. |
-| + replace RDS with Aurora Serverless v2 (min 0 ACU — pauses when idle, ~$2 storage + ACU-hours only while in use) | **~$12–15** | First request after an idle period waits ~15 s for DB resume. For an exercise-driven tool that's idle most days, this is the only way to $10–15. |
+1. **Consolidation** — role2-builder's API now runs as a second Docker
+   Compose service on the r2ra instance (`deploy/docker-compose.eb.yml`;
+   80→r2ra, 8080→role2-builder). Its pipeline no longer deploys to EB —
+   its Publish stage uploads the built bundle to
+   `s3://r2ra-artifacts-885232248320/role2-builder/latest.zip`, which the
+   r2ra build pulls in. `api.role2builder.org` CloudFront origin now
+   points at the r2ra EB CNAME port 8080. `role2-builder-prod` EB env
+   terminated (instance + EIP released). **Note:** a role2-builder repo
+   push now needs its pipeline run *and then* an r2ra pipeline run to
+   reach production.
+2. **Aurora Serverless v2** — cluster `r2ra-aurora` (PG 16.13, 0–2 ACU,
+   auto-pause 300 s) created as a live replica of `r2ra-postgres`,
+   promoted, data verified via RDS Data API (users/assessments/responses
+   counts + alembic head `m3n4o5p6q7r8`), EB `DATABASE_URL` repointed,
+   externally verified 200 on `/api/health`. Old instance deleted behind
+   final snapshot `r2ra-postgres-final-20260725`. First request after
+   ≥5 min idle waits ~15 s for DB resume (accepted tradeoff).
+   Data API is enabled; master creds for it live in Secrets Manager
+   (`r2ra-aurora-master`, ~$0.40/mo) — handy for ops queries without
+   VPC access.
+3. **1-yr commitment** — EC2 Instance Savings Plan
+   `c0cea13e-bcc5-4330-b7fb-34436e84cd94`, t4g family us-east-1,
+   No Upfront, $0.0053/hr commitment (exactly one t4g.micro), ends
+   2027-07-25. (Direct RI purchase was quota-blocked; Savings Plan has
+   identical economics.)
 
-Structural floor that can't be removed while keeping the current
-capability set: 2 public IPv4s (~$7.30 — CloudFront origins need them)
-and 2 Route 53 zones ($1). A true $10–15 requires all three steps above;
-$27 requires only signing 1-year commitments.
+**Resulting bill (steady state): ~$12–15/mo**
+(t4g.micro via SP $3.87 + 1 IPv4 $3.65 + EBS ~$0.60 + Aurora storage/IO
+~$1–2 + ACU-hours while in use ~$1–4 + Route 53 $1 + S3/CF/secrets ~$1.)
+Budget alert lowered to $25/mo.
+
+Deferred cleanup (another ~$3.5/mo when done): terminate the stopped
+`t3.small` + its 20 GB volume; delete snapshot
+`r2ra-postgres-final-20260725` once Aurora has a few weeks of history.
+The artifacts-bucket lifecycle was re-scoped to prefixes `r2ra/` and
+`role2-builder/BuildOutpu` so it can never expire the load-bearing
+`role2-builder/latest.zip`.
 
 ---
 

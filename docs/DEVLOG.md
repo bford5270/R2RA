@@ -7,8 +7,8 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-07-25 (Session 23 — AWS cost optimization runbook)
-- **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
+- **Last session**: 2026-07-25 (Session 23 — cost optimization applied end-to-end; ~$12–15/mo)
+- **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk (single t4g.micro running BOTH apps via Compose), **Aurora Serverless v2** (auto-pause), CloudFront
 - **Branch**: `claude/website-setup-cost-optimization-1u6066` (docs/COST.md runbook); Session 22 evaluator work still on `claude/mobile-app-conversion-1bcxvh`
 - **Last commit**: Session 23 — `docs/COST.md` AWS cost-optimization runbook (this branch); Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on `claude/mobile-app-conversion-1bcxvh` (ready to merge)
 - **Open PR**: none
@@ -243,6 +243,46 @@ request; root AWS keys in env):
   invalidated.
 - Lesson: pipeline state can show stale "Succeeded" stages from months
   ago — check `list-pipeline-executions` timestamps, not stage colors.
+**Session 23 continued — the $10–15 plan EXECUTED** (user: "Go ahead and
+execute those 3 changes"; also "make sure the dictation stuff still
+works"):
+
+- **Consolidation**: `deploy/docker-compose.eb.yml` + buildspec change —
+  one t4g.micro runs r2ra (:80) and role2-builder (:8080). rb pipeline's
+  Deploy stage → S3 publish of `role2-builder/latest.zip` (r2ra build
+  pulls it). role2builder compose service gets ONLY CORS_ORIGINS +
+  GEMINI_API_KEY (never r2ra's DATABASE_URL/SECRET_KEY). SG
+  `r2ra-cotenant-8080` (passed by NAME — EB in default VPC rejects SG
+  ids in that option). `api.role2builder.org` CF origin → r2ra CNAME:8080.
+  Both services externally verified HTTP 200 via temporary Route 53
+  health checks (WebFetch/curl are blocked in the CCR sandbox — R53
+  health checks are the reliable external probe). `role2-builder-prod`
+  env terminated; EIP released.
+- **Aurora Serverless v2**: `r2ra-aurora` (PG 16.13, 0–2 ACU, 300 s
+  auto-pause) created as replica of `r2ra-postgres` → promoted → data
+  verified via Data API (4 users / 1 assessment / alembic
+  `m3n4o5p6q7r8`) → DATABASE_URL cut over → external 200s → old RDS
+  deleted behind snapshot `r2ra-postgres-final-20260725`. Watch out:
+  `RDSToAuroraPostgreSQLReplicaLag` grows linearly on an idle source
+  (no WAL to replay) — not a stall. Data API needs
+  `aws rds enable-http-endpoint` (the modify-db-cluster flag is the
+  Serverless-v1 path and silently no-ops).
+- **Dictation/debrief pipeline protected through the move**: IMDS hop
+  limit 2 verified (containers keep instance-role creds for
+  S3/Transcribe/Bedrock); S3_EVIDENCE_BUCKET etc. flow via env_file;
+  debriefs tables replicated; compose mode drops EB nginx and with it
+  the 1 MB default body cap that would have rejected audio uploads.
+  Aurora auto-pause adds ~15 s to the first request after idle.
+- **Commitment**: RI purchase quota-blocked → bought the equivalent
+  EC2 Instance Savings Plan (t4g/us-east-1/1 yr/No Upfront,
+  $0.0053/hr, id `c0cea13e…`, ends 2027-07-25).
+- **Guard**: artifacts-bucket lifecycle re-scoped to `r2ra/` and
+  `role2-builder/BuildOutpu` prefixes so it can never expire
+  `role2-builder/latest.zip`. Budget lowered to $25/mo.
+- **Bill**: ~$34 → **~$12–15/mo**. Deferred cleanup worth ~$3.5/mo more:
+  terminate stopped t3.small + volume; delete final RDS snapshot after
+  Aurora has history.
+
 - Note: `update-pipeline` supersedes in-flight executions (first manual
   run was cancelled at Build by the trigger update; re-ran after).
 - **Still open**: even with the explicit trigger, a subsequent push to
