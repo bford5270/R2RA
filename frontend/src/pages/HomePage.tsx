@@ -6,6 +6,7 @@ import { MISSION_TYPE_LABELS } from '../types/assessment'
 import { useAuth } from '../lib/auth'
 import { useExercise } from '../lib/exercise'
 import { StatusChip } from '../components/StatusChip'
+import { InstallPrompt } from '../components/InstallPrompt'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -109,6 +110,8 @@ export function HomePage() {
           </button>
         </div>
       </div>
+
+      <InstallPrompt />
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-sm font-semibold text-neutral-700 uppercase tracking-widest">Assessments</h2>

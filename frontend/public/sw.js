@@ -1,11 +1,22 @@
-const CACHE = 'r2ra-v1'
+const CACHE = 'r2ra-v2'
 
-// On install, cache the app shell.
+// App shell + install assets cached up front so a home-screen launch
+// works offline even if those files were never fetched in-session.
+const PRECACHE = [
+  '/',
+  '/index.html',
+  '/manifest.webmanifest',
+  '/logo-mark.svg',
+  '/icons/app/icon-192.png',
+  '/icons/app/icon-512.png',
+  '/icons/app/icon-maskable-192.png',
+  '/icons/app/icon-maskable-512.png',
+  '/icons/app/apple-touch-icon.png',
+]
+
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE).then(cache =>
-      cache.addAll(['/', '/index.html'])
-    )
+    caches.open(CACHE).then(cache => cache.addAll(PRECACHE))
   )
   self.skipWaiting()
 })
@@ -28,12 +39,20 @@ self.addEventListener('fetch', event => {
     return
   }
 
-  // Navigation requests: network-first, fall back to cached index.html.
+  // Navigation requests: network-first. Keep the cached shell fresh by
+  // storing each successful response, so the offline fallback tracks the
+  // latest deploy instead of the install-time copy.
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() =>
-        caches.match('/index.html')
-      )
+      fetch(event.request)
+        .then(res => {
+          if (res.ok) {
+            const copy = res.clone()
+            caches.open(CACHE).then(cache => cache.put('/index.html', copy))
+          }
+          return res
+        })
+        .catch(() => caches.match('/index.html'))
     )
     return
   }

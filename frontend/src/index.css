@@ -191,9 +191,10 @@
     color: var(--ink-1);
     background: var(--surface-0);
     line-height: var(--lh-body);
-    /* Reserve top + bottom for CUI banners */
-    padding-top: var(--cui-banner-height);
-    padding-bottom: var(--cui-banner-height);
+    /* Reserve top + bottom for CUI banners (+ device safe areas when
+       installed as a standalone mobile app with viewport-fit=cover) */
+    padding-top: calc(var(--cui-banner-height) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--cui-banner-height) + env(safe-area-inset-bottom, 0px));
   }
 
   /* Heading defaults — display font */

@@ -29,11 +29,26 @@ const bannerStyle: CSSProperties = {
 }
 
 function CuiBannerFixed({ position }: { position: 'top' | 'bottom' }) {
+  // Installed-app mode (viewport-fit=cover): extend the banner background
+  // under the device status bar / home indicator via safe-area insets so
+  // the CUI marking is never clipped by a notch.
+  const safeArea: CSSProperties =
+    position === 'top'
+      ? {
+          top: 0,
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+          height: 'calc(var(--cui-banner-height) + env(safe-area-inset-top, 0px))',
+        }
+      : {
+          bottom: 0,
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          height: 'calc(var(--cui-banner-height) + env(safe-area-inset-bottom, 0px))',
+        }
   return (
     <div
       role={position === 'top' ? 'banner' : 'contentinfo'}
       aria-label={`Classification banner — ${position}`}
-      style={{ ...bannerStyle, top: position === 'top' ? 0 : undefined, bottom: position === 'bottom' ? 0 : undefined }}
+      style={{ ...bannerStyle, ...safeArea }}
     >
       {BANNER_TEXT}
     </div>
