@@ -10,7 +10,7 @@ next session can resume cleanly.
 - **Last session**: 2026-07-25 (Session 22)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
 - **Branch**: `claude/mobile-app-conversion-1bcxvh` (installable-PWA work; merge to `main` to deploy)
-- **Last commit**: Session 22 — installable PWA (manifest, icons, safe areas, install prompt, SW v2) (`b2aa91e`+)
+- **Last commit**: Session 22 — installable PWA (merged to `main`, `dc6a2f9`) + account request/approval flow (`188364a`, on branch)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
@@ -181,6 +181,25 @@ so the answer is PWA completion, not a native rewrite.
 
 **Commits**: `b2aa91e` (PWA), `a9fbc6c` (lock sync), `1cfa78e` (gitignore),
 plus docs commit — pushed to `claude/mobile-app-conversion-1bcxvh`.
+
+**Session 22 continued — PWA merged to `main` (user approved) + account
+request/approval flow** (`188364a`):
+
+- Self-registration reopened: `POST /api/auth/register` now creates
+  `global_role="pending"` accounts after bootstrap (requested role ignored,
+  rate-limited, email lowercased, 409 on duplicate).
+- Login email lookup made case-insensitive (mobile autocapitalize).
+- New `require_approved` dependency gates all assessment-data routers at
+  the router level; content + crosswalk read remain open to pending users
+  so they can browse the unclassified JTS form preview.
+- Audit entries: `user.register`, `user.approve`, `user.update`.
+- Frontend: `/register` page (auto-login into pending home view), pending
+  notice on HomePage with preview link, ExerciseGate bypass for pending,
+  AdminUsersPage "Awaiting Approval" queue (role select + Approve / Deny).
+- Verified with a 17-check TestClient smoke test (bootstrap → self-register
+  → pending gating → approve → access; audit chain).
+- Approval assigns the *global* role; per-assessment roles are still
+  assigned via TeamPanel by the assessment lead (existing flow).
 
 ---
 
