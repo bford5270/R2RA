@@ -182,6 +182,42 @@ class AssignmentUpsert(BaseModel):
     scope_ids: list[str] = []
 
 
+class TrTaskingOut(BaseModel):
+    id: str
+    assessment_id: str
+    user_id: str
+    display_name: str
+    email: str
+    event_codes: list[str]
+    mets: list[str]
+    note: str | None
+    status: str
+    assigned_at: datetime
+    returned_at: datetime | None
+
+
+class TrTaskingUpsert(BaseModel):
+    event_codes: list[str]
+    mets: list[str] = []
+    note: str | None = None
+
+
+class MyTrTaskingOut(BaseModel):
+    """A tasking joined with its assessment context + progress, for the home card."""
+    id: str
+    assessment_id: str
+    unit_name: str
+    unit_uic: str
+    exercise_name: str | None
+    event_codes: list[str]
+    mets: list[str]
+    note: str | None
+    status: str
+    assigned_at: datetime
+    returned_at: datetime | None
+    scored_count: int
+
+
 class SignatureOut(BaseModel):
     id: str
     assessment_id: str

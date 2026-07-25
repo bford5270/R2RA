@@ -6,8 +6,10 @@ from app.models.response import Response, ResponseComment
 from app.models.evidence import Evidence
 from app.models.signature import Signature
 from app.models.audit_log import AuditLog
+from app.models.tr_tasking import TrTasking
 
 __all__ = [
+    "TrTasking",
     "Base",
     "User",
     "Unit",

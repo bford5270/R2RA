@@ -11,6 +11,7 @@ from app.models.response import Response
 from app.models.unit import Unit
 from app.models.user import User
 from app.models.tr_response import TrResponse
+from app.models.tr_tasking import TrTasking
 import hashlib
 import json
 
@@ -374,6 +375,31 @@ def upsert_tr_response(
     assessment = _require_assessment(db, assessment_id)
     if assessment.status == "certified":
         raise HTTPException(status_code=403, detail="Assessment is certified and locked")
+
+    # Tasking enforcement (leads and admins are exempt): an evaluator with a
+    # tasking on this assessment may only score their assigned wickets, and
+    # a returned tasking soft-locks them until S3T reopens it.
+    if assessment.lead_id != current_user.id and current_user.global_role != "admin":
+        tasking = (
+            db.query(TrTasking)
+            .filter(
+                TrTasking.assessment_id == assessment_id,
+                TrTasking.user_id == current_user.id,
+            )
+            .first()
+        )
+        if tasking is not None:
+            if event_code not in (tasking.event_codes or []):
+                raise HTTPException(
+                    status_code=403,
+                    detail="This wicket is outside your assigned tasking",
+                )
+            if tasking.status == "returned":
+                raise HTTPException(
+                    status_code=403,
+                    detail="Tasking already returned to S3T — ask the lead to reopen it",
+                )
+
     tr = (
         db.query(TrResponse)
         .filter(TrResponse.assessment_id == assessment_id, TrResponse.event_code == event_code)
