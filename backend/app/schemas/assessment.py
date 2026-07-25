@@ -218,6 +218,39 @@ class MyTrTaskingOut(BaseModel):
     scored_count: int
 
 
+class ScenarioCaseOut(BaseModel):
+    id: str
+    assessment_id: str
+    label: str
+    source_ref: str | None
+    event_codes: list[str]
+    filename: str
+    content_type: str
+    hash: str
+    uploaded_by: str
+    uploaded_at: datetime
+
+
+class LoFeedbackOut(BaseModel):
+    id: str
+    assessment_id: str
+    event_code: str
+    case_id: str | None
+    rating: int | None
+    recommendation: str | None
+    comment: str | None
+    created_by: str
+    author_name: str
+    updated_at: datetime
+
+
+class LoFeedbackUpsert(BaseModel):
+    rating: int | None = None
+    recommendation: str | None = None
+    comment: str | None = None
+    case_id: str | None = None
+
+
 class SignatureOut(BaseModel):
     id: str
     assessment_id: str

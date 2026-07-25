@@ -7,9 +7,12 @@ from app.models.evidence import Evidence
 from app.models.signature import Signature
 from app.models.audit_log import AuditLog
 from app.models.tr_tasking import TrTasking
+from app.models.scenario_case import LoFeedback, ScenarioCase
 
 __all__ = [
     "TrTasking",
+    "ScenarioCase",
+    "LoFeedback",
     "Base",
     "User",
     "Unit",

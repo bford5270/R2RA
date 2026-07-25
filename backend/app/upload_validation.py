@@ -12,6 +12,8 @@ ALLOWED_CONTENT_TYPES = {
     "image/gif",
     "application/pdf",
     "text/plain",
+    # role2builder case exports
+    "application/json",
 }
 
 # (offset, bytes_to_match) — first matching signature wins
@@ -64,8 +66,8 @@ def validate_upload(content: bytes, declared_content_type: str, max_bytes: int) 
             status_code=415,
             detail="File content does not match any allowed type.",
         )
-    # Allow text/plain heuristic to pass for any declared text type
-    if detected == "text/plain" and declared_content_type == "text/plain":
+    # Text heuristic covers plain text and JSON (both are printable text)
+    if detected == "text/plain" and declared_content_type in {"text/plain", "application/json"}:
         return
     if detected != declared_content_type:
         raise HTTPException(
