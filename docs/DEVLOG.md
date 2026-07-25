@@ -7,10 +7,10 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-05-23 (Session 21)
+- **Last session**: 2026-07-25 (Session 22)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk, RDS Postgres, CloudFront
-- **Branch**: `main`
-- **Last commit**: Session 21 — scarlet sidebar stripe + signal nav indicators + CF cache fix (`08ff17d`)
+- **Branch**: `claude/mobile-app-conversion-1bcxvh` (installable-PWA work; merge to `main` to deploy)
+- **Last commit**: Session 22 — installable PWA (manifest, icons, safe areas, install prompt, SW v2) (`b2aa91e`+)
 - **Open PR**: none
 - **Blocked on**: Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (user can optionally set Railway PostgreSQL URL in EB env to restore history persistence)
 
@@ -133,6 +133,56 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-07-25 — Session 22: installable mobile app (PWA completion)
+
+**In**: User asked "can you help me make this into a mobile app?" App already
+had a service worker, mobile nav drawers, and 44px touch targets — but was
+not *installable*: no web app manifest, no home-screen icons, no mobile meta,
+no safe-area handling. STRATEGY §13 had already decided cloud + offline PWA,
+so the answer is PWA completion, not a native rewrite.
+
+**Out** (branch `claude/mobile-app-conversion-1bcxvh`):
+
+- **`manifest.webmanifest`**: standalone display, `theme_color #3A3025`
+  (dark coyote, matches CUI banner so the status bar blends), `background_color
+  #E8DCC4` (warm paper splash), full icon set.
+- **App icons** (`public/icons/app/`): 192/512 standard + maskable (mark at
+  52% for the 80% safe zone) + 180px apple-touch-icon. Rendered from the
+  dual-hexagon mark, cream on dark coyote, via a sharp script (no CDN assets).
+- **`index.html`**: manifest link, `theme-color`, SVG favicon, iOS standalone
+  meta (`apple-mobile-web-app-*`, `black-translucent` status bar),
+  `viewport-fit=cover`.
+- **Safe areas**: `CuiBanner` fixed banners and body padding extend by
+  `env(safe-area-inset-top/bottom)` so the CUI marking is never clipped by a
+  notch or home indicator in standalone mode. No-ops in normal browsers.
+- **`sw.js` v2**: precaches shell + manifest + icons (home-screen launch works
+  offline even if assets were never fetched in-session); successful navigation
+  responses now refresh the cached `index.html` so the offline fallback tracks
+  the latest deploy instead of the install-time copy. Still never intercepts
+  `/api/`.
+- **`InstallPrompt`** (HomePage): captures `beforeinstallprompt` for one-tap
+  install on Chromium/Android; iOS Safari gets Share → Add to Home Screen
+  instructions; hidden when already standalone; dismissal stored in
+  localStorage (UI preference only — no CUI content).
+- **`docs/MOBILE.md`**: install instructions, architecture table, icon
+  regeneration notes, offline scope, and the Capacitor path if app-store
+  distribution is ever mandated.
+- **Lock file sync**: `package-lock.json` now includes the @fontsource
+  packages — CI could return to `npm ci` (was switched to `npm install` in
+  `952431f` because of this gap).
+
+**Key decisions**:
+- Mobile app = installable PWA, per the existing §13 decision. Capacitor
+  native wrap documented as a future option but not built — no store/MDM
+  requirement exists, and PWA keeps the single CI/CD path.
+- Install-prompt dismissal flag lives in localStorage despite the
+  memory-only auth posture — it is a UI preference containing no CUI.
+
+**Commits**: `b2aa91e` (PWA), `a9fbc6c` (lock sync), `1cfa78e` (gitignore),
+plus docs commit — pushed to `claude/mobile-app-conversion-1bcxvh`.
+
+---
 
 ### 2026-05-23 — Session 18: Role 2 Forward design system implementation
 
