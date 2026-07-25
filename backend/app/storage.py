@@ -32,6 +32,11 @@ def _s3():
     return boto3.client("s3", **kwargs)
 
 
+def _bucket() -> str:
+    """Active S3 bucket — accepts either env name; empty string = local disk."""
+    return settings.aws_s3_bucket or settings.s3_evidence_bucket
+
+
 def _local_path(key: str) -> Path:
     return Path(settings.uploads_dir) / key
 
@@ -45,9 +50,9 @@ def put(key: str, content: bytes, content_type: str) -> str:
     Store content under the given key. Returns key (stored as blob_ref).
     S3 uploads always use AES-256 server-side encryption.
     """
-    if settings.aws_s3_bucket:
+    if _bucket():
         _s3().put_object(
-            Bucket=settings.aws_s3_bucket,
+            Bucket=_bucket(),
             Key=key,
             Body=content,
             ContentType=content_type,
@@ -65,9 +70,9 @@ def serve(key: str, filename: str, content_type: str) -> Response:
     Return a FastAPI Response that streams the file to the client.
     Raises HTTP 404 if the file is not found.
     """
-    if settings.aws_s3_bucket:
+    if _bucket():
         try:
-            obj = _s3().get_object(Bucket=settings.aws_s3_bucket, Key=key)
+            obj = _s3().get_object(Bucket=_bucket(), Key=key)
         except Exception as exc:
             # boto3 raises botocore.exceptions.ClientError for 404
             raise HTTPException(status_code=404, detail="File not found") from exc
@@ -94,9 +99,9 @@ def serve(key: str, filename: str, content_type: str) -> Response:
 
 def delete(key: str) -> None:
     """Delete the file at key. Silent no-op if already gone."""
-    if settings.aws_s3_bucket:
+    if _bucket():
         try:
-            _s3().delete_object(Bucket=settings.aws_s3_bucket, Key=key)
+            _s3().delete_object(Bucket=_bucket(), Key=key)
         except Exception:
             pass
     else:

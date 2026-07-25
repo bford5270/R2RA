@@ -19,8 +19,10 @@ class Settings(BaseSettings):
     uploads_dir: str = "./uploads"
     max_upload_bytes: int = 10 * 1024 * 1024  # 10 MB
 
-    # S3 — leave blank to use local disk (dev default)
+    # S3 — leave blank to use local disk (dev default). Both names accepted:
+    # AWS_S3_BUCKET (original, per docs/DEPLOY.md) or S3_EVIDENCE_BUCKET.
     s3_evidence_bucket: str = ""
+    aws_s3_bucket: str = ""
     aws_region: str = "us-east-1"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
