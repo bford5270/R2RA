@@ -245,6 +245,15 @@ request; root AWS keys in env):
   ago — check `list-pipeline-executions` timestamps, not stage colors.
 - Note: `update-pipeline` supersedes in-flight executions (first manual
   run was cancelled at Build by the trigger update; re-ran after).
+- **Still open**: even with the explicit trigger, a subsequent push to
+  `main` (`84c3af0`, docs-only) did not auto-start the pipeline —
+  events from GitHub aren't arriving. AWS-side config is correct;
+  check the **GitHub side**: github.com → Settings → Applications →
+  "AWS Connector for GitHub" → confirm it's installed and has access
+  to `bford5270/R2RA` (and `role2-builder`). Until fixed, deploy with
+  one command: `aws codepipeline start-pipeline-execution --name r2ra`
+  (or Release change in the console). Site is NOT stale — `c75c338`
+  (today's code) deployed manually and is live.
 
 ---
 
