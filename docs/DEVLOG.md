@@ -285,15 +285,28 @@ works"):
 
 - Note: `update-pipeline` supersedes in-flight executions (first manual
   run was cancelled at Build by the trigger update; re-ran after).
-- **Still open**: even with the explicit trigger, a subsequent push to
-  `main` (`84c3af0`, docs-only) did not auto-start the pipeline —
-  events from GitHub aren't arriving. AWS-side config is correct;
-  check the **GitHub side**: github.com → Settings → Applications →
-  "AWS Connector for GitHub" → confirm it's installed and has access
-  to `bford5270/R2RA` (and `role2-builder`). Until fixed, deploy with
-  one command: `aws codepipeline start-pipeline-execution --name r2ra`
-  (or Release change in the console). Site is NOT stale — `c75c338`
-  (today's code) deployed manually and is live.
+- ~~Still open: GitHub push events~~ — **ROOT CAUSE FOUND + FIXED
+  (later in Session 23)**: pipeline execution history shows **zero
+  webhook-triggered executions ever** — every run since May was
+  `StartPipelineExecution` by `r2ra-app` or root. The CodeStar
+  connection delivers source *pulls* but its push *events* never
+  reached CodePipeline, so "push to main → deploy" never actually
+  existed. Fix (bypasses the connector event path entirely):
+  - **`.github/workflows/deploy.yml`** — on push to `main`, GitHub
+    Actions assumes OIDC role `github-actions-start-pipeline`
+    (provider `token.actions.githubusercontent.com`, trust scoped to
+    `bford5270/R2RA` + `bford5270/role2-builder` main; permission:
+    `codepipeline:StartPipelineExecution` on the two pipelines only)
+    and starts the `r2ra` pipeline. `paths-ignore` skips docs-only
+    pushes. **Verified live**: the push that landed the workflow
+    triggered Actions → pipeline → deploy → Green, end to end.
+  - **EventBridge rule `rb-publish-chains-r2ra`** — role2-builder
+    pipeline SUCCEEDED → auto-starts `r2ra` (role
+    `eventbridge-start-r2ra`), so a role2-builder publish flows to
+    production without a manual second step. The role2-builder repo
+    still needs its own copy of the Actions workflow (starting the
+    `role2-builder` pipeline) — blurb handed to the user for that
+    session.
 
 ---
 
