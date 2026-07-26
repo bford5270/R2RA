@@ -1,0 +1,27 @@
+# Push-to-deploy trigger.
+#
+# The CodeStar connection's GitHub push events have never reached
+# CodePipeline (every execution in pipeline history was manually
+# started), so this workflow is the deploy trigger: every push to main
+# assumes a scoped OIDC role and starts the r2ra pipeline. The pipeline
+# itself still pulls source through the CodeStar connection as before.
+#
+# role2-builder's repo has the same workflow starting ITS pipeline; an
+# EventBridge rule (rb-publish-chains-r2ra) then starts this pipeline
+# automatically after its bundle publishes.
+name: deploy
+on:
+  push:
+    branches: [main]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  start-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::885232248320:role/github-actions-start-pipeline
+          aws-region: us-east-1
+      - run: aws codepipeline start-pipeline-execution --name r2ra
