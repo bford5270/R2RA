@@ -308,6 +308,12 @@ pilot traffic (~20 users over a few days), and a pause terminates
 server-side connections anyway, so a retained pool would serve dead
 connections without `pool_pre_ping`.
 
+**Deployed and confirmed 2026-08-05**: after the fix reached production,
+`pg_stat_activity` showed zero `r2ra` connections and
+`ServerlessDatabaseCapacity` hit **0.00 for the first time since the
+7/25 cutover**. Verify from CloudWatch, not the Data API — a Data API
+query is itself DB activity and resets the 300 s timer.
+
 **Verify after deploy** — `ServerlessDatabaseCapacity` should reach 0
 within ~5 min of the last request:
 
