@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     # SQLite for local dev; set DATABASE_URL=postgresql://... for production
     database_url: str = "sqlite:///./r2ra_dev.db"
 
+    # Postgres connect timeout. Sized for an Aurora Serverless v2 resume from
+    # auto-pause (~15 s); CloudFront's 30 s origin timeout is the outer bound.
+    db_connect_timeout_sec: int = 25
+
     secret_key: str = "change-me-in-production"
     access_token_expire_minutes: int = 480  # 8-hour field shift
 
