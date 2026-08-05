@@ -186,9 +186,21 @@ NullPool leaves **zero**.
   server-side connections, so a retained pool would hand out dead ones
   without `pool_pre_ping`.
 
+**Deployed & confirmed working (same session)**: merged to `main`
+(`69641c2`) → Actions run #3 → pipeline `82895e68` Succeeded →
+`r2ra-prod` Ready/Green. `pg_stat_activity` then showed **zero** `r2ra`
+connections (only AWS-internal `rdsadmin`, which don't block pause), and
+`ServerlessDatabaseCapacity` **reached 0.00 for the first time since the
+7/25 cutover**. 5-min averages across the deploy: connections
+`5.00 → 4.00 → 0.60 → 0.00`, capacity `0.50 → 0` behind it. Expect the
+~$44/mo Aurora line to fall to a few dollars; total ~$8–12/mo.
+
+Note: verify from CloudWatch, not the Data API — a Data API query is
+itself DB activity and resets the 300 s auto-pause timer.
+
 **Still open**:
-- Deploy this to see `ServerlessDatabaseCapacity` actually reach 0
-  (command in COST.md). Expect ~$44/mo → a few $; total ~$8–12/mo.
+- Watch the first real usage session for the ~15 s cold-resume behavior
+  under actual load (nobody has hit it post-fix yet).
 - Deferred July cleanup, ~$2.50/mo: terminate stopped `t3.small`
   `i-02d4f9ed565eef469` + volume `vol-020b4c7892935dc6c`; delete
   snapshot `r2ra-postgres-final-20260725` (Aurora now has history).
