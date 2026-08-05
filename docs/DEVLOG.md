@@ -7,12 +7,12 @@ next session can resume cleanly.
 
 ## Header (always current)
 
-- **Last session**: 2026-07-25 (Session 23 — cost optimization applied end-to-end; ~$12–15/mo)
+- **Last session**: 2026-08-05 (Session 24 — Aurora never paused; connection-pool fix restores the ~$12–15/mo target)
 - **Current phase**: Live on AWS — CodePipeline CI/CD, Elastic Beanstalk (single t4g.micro running BOTH apps via Compose), **Aurora Serverless v2** (auto-pause), CloudFront
-- **Branch**: `claude/website-setup-cost-optimization-1u6066` (docs/COST.md runbook); Session 22 evaluator work still on `claude/mobile-app-conversion-1bcxvh`
+- **Branch**: `claude/project-budget-overrun-dlk30r` (Aurora pool fix); Session 22 evaluator work still on `claude/mobile-app-conversion-1bcxvh`
 - **Last commit**: Session 23 — `docs/COST.md` AWS cost-optimization runbook (this branch); Session 22 — installable PWA (merged to `main`, `dc6a2f9`); account approval + evaluator workflow M1–M4 on `claude/mobile-app-conversion-1bcxvh` (ready to merge)
 - **Open PR**: none
-- **Blocked on**: user to apply docs/COST.md changes in AWS console; Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (optional). ~~Debrief AI enablement~~ — **done & verified 2026-07-25** (see DEPLOY.md §Debrief AI pipeline status note)
+- **Blocked on**: user confirmation to terminate stopped `t3.small` + volume and delete snapshot `r2ra-postgres-final-20260725` (~$2.50/mo, irreversible); Phase 3 stakeholder input (enclave, sponsor, SME review); role2-builder DATABASE_URL (optional). ~~Debrief AI enablement~~ — **done & verified 2026-07-25** (see DEPLOY.md §Debrief AI pipeline status note)
 
 ---
 
@@ -133,6 +133,70 @@ Will need user input to proceed on:
 ---
 
 ## Session log
+
+### 2026-08-05 — Session 24: Aurora never paused — budget overrun found & fixed
+
+**In**: User asked why the project is still running over budget.
+
+**Found** (live AWS via Cost Explorer + CloudWatch + RDS Data API):
+
+- August 1–5 billed **$8.32** — a **~$50/mo** run rate against a $12–15
+  target and a $25 alert. The July work *did* land (ELB $18 → $0,
+  Savings Plan covering the instance, IPv4 sprawl cleaned up); the
+  single failure was Aurora.
+- `Aurora:ServerlessV2Usage` flat at **12 ACU-hours/day** since
+  2026-07-29 = 0.5 ACU × 24 h, i.e. **the cluster never paused once**.
+  ~$44/mo of the ~$50.
+- Cluster config was correct all along (`MinCapacity=0.0`,
+  `MaxCapacity=2.0`, `SecondsUntilAutoPause=300`).
+- **Root cause**: auto-pause needs *zero* client connections; an idle
+  pooled connection still counts. `app/database.py` used
+  `create_engine()` with no pool args → default `QueuePool`
+  (`pool_size=5`, no idle reaper). `pg_stat_activity`: five `r2ra`
+  connections from `172.31.5.170` (the EB instance), opened
+  2026-07-28 17:19, **idle 7½ days**. Matches `DatabaseConnections=5.00`
+  flat in CloudWatch.
+- **Why it appeared Aug 1**: AWS credits (−$5.06) masked the identical
+  late-July usage; they ran out.
+
+**Out** (branch `claude/project-budget-overrun-dlk30r`):
+
+- **`app/database.py`** — `poolclass=NullPool` for Postgres so idle
+  means zero open connections. SQLite dev keeps its driver default
+  (NullPool would give an in-memory DB a fresh empty database per
+  connection). Postgres `connect_args` gains `connect_timeout`.
+- **`app/config.py`** — `db_connect_timeout_sec: int = 25`, sized above
+  the ~15 s resume and under CloudFront's 30 s origin timeout.
+- **`docs/COST.md`** — regression section: cause, fix, verification
+  command, pre-warm guidance.
+
+**Verified**: app boots and serves (`/api/health` 200, auth-guarded
+routes reach `get_db()`); engine construction correct on both paths
+(SQLite → QueuePool + `check_same_thread`; Postgres → NullPool +
+`connect_timeout=25`); pool semantics measured with connect/close event
+counters — old pool leaves a connection open after requests complete,
+NullPool leaves **zero**.
+
+**Key decisions**:
+- NullPool over a smaller `pool_size`: SQLAlchemy has no idle reaper for
+  `QueuePool`, so any pool size pins that many connections open forever.
+  There is no middle option.
+- Pooling is not worth defending here — intra-VPC connect is
+  single-digit ms at ~20 users over a few days, and a pause terminates
+  server-side connections, so a retained pool would hand out dead ones
+  without `pool_pre_ping`.
+
+**Still open**:
+- Deploy this to see `ServerlessDatabaseCapacity` actually reach 0
+  (command in COST.md). Expect ~$44/mo → a few $; total ~$8–12/mo.
+- Deferred July cleanup, ~$2.50/mo: terminate stopped `t3.small`
+  `i-02d4f9ed565eef469` + volume `vol-020b4c7892935dc6c`; delete
+  snapshot `r2ra-postgres-final-20260725` (Aurora now has history).
+  **Not done — irreversible, awaiting user confirmation.**
+- **AWS keys in the CCR env are root account keys** (flagged in Session
+  23, still true). Replace with a scoped IAM user.
+
+---
 
 ### 2026-07-25 — Session 23: AWS cost optimization runbook
 

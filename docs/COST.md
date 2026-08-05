@@ -277,6 +277,60 @@ The artifacts-bucket lifecycle was re-scoped to prefixes `r2ra/` and
 
 ---
 
+## Regression — Aurora never paused (found & fixed 2026-08-05)
+
+The $10–15 target above assumed Aurora scale-to-zero. It never happened.
+August 1–5 billed **$8.32 (~$50/mo run rate)**; Cost Explorer showed
+`Aurora:ServerlessV2Usage` at a flat **12 ACU-hours/day** ($1.44/day,
+~$44/mo) every day since 2026-07-29.
+
+**Cause.** Auto-pause requires *zero* client connections, and a pooled
+connection counts even when idle. `backend/app/database.py` called
+`create_engine()` with no pool arguments → SQLAlchemy's default
+`QueuePool` (`pool_size=5`, no idle reaper). `pg_stat_activity` showed
+five `r2ra` connections from `172.31.5.170` (the EB instance), opened
+2026-07-28 17:19 and idle **7½ days** — never released. The cluster was
+therefore pinned at its 0.5-ACU floor 24/7. Config was never the
+problem: `MinCapacity=0.0`, `MaxCapacity=2.0`,
+`SecondsUntilAutoPause=300` were all correct.
+
+**Why it surfaced on Aug 1, not Jul 29.** AWS credits (−$5.06) absorbed
+the late-July usage. They ran out; August is the first fully-billed
+month.
+
+**Fix.** `poolclass=NullPool` for Postgres (SQLite dev keeps its driver
+default), plus `connect_timeout` sized above the ~15 s resume. Verified:
+with the old pool a connection stays open after requests complete; with
+NullPool zero remain, which is the precondition for pause.
+
+Pooling costs nothing here — intra-VPC connect is single-digit ms at
+pilot traffic (~20 users over a few days), and a pause terminates
+server-side connections anyway, so a retained pool would serve dead
+connections without `pool_pre_ping`.
+
+**Verify after deploy** — `ServerlessDatabaseCapacity` should reach 0
+within ~5 min of the last request:
+
+```bash
+aws cloudwatch get-metric-statistics --namespace AWS/RDS \
+  --metric-name ServerlessDatabaseCapacity \
+  --dimensions Name=DBClusterIdentifier,Value=r2ra-aurora \
+  --start-time 2026-08-05T00:00:00Z --end-time 2026-08-06T00:00:00Z \
+  --period 3600 --statistics Average Minimum
+```
+
+**Operational notes.** The first request after ≥5 min idle now waits
+~15 s for resume — real and repeated at sparse usage, so pre-warm before
+a scheduled session (one DB-touching request, or set `MinCapacity=0.5`
+for the day). Raising `MaxCapacity` above 2 is free: billing is on
+ACU-hours consumed, not on the ceiling.
+
+Still outstanding from the July deferred list (~$2.50/mo): stopped
+`t3.small` `i-02d4f9ed565eef469` and its volume `vol-020b4c7892935dc6c`
+(20 GB gp3), plus snapshot `r2ra-postgres-final-20260725`.
+
+---
+
 ## Expected bill after all changes
 
 | Item | Est. $/mo |
