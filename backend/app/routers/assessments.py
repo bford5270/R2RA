@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.auth.access import can_read, require_certify, require_read, require_write, visible_assessment_filter
 from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.assessment import Assessment, AssessmentAssignment
@@ -133,12 +134,11 @@ def list_assessments(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    rows = (
-        db.query(Assessment, Unit)
-        .join(Unit, Assessment.unit_id == Unit.id)
-        .order_by(Assessment.started_at.desc())
-        .all()
-    )
+    q = db.query(Assessment, Unit).join(Unit, Assessment.unit_id == Unit.id)
+    visible = visible_assessment_filter(current_user)
+    if visible is not None:
+        q = q.filter(visible)
+    rows = q.order_by(Assessment.started_at.desc()).all()
     return [_assessment_out(a, u) for a, u in rows]
 
 
@@ -153,15 +153,8 @@ def get_assessment(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    row = (
-        db.query(Assessment, Unit)
-        .join(Unit, Assessment.unit_id == Unit.id)
-        .filter(Assessment.id == assessment_id)
-        .first()
-    )
-    if not row:
-        raise HTTPException(status_code=404, detail="Assessment not found")
-    return _assessment_out(row[0], row[1])
+    assessment = require_read(db, assessment_id, current_user)
+    return _assessment_out(assessment, db.get(Unit, assessment.unit_id))
 
 
 # ---------------------------------------------------------------------------
@@ -182,9 +175,10 @@ def update_scenario(
         .filter(Assessment.id == assessment_id)
         .first()
     )
-    if not row:
+    if not row or not can_read(db, row[0], current_user):
         raise HTTPException(status_code=404, detail="Assessment not found")
     assessment, unit = row
+    require_write(db, assessment, current_user)
     assessment.scenario_ref = body.scenario_ref
     db.commit()
     db.refresh(assessment)
@@ -204,9 +198,10 @@ def update_tr_meta(
         .filter(Assessment.id == assessment_id)
         .first()
     )
-    if not row:
+    if not row or not can_read(db, row[0], current_user):
         raise HTTPException(status_code=404, detail="Assessment not found")
     assessment, unit = row
+    require_write(db, assessment, current_user)
     for field in ("tr_evaluator_name", "tr_evaluator_rank", "tr_evaluator_billet",
                   "tr_aar_narrative", "tr_aar_priorities"):
         val = getattr(body, field, None)
@@ -230,7 +225,7 @@ def list_responses(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     responses = (
         db.query(Response)
         .filter(Response.assessment_id == assessment_id)
@@ -250,7 +245,8 @@ def upsert_response(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
+    require_write(db, assessment, current_user, item_id=item_id)
     if assessment.status == "certified":
         raise HTTPException(status_code=403, detail="Assessment is certified and locked")
     response = (
@@ -310,7 +306,8 @@ def advance_status(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
+    require_certify(db, assessment, current_user)
     expected_next = _TRANSITIONS.get(assessment.status)
     if body.status != expected_next:
         raise HTTPException(
@@ -360,7 +357,7 @@ def list_tr_responses(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     return db.query(TrResponse).filter(TrResponse.assessment_id == assessment_id).all()
 
 
@@ -372,7 +369,7 @@ def upsert_tr_response(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     if assessment.status == "certified":
         raise HTTPException(status_code=403, detail="Assessment is certified and locked")
 
@@ -399,6 +396,9 @@ def upsert_tr_response(
                     status_code=403,
                     detail="Tasking already returned to S3T — ask the lead to reopen it",
                 )
+        else:
+            # No tasking: only a writing assignment (not observer/OIC) may score.
+            require_write(db, assessment, current_user)
 
     tr = (
         db.query(TrResponse)
@@ -458,7 +458,7 @@ def get_readiness_summary(
     from app.routers.content import _load_tr
     from app.routers.crosswalk import _load_crosswalk
 
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
 
     tr_responses = db.query(TrResponse).filter(TrResponse.assessment_id == assessment_id).all()
     by_code: dict[str, TrResponse] = {r.event_code: r for r in tr_responses}
@@ -568,7 +568,7 @@ def get_tr_jts_evidence(
     """
     from app.routers.crosswalk import _load_crosswalk
 
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
 
     # All JTS (not T&R) responses for this assessment
     jts_resps: dict[str, Response] = {
@@ -631,11 +631,9 @@ def get_tr_jts_evidence(
 # ---------------------------------------------------------------------------
 
 
-def _require_assessment(db: Session, assessment_id: str) -> Assessment:
-    a = db.get(Assessment, assessment_id)
-    if not a:
-        raise HTTPException(status_code=404, detail="Assessment not found")
-    return a
+def _require_assessment(db: Session, assessment_id: str, user: User) -> Assessment:
+    """Load an assessment the user is a member of (lead, assignment, tasking) or 404."""
+    return require_read(db, assessment_id, user)
 
 
 def _assignment_out(a: AssessmentAssignment, u: User) -> AssignmentOut:
@@ -663,7 +661,7 @@ def list_assignments(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     rows = (
         db.query(AssessmentAssignment, User)
         .join(User, AssessmentAssignment.user_id == User.id)
@@ -681,7 +679,7 @@ def upsert_assignment(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     if assessment.lead_id != current_user.id:
         raise HTTPException(status_code=403, detail="Only the lead assessor can manage assignments")
     user = db.get(User, user_id)
@@ -726,7 +724,7 @@ def delete_assignment(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     if assessment.lead_id != current_user.id:
         raise HTTPException(status_code=403, detail="Only the lead assessor can manage assignments")
     assignment = db.get(AssessmentAssignment, assignment_id)
@@ -754,7 +752,7 @@ def list_signatures(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     return (
         db.query(Signature)
         .filter(Signature.assessment_id == assessment_id)
@@ -777,7 +775,7 @@ def get_audit_log(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     rows = (
         db.query(AuditLogModel)
         .filter(AuditLogModel.entity_id.like(f"{assessment_id}%"))

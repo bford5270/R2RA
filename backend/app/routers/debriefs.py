@@ -147,7 +147,7 @@ def list_debriefs(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     rows = (
         db.query(Debrief)
         .filter(Debrief.assessment_id == assessment_id)
@@ -171,7 +171,7 @@ def upload_debrief(
     current_user: User = Depends(get_current_user),
 ):
     """Upload a recorded debrief. Processing starts via POST /{id}/process."""
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     _require_lead(assessment, current_user)
 
     content_type = (file.content_type or "").split(";")[0].strip().lower()
@@ -225,7 +225,7 @@ def create_manual_debrief(
     current_user: User = Depends(get_current_user),
 ):
     """Manual transcript path — no audio, no Transcribe; distillation only."""
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     _require_lead(assessment, current_user)
     if not transcript.strip():
         raise HTTPException(status_code=422, detail="Transcript is required")
@@ -257,7 +257,7 @@ def process_debrief(
     d = db.get(Debrief, debrief_id)
     if not d:
         raise HTTPException(status_code=404, detail="Debrief not found")
-    assessment = _require_assessment(db, d.assessment_id)
+    assessment = _require_assessment(db, d.assessment_id, current_user)
     _require_lead(assessment, current_user)
     if d.status in {"transcribing", "distilling"}:
         raise HTTPException(status_code=409, detail="Already processing")
@@ -289,6 +289,7 @@ def get_debrief(
     d = db.get(Debrief, debrief_id)
     if not d:
         raise HTTPException(status_code=404, detail="Debrief not found")
+    _require_assessment(db, d.assessment_id, current_user)
     return _out(d)
 
 
@@ -303,7 +304,7 @@ def update_debrief(
     d = db.get(Debrief, debrief_id)
     if not d:
         raise HTTPException(status_code=404, detail="Debrief not found")
-    assessment = _require_assessment(db, d.assessment_id)
+    assessment = _require_assessment(db, d.assessment_id, current_user)
     _require_lead(assessment, current_user)
     if d.status == "committed":
         raise HTTPException(status_code=409, detail="Debrief is committed and locked")
@@ -336,7 +337,7 @@ def commit_debrief(
     d = db.get(Debrief, debrief_id)
     if not d:
         raise HTTPException(status_code=404, detail="Debrief not found")
-    assessment = _require_assessment(db, d.assessment_id)
+    assessment = _require_assessment(db, d.assessment_id, current_user)
     _require_lead(assessment, current_user)
     if d.status != "ready":
         raise HTTPException(status_code=409, detail="Only a ready debrief can be committed")
@@ -362,7 +363,7 @@ def delete_debrief(
     d = db.get(Debrief, debrief_id)
     if not d:
         raise HTTPException(status_code=404, detail="Debrief not found")
-    assessment = _require_assessment(db, d.assessment_id)
+    assessment = _require_assessment(db, d.assessment_id, current_user)
     _require_lead(assessment, current_user)
     if d.audio_blob_ref and not d.audio_deleted:
         storage.delete(d.audio_blob_ref)

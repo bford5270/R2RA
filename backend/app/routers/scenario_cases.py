@@ -24,6 +24,7 @@ from app.config import settings
 from app.database import get_db
 from app.models.scenario_case import LoFeedback, ScenarioCase
 from app.models.user import User
+from app.auth.access import require_read, require_write
 from app.routers.assessments import _require_assessment
 from app.schemas.assessment import (
     LoFeedbackOut,
@@ -69,7 +70,7 @@ def list_cases(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     rows = (
         db.query(ScenarioCase)
         .filter(ScenarioCase.assessment_id == assessment_id)
@@ -93,7 +94,8 @@ def upload_case(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
+    require_write(db, assessment, current_user)
     if not label.strip():
         raise HTTPException(status_code=422, detail="Label is required")
 
@@ -152,7 +154,7 @@ def update_case(
     personnel roster (bed team, surg tech, etc.). Any approved participant
     can log movement; every change is audited.
     """
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     case = db.get(ScenarioCase, case_id)
     if not case or case.assessment_id != assessment_id:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -206,6 +208,7 @@ def serve_case_file(
     case = db.get(ScenarioCase, case_id)
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
+    require_read(db, case.assessment_id, current_user)
     return storage.serve(case.blob_ref, case.filename, case.content_type)
 
 
@@ -216,7 +219,7 @@ def delete_case(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     case = db.get(ScenarioCase, case_id)
     if not case or case.assessment_id != assessment_id:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -259,7 +262,7 @@ def list_lo_feedback(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     rows = (
         db.query(LoFeedback, User)
         .join(User, LoFeedback.created_by == User.id)
@@ -280,7 +283,7 @@ def upsert_lo_feedback(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     if body.rating is not None and not (1 <= body.rating <= 5):
         raise HTTPException(status_code=422, detail="rating must be 1-5")
     if body.recommendation is not None and body.recommendation not in _RECOMMENDATIONS:

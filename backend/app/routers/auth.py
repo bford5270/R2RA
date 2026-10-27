@@ -51,19 +51,27 @@ _login_attempts: dict[str, collections.deque] = {}
 _login_lock = threading.Lock()
 
 
-def _check_login_rate(ip: str) -> None:
+def _check_login_rate(key: str, max_attempts: int = _LOGIN_MAX_ATTEMPTS) -> None:
     now = time.monotonic()
     cutoff = now - _LOGIN_WINDOW
     with _login_lock:
-        dq = _login_attempts.setdefault(ip, collections.deque())
+        dq = _login_attempts.setdefault(key, collections.deque())
         while dq and dq[0] < cutoff:
             dq.popleft()
-        if len(dq) >= _LOGIN_MAX_ATTEMPTS:
+        if len(dq) >= max_attempts:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail="Too many login attempts. Try again in a minute.",
             )
         dq.append(now)
+
+
+# Behind CloudFront every request arrives from an edge IP, so the IP bucket
+# is shared by many users. Also limit per account so one account can't be
+# password-sprayed from many IPs, and per user on the TOTP step so a stolen
+# password can't be paired with a brute-forced 6-digit code.
+_ACCOUNT_MAX_ATTEMPTS = 5
+_TOTP_MAX_ATTEMPTS = 5
 
 
 # ---------------------------------------------------------------------------
@@ -75,6 +83,7 @@ def _check_login_rate(ip: str) -> None:
 def login(body: LoginRequest, request: Request, db: Session = Depends(get_db)):
     _check_login_rate(request.client.host if request.client else "unknown")
     email = body.email.strip()
+    _check_login_rate(f"acct:{email.lower()}", _ACCOUNT_MAX_ATTEMPTS)
     # Case-insensitive lookup — mobile keyboards autocapitalize email fields.
     user: User | None = (
         db.query(User).filter(func.lower(User.email) == email.lower()).first()
@@ -112,6 +121,7 @@ def totp_complete(body: TotpCompleteRequest, db: Session = Depends(get_db)):
     if not user or not user.is_active or not user.totp_secret:
         raise _INVALID
 
+    _check_login_rate(f"totp:{user.id}", _TOTP_MAX_ATTEMPTS)
     if not verify_totp(user.totp_secret, body.code):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid TOTP code")
 

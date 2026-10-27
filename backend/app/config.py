@@ -39,6 +39,11 @@ class Settings(BaseSettings):
     transcribe_timeout_sec: int = 1800  # 30 min ceiling for long debriefs
     max_audio_upload_bytes: int = 200 * 1024 * 1024  # ~2h of opus audio
 
+    # Shared secret CloudFront adds as the X-Origin-Verify header on /api/*
+    # requests. When set, the API rejects requests without it, so the EB
+    # hostname can't be used to go around CloudFront. Blank = check off.
+    origin_verify_secret: str = ""
+
     # Classification banner text — CUI Basic
     cui_banner: str = "CONTROLLED UNCLASSIFIED INFORMATION // BASIC"
 

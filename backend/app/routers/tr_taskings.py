@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.audit import append_entry
+from app.auth.access import require_read
 from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.assessment import Assessment
@@ -26,11 +27,8 @@ from app.schemas.assessment import MyTrTaskingOut, TrTaskingOut, TrTaskingUpsert
 router = APIRouter(tags=["tr-taskings"], dependencies=[Depends(require_approved)])
 
 
-def _require_assessment(db: Session, assessment_id: str) -> Assessment:
-    a = db.get(Assessment, assessment_id)
-    if not a:
-        raise HTTPException(status_code=404, detail="Assessment not found")
-    return a
+def _require_assessment(db: Session, assessment_id: str, user: User) -> Assessment:
+    return require_read(db, assessment_id, user)
 
 
 def _require_s3t(assessment: Assessment, current_user: User) -> None:
@@ -60,7 +58,7 @@ def list_tr_taskings(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     rows = (
         db.query(TrTasking, User)
         .join(User, TrTasking.user_id == User.id)
@@ -78,7 +76,7 @@ def upsert_tr_tasking(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     _require_s3t(assessment, current_user)
     if not body.event_codes:
         raise HTTPException(status_code=422, detail="Tasking must include at least one wicket")
@@ -132,7 +130,7 @@ def delete_tr_tasking(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    assessment = _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
     _require_s3t(assessment, current_user)
     tasking = db.get(TrTasking, tasking_id)
     if not tasking or tasking.assessment_id != assessment_id:
@@ -182,7 +180,7 @@ def reopen_tr_tasking(
     tasking = db.get(TrTasking, tasking_id)
     if not tasking:
         raise HTTPException(status_code=404, detail="Tasking not found")
-    assessment = _require_assessment(db, tasking.assessment_id)
+    assessment = _require_assessment(db, tasking.assessment_id, current_user)
     _require_s3t(assessment, current_user)
     if tasking.status != "returned":
         raise HTTPException(status_code=409, detail="Tasking is not returned")

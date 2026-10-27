@@ -1,6 +1,8 @@
+import hmac
 import sys
 
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -40,6 +42,19 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         return response
 
 
+class OriginVerifyMiddleware(BaseHTTPMiddleware):
+    """Only accept traffic that came through CloudFront (see config.origin_verify_secret)."""
+
+    async def dispatch(self, request: Request, call_next):
+        expected = settings.origin_verify_secret
+        if expected and request.url.path != "/api/health":
+            supplied = request.headers.get("x-origin-verify", "")
+            if not hmac.compare_digest(supplied.encode(), expected.encode()):
+                return JSONResponse({"detail": "Forbidden"}, status_code=403)
+        return await call_next(request)
+
+
+app.add_middleware(OriginVerifyMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,

@@ -17,6 +17,7 @@ from app.database import get_db
 from app.models.evidence import Evidence
 from app.models.response import Response
 from app.models.user import User
+from app.auth.access import require_read, require_write
 from app.routers.assessments import _require_assessment
 from app.upload_validation import validate_upload
 
@@ -38,7 +39,8 @@ def upload_evidence(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
+    require_write(db, assessment, current_user, item_id=item_id)
 
     content = file.file.read()
     validate_upload(content, file.content_type or "", settings.max_upload_bytes)
@@ -99,7 +101,7 @@ def list_evidence(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    _require_assessment(db, assessment_id, current_user)
     resp = (
         db.query(Response)
         .filter(Response.assessment_id == assessment_id, Response.item_id == item_id)
@@ -126,6 +128,7 @@ def serve_evidence_file(
     ev = db.get(Evidence, evidence_id)
     if ev is None:
         raise HTTPException(status_code=404, detail="Evidence not found")
+    require_read(db, ev.assessment_id, current_user)
     return storage.serve(ev.blob_ref, ev.filename, ev.content_type)
 
 
@@ -144,7 +147,8 @@ def delete_evidence(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    _require_assessment(db, assessment_id)
+    assessment = _require_assessment(db, assessment_id, current_user)
+    require_write(db, assessment, current_user, item_id=item_id)
     ev = db.get(Evidence, evidence_id)
     if ev is None:
         raise HTTPException(status_code=404, detail="Evidence not found")

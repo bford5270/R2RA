@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.auth.access import visible_assessment_filter
 from app.auth.deps import get_current_user, require_approved
 from app.database import get_db
 from app.models.assessment import Assessment
@@ -42,12 +43,11 @@ def readiness_report(
     current_user: User = Depends(get_current_user),
 ):
     # Latest assessment per unit (by started_at desc).
-    rows = (
-        db.query(Assessment, Unit)
-        .join(Unit, Assessment.unit_id == Unit.id)
-        .order_by(Assessment.started_at.desc())
-        .all()
-    )
+    q = db.query(Assessment, Unit).join(Unit, Assessment.unit_id == Unit.id)
+    visible = visible_assessment_filter(current_user)
+    if visible is not None:
+        q = q.filter(visible)
+    rows = q.order_by(Assessment.started_at.desc()).all()
 
     seen: set[str] = set()
     latest: list[tuple[Assessment, Unit]] = []
