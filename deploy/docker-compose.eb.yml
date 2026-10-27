@@ -28,7 +28,7 @@ services:
     ports:
       - "8080:8000"
     environment:
-      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://www.role2builder.org,https://role2builder.org}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     restart: always
     logging:
