@@ -19,6 +19,9 @@ target_metadata = Base.metadata
 # Normalize to sync driver; fix postgres:// shorthand (AWS RDS uses it)
 _sync_url = re.sub(r"\+aiosqlite", "", settings.database_url)
 _sync_url = _sync_url.replace("postgres://", "postgresql://")
+# Name the driver; SQLAlchemy 2.1 would otherwise pick psycopg 3 (see database.py)
+if _sync_url.startswith("postgresql://"):
+    _sync_url = "postgresql+psycopg2://" + _sync_url[len("postgresql://"):]
 config.set_main_option("sqlalchemy.url", _sync_url)
 
 

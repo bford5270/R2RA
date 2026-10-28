@@ -12,6 +12,10 @@ _sync_url = (
     .replace("postgresql+asyncpg", "postgresql")
     .replace("postgres://", "postgresql://")
 )
+# Name the driver: SQLAlchemy 2.1 defaults postgresql:// to psycopg 3, which
+# the image doesn't install (that crash-looped prod on Oct 28, 2026).
+if _sync_url.startswith("postgresql://"):
+    _sync_url = "postgresql+psycopg2://" + _sync_url[len("postgresql://"):]
 
 # SQLite requires check_same_thread=False; Postgres does not accept it
 _is_sqlite = _sync_url.startswith("sqlite")
